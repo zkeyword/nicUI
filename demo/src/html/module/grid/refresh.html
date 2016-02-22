@@ -1,109 +1,60 @@
-<div class="block">
-	<h2>接口说明：</h2>
-	<p>刷新表格的API是refresh，该API必须在表格对象生成之后才能使用，下面实例是将静态数据源刷新成ajax数据源。refresh的参数设置是跟表格的设置是一样的，没有设置的参数则保留原来的设置。刷新时要指定pageIndex，需把refreshIndex置为true。</p>
-</div>
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"grid": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<div id="grid"></div>
+					<a href="#" class="ui-btn ui-btnMain" id="refresh">点击刷新表格</a>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./refresh.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
 
-<div class="block">
-	<h2>应用代码：</h2>
-<pre>
-var staticData = {
+<script>
+	var staticData = {
 		/*json格式的数据行*/
 		rows:[
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
+			{id:1,name:'张三',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
 		],
 		/* 该数据源的总条数 */
 		total:20 
 	};
 	
-var grid = nic.ui.grid({
-	wrap:'#grid-checkbox',
-	data: staticData,
-	columns: [
-		{ display: '编码.', name: 'id', width: 50},
-		{ display: '姓名', name: 'name', width: 50},
-		{ display: '类别', name: 'type', width: 50},
-		{ display: '性别', name: 'sex', width: 50},
-		{ display: '电话', name: 'tel', width: 50},
-		{ display: 'Email', name: 'email', width: 50}
-	]
-});
-
-/*刷新*/
-/*
-grid.refresh({
-	pageAjax: {
-		url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
-		data:'type=1&sex=man',
-		//type: 'post',
-		//beforeSend: function(){},
-		//success: function(){},
-		//error: function(){}
-	}
-});
-*/
-</pre>
-</div>
-
-<div class="block">
-	<h2>调用后效果：</h2>
-	<p>
-		<a href="#" class="ui-btn ui-btnMain" id="refresh">点击刷新表格</a>
-	</p>
-	<div id="grid-checkbox"></div>
-</div>
-
-<script>
-require(['app/main'], function(nic){
-
-	var staticData = {
-			/*json格式的数据行*/
-			rows:[
-				{id:1,name:'张三11',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-				{id:1,name:'张三1',type:'经理',sex:'男',tel:'13400000000',email:'zhangsan@a.com'},
-			],
-			/* 该数据源的总条数 */
-			total:20 
-		};
-		
 	var grid = nic.ui.grid({
-		wrap:'#grid-checkbox',
+		wrap:'#grid',
 		data: staticData,
 		columns: [
 			{ display: '编码.', name: 'id', width: 50},
@@ -118,12 +69,10 @@ require(['app/main'], function(nic){
 	$('#refresh').click(function(){
 		grid.refresh({
 			pageAjax: {
-				url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+				url: '/grid',
 				data:'type=1&sex=man'
 			}
 		});
 		return false;
 	});
-
-});
 </script>

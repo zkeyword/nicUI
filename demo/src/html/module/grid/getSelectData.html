@@ -1,52 +1,34 @@
-<div class="block">
-	<h2>接口说明：</h2>
-	<p>获取已选的API是getSelectData，该接口获取到的数据和请求的数据格式是一直的，需要记住翻页已选的情况，请配合isMemory接口使用。</p>
-</div>
-
-<div class="block">
-	<h2>应用代码：</h2>
-<pre>
-var grid = nic.ui.grid({
-	wrap:'#grid',
-	pageAjax: {
-		url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
-		data:'type=1&sex=man',
-		success:function(){
-			getCurrentData();
-		}
-	},
-	columns: [
-		{ display: '编码.', name: 'id', width: 50},
-		{ display: '姓名', name: 'name', width: 50},
-		{ display: '类别', name: 'type', width: 50},
-		{ display: '性别', name: 'sex', width: 50},
-		{ display: '电话', name: 'tel', width: 50},
-		{ display: 'Email', name: 'email', width: 50}
-	]
-});
-
-$('#getSelectData').on('click', function(){
-	console.log(grid.getSelectData());
-});
-
-</pre>
-</div>
-
-<div class="block">
-	<h2>调用后效果(可打开chrome控制台查看请求)：</h2>
-	<p>
-		<a href="#" class="ui-btn ui-btnMain" id="getSelectData">点击获取已选数据</a>
-	</p>
-	<div id="grid"></div>
-</div>
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"grid": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<div id="grid" class="fn-clear"></div>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./getSelectData.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
 
 <script>
-require(['app/main'], function(nic){
 
 	var grid = nic.ui.grid({
 		wrap:'#grid',
 		pageAjax: {
-			url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+			url: '/grid',
 			data:'type=1&sex=man'
 		},
 		columns: [
@@ -63,5 +45,4 @@ require(['app/main'], function(nic){
 		console.log(grid.getSelectData());
 	});
 
-});
 </script>

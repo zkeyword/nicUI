@@ -1,99 +1,37 @@
-<div class="block">
-	<h2>列统计：</h2>
-	<dl>
-		<dt>1)、statis</dt>
-		<dd>
-			<p>statis接口是一个json格式的数据，display是统计的名称；type是统计的类型，共有sum、avg、min、max四种类型，暂不支持其他复杂形式的统计。</p>
-		</dd>
-		<dt>2)、statisWrap</dt>
-		<dd>
-			<p>该接口是columns数组里面的数据的一个属性，用来放置statis接口display的名字，不设置将默认第一列。</p>
-		</dd>
-		<dt>3)、statisType</dt>
-		<dd>
-			<p>该接口是columns数组里面的数据的一个属性，用来指定statis要统计的类型。</p>
-		</dd>
-	</dl>
-	<h2>行统计：</h2>
-	<dl>
-		<dt>1)、statis</dt>
-		<dd>
-			<p>该接口是columns数组里面的数据的一个属性，若不设置或为false，行统计值为undefined。</p>
-		</dd>
-		<dt>2)、statisType</dt>
-		<dd>
-			<p>该接口是columns数组里面的数据的一个属性，用来指定statis要统计的类型。</p>
-		</dd>
-	</dl>
-</div>
-
-<div class="block">
-	<h2>应用代码(列统计)：</h2>
-<pre>
-var gridCell = nic.ui.grid({
-	wrap:'#gridCell',
-	pageAjax: {
-		url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
-		data:'type=1&sex=man',
-	},
-	statis:[
-		{display:'均值',type:'avg'},
-		{display:'总计',type:'sum'},
-	],
-	columns: [
-		{ display: '编码.', name: 'id', width: 50, statisWrap:true},
-		{ display: '姓名', name: 'name', width: 50},
-		{ display: '类别', name: 'type', width: 50},
-		{ display: '性别', name: 'sex', width: 50},
-		{ display: '电话', name: 'tel', width: 50, statisType:'avg,sum'},
-		{ display: 'Email', name: 'email', width: 50},
-	]
-});
-</pre>
-</div>
-
-<div class="block">
-	<h2>调用后效果(列统计)：</h2>
-	<div id="gridCell"></div>
-</div>
-
-<div class="block">
-	<h2>应用代码(行统计)：</h2>
-<pre>
-var gridColl = nic.ui.grid({
-	wrap:'#gridColl',
-	pageAjax: {
-		url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
-		data:'type=1&sex=man',
-	},
-	statis:[
-		{display:'均值',type:'avg'},
-		{display:'总计',type:'sum'},
-	],
-	columns: [
-		{ display: '编码.', name: 'id', width: 50, statisWrap:true},
-		{ display: '姓名', name: 'name', width: 50},
-		{ display: '类别', name: 'type', width: 50},
-		{ display: '性别', name: 'sex', width: 50},
-		{ display: 'Email', name: 'email', width: 50},
-		{ display: '总计', width: 60, statis:true, statisType:'avg,sum'}
-	]
-});
-</pre>
-</div>
-
-<div class="block">
-	<h2>调用后效果(行统计)：</h2>
-	<div id="gridColl"></div>
-</div>
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"grid": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<h5>列统计</h5>
+					<div id="gridCell"></div>
+					<h5>行统计</h5>
+					<div id="gridColl"></div>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./statis.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
 
 <script>
-require(['app/main'], function(nic){
 
 	var gridCell = nic.ui.grid({
 		wrap:'#gridCell',
 		pageAjax: {
-			url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+			url: '/grid',
 			data:'type=1&sex=man',
 		},
 		statis:[
@@ -113,7 +51,7 @@ require(['app/main'], function(nic){
 	var gridColl = nic.ui.grid({
 		wrap:'#gridColl',
 		pageAjax: {
-			url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+			url: '/grid',
 			data:'type=1&sex=man',
 		},
 		statis:[
@@ -129,6 +67,4 @@ require(['app/main'], function(nic){
 			{ display: '总计', width: 60, statis:true, statisType:'avg,sum'}
 		]
 	});
-
-});
 </script>
