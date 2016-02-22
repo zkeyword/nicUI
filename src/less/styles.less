@@ -1,0 +1,97 @@
+@charset "utf-8";
+/*
+* @require:     base.less
+* @overview:    nic
+
+**************************
+.col- 文字颜色前缀
+注意：定义颜色时使用.col-作为前缀加上颜色值
+
+.font- 文字大小/样式前缀
+注意：定义大小/样式时使用.font-作为前缀文字大小值/样式，如：font-12、font-bold
+
+.bg- 背景样式前缀
+注意：定义颜色时使用.bg-作为前缀加上颜色值
+
+.icon- 图标
+注意：定义图标时使用.icon-作为前缀加上图标名字，如：icon-edit、icon-error
+
+.l- js UI 样式前缀
+注意：只要是以.l-开头的，命名都是直接在UI里面定义，如果要增删改请修改js
+
+.sl- 兼容解决方案前缀
+注意：非组件/解决方案，请不要使用.ui-/.sl-作为前缀
+
+.ui- 组件类前缀
+
+.lt-/#lt- 布局类前缀
+
+.mo-/#mo- 模块类前缀
+注意：定义模块公用样式时使用.mo-/#mo-开头加上模块名，如.mo-testing-header；定义模块私用的样式时，直接文件名开头。若定义的样式可以提升到最顶级，有涉及到改图片背景，请修改图片路径。
+
+.page-/#page- 页面级前缀
+注意：添加页面时，请先在最外层添加一个以.page-/#page-开头的命名空间。
+**************************
+*/
+
+/*基本样式*/
+@import "lib/base.less";
+
+/*基本函数*/
+@import "lib/mixins.less";
+
+/*全局颜色*/
+@import "lib/color.less";
+
+/*js组件基本样式*/
+@import "core/l-base.less";
+
+/*js组件*/
+@import "core/l-dialog.less";
+@import "core/l-tree.less";
+@import "core/l-pop.less";
+@import "core/l-tip.less";
+@import "core/l-tab.less";
+@import "core/l-selectArea.less";
+@import "core/l-calendar.less";
+@import "core/l-grid.less";
+@import "core/l-tree_debug.less";
+@import "core/l-select_debug.less";
+
+
+/*搜索建议*/
+@import "core/l-suggestion.less";
+@import "core/l-gridFree.less";
+
+/*图标样式*/
+//@import "core/ui-icon.less";
+@import (less) "core/sprite-png.css";
+@import (less) "core/sprite-jpg.css";
+
+/*常用样式*/
+@import "core/ui-common.less";
+
+/*按钮样式*/
+@import "core/ui-btn.less";
+
+/*表单样式*/
+@import "core/ui-forms.less";
+
+/*分页样式*/
+@import "core/ui-pagination.less";
+
+/* 进度条 */
+@import "core/mod-progress.less";
+
+
+/*表格样式*/
+@import "core/ui-table.less";
+
+/*布局样式*/
+@import "app/layout.less";
+
+
+/*app表单*/
+@import "app/form.less";
+
+

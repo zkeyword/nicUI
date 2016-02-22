@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"suggestion": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<h4>调用效果</h4>
+				<div class="fn-clear">
+					<input type="text" name="keyword" id="suggestion" />
+				</div>
+				<div id="markdown">
+					@@include(markdown('./static.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+
+<script>
+
+	$('#suggestion').suggestion({
+		data:[{"id":978,"name":"韦斌谦"},{"id":539,"name":"奚倩"},{"id":907,"name":"戚彪成"},{"id":928,"name":"水月锦"},{"id":950,"name":"任固"},{"id":255,"name":"鲁绍蓓"},{"id":179,"name":"章磊"},{"id":163,"name":"陈安富"},{"id":330,"name":"陈栋伦"},{"id":836,"name":"杨超进"},{"id":917,"name":"戚河"},{"id":382,"name":"彭璐启"},{"id":968,"name":"任鹏秋"},{"id":909,"name":"任瑞"},{"id":75,"name":"沈珍彪"},{"id":81,"name":"施婵"},{"id":195,"name":"许亮宏"},{"id":201,"name":"杨婉涛"},{"id":749,"name":"柳有昌"},{"id":944,"name":"唐青"}],
+		touch: function(data){}
+	}); 
+
+</script>

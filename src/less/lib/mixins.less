@@ -1,0 +1,170 @@
+/*阴影*/
+.box-shadow(@x: 0; @y: 0; @blur: 1px; @color: #ddd; @inset: default){
+	.color ( @a ) when( isnumber(@a) ){
+		@color:rgba(0, 0, 0, @a);
+	}
+	.inset (@a) when (@a = default) {
+		@inset:; //清空
+	}
+	.color(@color);
+	.inset(@inset);
+	-webkit-box-shadow:@inset @x @y @blur @color;
+		   -moz-box-shadow:@inset @x @y @blur @color;
+				box-shadow:@inset @x @y @blur @color;
+}
+
+/*圆角*/
+.border-radius(@size: 5px, @radius: default){
+	.radius (@radius) when (@radius = default) {
+		-webkit-border-radius: @size;
+				border-radius: @size;
+	}
+	.radius (@radius) when (@radius = top) {
+		-webkit-border-top-right-radius: @size;
+				border-top-right-radius: @size;
+		-webkit-border-top-left-radius: @size;
+				border-top-left-radius: @size;
+	}
+	.radius (@radius) when (@radius = right) {
+		-webkit-border-top-right-radius: @size;
+				border-top-right-radius: @size;
+		-webkit-border-bottom-right-radius: @size;
+				border-bottom-right-radius: @size;
+	}
+	.radius (@radius) when (@radius = bottom) {
+		-webkit-border-bottom-right-radius: @size;
+				border-bottom-right-radius: @size;
+		-webkit-border-bottom-left-radius: @size;
+				border-bottom-left-radius: @size;		
+	}
+	.radius (@radius) when (@radius = left) {
+		-webkit-border-top-left-radius: @size;
+				border-top-left-radius: @size;
+		-webkit-border-bottom-left-radius: @size;
+				border-bottom-left-radius: @size;
+	}
+    .radius(@radius);
+}
+
+/*三角*/
+.arrow(@color: #ddd; @pointer:up; @size: 20px){
+	width:0;
+    height:0;
+    border-width:@size;
+
+	.pointer(@pointer) when (@pointer = up){
+		border-style:dashed dashed solid dashed;
+		border-color:transparent transparent @color transparent;
+	}
+	.pointer(@pointer) when (@pointer = down){
+		border-style:solid dashed dashed dashed;
+		border-color: @color transparent transparent transparent;
+	}
+	.pointer(@pointer) when (@pointer = left){
+		border-style:dashed solid dashed dashed;
+		border-color:transparent @color transparent transparent;
+	}
+	.pointer(@pointer) when (@pointer = right){
+		border-style:dashed dashed dashed solid;
+		border-color:transparent transparent transparent @color;
+	}
+	.pointer(@pointer);
+}
+
+/*盒子*/
+.box-sizing(@boxmodel: border-box){
+  -webkit-box-sizing: @boxmodel;
+     -moz-box-sizing: @boxmodel;
+          box-sizing: @boxmodel;
+}
+
+/*透明度*/
+.opacity(@opacity){
+  filter: ~"alpha(opacity=@{opacity-ie})";
+  @opacity-ie: (@opacity * 100);
+  opacity: @opacity;
+}
+
+/*以下部分ie9以下不支持--待定*/
+
+// Transitions
+.transition(@transition) {
+  -webkit-transition: @transition;
+          transition: @transition;
+}
+.transition-property(@transition-property) {
+  -webkit-transition-property: @transition-property;
+          transition-property: @transition-property;
+}
+.transition-delay(@transition-delay) {
+  -webkit-transition-delay: @transition-delay;
+          transition-delay: @transition-delay;
+}
+.transition-duration(@transition-duration) {
+  -webkit-transition-duration: @transition-duration;
+          transition-duration: @transition-duration;
+}
+.transition-transform(@transition) {
+  -webkit-transition: -webkit-transform @transition;
+     -moz-transition: -moz-transform @transition;
+       -o-transition: -o-transform @transition;
+          transition: transform @transition;
+}
+
+// Transformations
+.rotate(@degrees) {
+  -webkit-transform: rotate(@degrees);
+      -ms-transform: rotate(@degrees); // IE9+
+          transform: rotate(@degrees);
+}
+.scale(@ratio) {
+  -webkit-transform: scale(@ratio);
+      -ms-transform: scale(@ratio); // IE9+
+          transform: scale(@ratio);
+}
+.translate(@x; @y) {
+  -webkit-transform: translate(@x, @y);
+      -ms-transform: translate(@x, @y); // IE9+
+          transform: translate(@x, @y);
+}
+.skew(@x; @y) {
+  -webkit-transform: skew(@x, @y);
+      -ms-transform: skewX(@x) skewY(@y); // See https://github.com/twbs/bootstrap/issues/4885; IE9+
+          transform: skew(@x, @y);
+}
+.translate3d(@x; @y; @z) {
+  -webkit-transform: translate3d(@x, @y, @z);
+          transform: translate3d(@x, @y, @z);
+}
+
+.rotateX(@degrees) {
+  -webkit-transform: rotateX(@degrees);
+      -ms-transform: rotateX(@degrees); // IE9+
+          transform: rotateX(@degrees);
+}
+.rotateY(@degrees) {
+  -webkit-transform: rotateY(@degrees);
+      -ms-transform: rotateY(@degrees); // IE9+
+          transform: rotateY(@degrees);
+}
+.perspective(@perspective) {
+  -webkit-perspective: @perspective;
+     -moz-perspective: @perspective;
+          perspective: @perspective;
+}
+.perspective-origin(@perspective) {
+  -webkit-perspective-origin: @perspective;
+     -moz-perspective-origin: @perspective;
+          perspective-origin: @perspective;
+}
+.transform-origin(@origin) {
+  -webkit-transform-origin: @origin;
+     -moz-transform-origin: @origin;
+          transform-origin: @origin;
+}
+
+// Animations
+.animation(@animation) {
+  -webkit-animation: @animation;
+          animation: @animation;
+}

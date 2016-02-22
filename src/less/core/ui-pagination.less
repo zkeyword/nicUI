@@ -1,0 +1,35 @@
+.ui-pagination{
+
+	a, span{
+		display:block;
+		height:16px;
+		line-height:16px;
+		float:left;
+		padding:7px 12px;
+		background:#fff;
+		border:1px solid #eee;
+		border-left:0 none;
+	}
+	span{
+		cursor:default;
+		&.prev,&.next{
+			//color:@col-font-disable;
+		}
+	}
+	a{
+		transition:background ease 0.5s, border ease 0.5s, color ease 0.5s;
+		&:hover{
+			color:#f60;
+		}
+		&:active{
+			.box-shadow(0, 3px, 5px, 0.2, inset);
+		}
+		&:first-child{border-left:1px solid #eee}
+	}
+	.prev{
+		border-left:1px solid #eee;
+	}
+	.current{
+		border-left:1px solid #eee;
+	}
+}

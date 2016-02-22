@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"tree": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<div class="fn-clear">
+						<div id="tree"></div>
+					</div>
+				</div>
+				@@include(markdown('./data.md'))
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+
+<script>
+	var data = 
+[{"id":1,"pid":0,"name":"\u9009\u9879 1","open":true},{"id":11,"pid":1,"name":"\u9009\u9879 11"},{"id":12,"pid":1,"name":"\u9009\u9879 12"},{"id":121,"pid":12,"name":"\u9009\u9879 121"},{"id":122,"pid":12,"name":"\u9009\u9879 122"},{"id":13,"pid":1,"name":"\u9009\u9879 13"},{"id":131,"pid":13,"name":"\u9009\u9879 131"},{"id":132,"pid":13,"name":"\u9009\u9879 132"},{"id":1321,"pid":132,"name":"\u9009\u9879 1321"},{"id":13211,"pid":1321,"name":"\u9009\u9879 13211"},{"id":132111,"pid":13211,"name":"\u9009\u9879 132111"},{"id":132112,"pid":13211,"name":"\u9009\u9879 132112"},{"id":132113,"pid":13211,"name":"\u9009\u9879 132113"},{"id":142,"pid":13,"name":"\u9009\u9879 142"},{"id":2,"pid":0,"name":"\u9009\u9879 2"},{"id":21,"pid":2,"name":"\u9009\u9879 21"},{"id":211,"pid":21,"name":"\u9009\u9879 211"},{"id":3,"pid":0,"name":"\u9009\u9879 3","isParent":true}];
+
+console.log(data)
+	
+	var tree = nic.ui.tree({
+		target: $('#tree'),
+		data:data,
+		selected:[13, 11],
+		onClick:function(obj, data){
+			console.log(obj, data)
+		},
+		//onRightClick:function(){
+		//	alert(11)
+		//},
+		onLoad:function(){
+			//alert('1');
+		},
+		onMouseOver:function(){
+			
+		},
+		onMouseOut:function(){
+		
+		}
+	});
+	
+	console.log(tree)
+
+</script>

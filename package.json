@@ -1,0 +1,29 @@
+{
+  "name": "erp",
+  "version": "0.1.0",
+  "scripts": {
+    "gulp": "gulp",
+    "build": "npm run gulp"
+  },
+  "devDependencies": {
+    "express": "*",
+    "gulp": "*",
+    "gulp-clean": "*",
+    "gulp-file-include": "^0.13.7",
+    "gulp-imagemin": "*",
+    "gulp-jshint": "*",
+    "gulp-less": "*",
+    "gulp-minify-css": "*",
+    "gulp-nodemon": "^2.0.6",
+    "gulp-plumber": "^1.0.1",
+    "gulp-requirejs": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-tmod": "^0.1.2",
+    "gulp-uglify": "*",
+    "gulp-webpack": "*",
+    "gulp.spritesmith": "*",
+    "markdown": "^0.5.0",
+    "mockjs": "*",
+    "webpack": "*"
+  }
+}

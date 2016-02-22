@@ -1,0 +1,62 @@
+<div class="block">
+	<h2>HTML规范 - 代码格式</h2>
+	<dl>
+		<dt>1)、说明文案的注释方法</dt>
+		<dd>
+			<p>开始注释：&lt;!--&nbsp;注释文案&nbsp;--&gt;（文案两头空格）。</p> 
+			<p>结束注释：&lt;!--&nbsp;/注释文案&nbsp;--&gt;（文案前加“/”符号，类似标签的闭合）。</p> 
+			<p>允许只有开始注释！</p> 
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;/&gt;
+&lt;title&gt;nic&lt;/title&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;/&gt;
+&lt;meta name=&quot;renderer&quot; content=&quot;webkit&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;!-- 页面开始 --&gt;
+	&lt;div id=&quot;lt-wrap&quot; class=&quot;page-index&quot;&gt;
+		&lt;!-- 头部开始 --&gt;
+		&lt;div id=&quot;lt-header&quot;&gt;
+			&lt;!-- logo --&gt;
+			&lt;div id=&quot;logo&quot;&gt;&lt;/div&gt;
+			&lt;div id=&quot;nav&quot;&gt;&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;!-- /头部结束 --&gt;
+		&lt;!-- 内容开始 --&gt;
+		&lt;div id=&quot;lt-main&quot;&gt;
+			&lt;div id=&quot;lt-left&quot;&gt;&lt;/div&gt;
+			&lt;div id=&quot;lt-right&quot;&gt;&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;!-- /内容结束 --&gt;
+	&lt;/div&gt;
+	&lt;!-- /页面结束 --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+		</dd>
+		<dt>2)、严格的属性</dt>
+		<dd>
+			<p>属性和值全部小写，每个属性都必须有一个值，每个值必须加双引号。</p>
+			<p>使用自定义属性时，请在指定属性上加上“data-”前缀，例如：&lt;div id=&quot;logo&quot; data-title=&quot;logo&quot;&gt;&lt;/div&gt;</p>
+			<p>没有值的属性必须使用自己的名称做为值（checked、disabled、readonly、selected等等）。</p>
+			<p>可以省略style标签和script标签的type属性。</p>
+		</dd>
+		<dt>3)、严格的嵌套</dt>
+		<dd>
+			<p>a标签不可嵌套a标签<p>
+			<p>br标签不可用来排版。<p>
+			<p>ol、ul标签只能嵌套li标签<p>
+			<p>table标签只能嵌套表格元素thead、tbody、tfoot、tr、th、td<p>
+			<p>select标签只能嵌套option或optgroup<p>
+			<p>dl标签只能嵌套dl、dt、dd标签<p>
+			<p>p标签不能嵌套块级元素</p>
+			<p>从h1到h6，不可嵌套块级元素</p>
+			<p>meta、link、style、script不可嵌套任何元素</p>
+			<p>内联元素不能嵌套块级元素</p>
+			<p>正确闭合标签且必须闭合</p>
+		</dd>
+	</dl>
+</div>

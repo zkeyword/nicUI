@@ -1,0 +1,15 @@
+.l-selectArea{position:relative}
+	.l-selectArea-selected{float:right;height:20px;line-height:20px;border:1px solid #eee;padding:2px 15px 2px 0;position:relative;z-index:2;background:#fff url(../images/l-selectArea-selected.gif) no-repeat right 10px;cursor:pointer;}
+	.l-selectArea-selected-on{border-bottom:0 none;background:#fff url(../images/l-selectArea-selected.gif) no-repeat right -16px}
+		.l-selectArea-selectedProvince{background:url(../images/l-selectArea-selected-ico.png) no-repeat 5px 0;padding:0 5px 0 20px;}
+		.l-selectArea-selectedCity{}
+	.l-selectArea-wrap{position:absolute;top:24px;left:0;z-index:1;width:337px;background:#fff;border:1px solid #eee;padding:8px}
+		/*tab*/
+		.l-selectArea-tab{height:24px;position:absolute;top:8px;left:8px;z-index:4}
+			.l-selectArea-tab li{height:22px;line-height:22px;float:left;display:inline;border:1px solid #bfbfbf;border-bottom:1px solid #659dc3;margin:0 5px 0 0;padding:0 15px 0 10px;cursor:pointer;background:#fff url(../images/l-selectArea-tab.gif) no-repeat right 9px}
+			.l-selectArea-tab li.on{height:23px;border:1px solid #659dc3;border-bottom:0 none;background:#fff url(../images/l-selectArea-tab.gif) no-repeat right -17px}
+		.l-selectArea-main{padding:23px 0 0;position:relative;z-index:3}
+			.l-selectArea-mainItem{padding:5px;border:1px solid #659dc3;cursor:pointer;}
+				.l-selectArea-province-item{float:left;width:55px;height:24px;line-height:24px;padding:0 5px;cursor:pointer;overflow:hidden;}
+				.l-selectArea-city-item{float:left;width:55px;height:24px;line-height:24px;padding:0 5px;cursor:pointer;overflow:hidden;}
+				.l-selectArea-item-over{background:#317EE7;color:#fff}

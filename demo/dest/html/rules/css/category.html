@@ -1,0 +1,35 @@
+<div class="block">
+	<h2>CSS规范 - 分类方法</h2>
+	<dl>
+		<dt>1)、LESS文件的分类和引用顺序</dt>
+		<dd>
+			<p>该UI是基于LESS开发的，由于面向比较大项目，我们将LESS文件进行物理分类，然后通过styles.less进行文件管理，最后发布时编译成一个CSS文件。</p>
+			<p>我们按照CSS的性质和用途，将LESS文件分成“公共型样式”、“应用型样式”，并以此顺序引用。</p>
+			<p>
+				公共型样式：<br />
+				1、base.less 重设浏览器默认样式，以及提供fn-left、fn-right、fn-clear、fn-hide等浮动处理及隐藏样式。<br />
+				2、mixins.less 通用函数，包含阴影、透明度、三角形等常用样式。<br />
+				3、l-*.less JS控件样式，由于与JS控件耦合度高、若要修改样式名称请修改对应的JS控件<br />
+				4、ui-*.less 组件样式，包含图标、颜色、文字、间距、表单、按钮等元素<br />
+			</p>
+			<p>
+				应用型样式：<br />
+				1、layout.less 布局样式，包含通用的基本布局以及页面初始化默认设置。<br />
+				2、page-*.less 页面样式，以页面最外层class的值“page-*”为文件名。<br />
+				3、mo-*.less 栏目模块，通常是一个语义化的可以重复使用的较大的整体！比如导航、登录、注册、各种列表、评论、搜索等！<br />
+			</p>
+		</dd>
+		<dt>CSS内部的分类及其顺序</dt>
+		<dd>
+			1、“l-”前缀：JS控件，如“.l-grid”<br />
+			2、“lt-”前缀：通用布局，如“.lt-right”<br />
+			3、“.mo-/#mo-”前缀：通用模块，如“.mo-logo”<br />
+			4、“.col-”前缀：文字颜色，如“.col-red”<br />
+			5、“.font-”前缀：文字大小/样式，如“.font-12”、“.font-bold”<br />
+			6、“.icon-”前缀：图标样式，如“.icon-edit”、“.icon-error”<br />
+			7、“.fn-”前缀：常用功能样式，目前就提供“.fn-left”、“.fn-right”、“.fn-clear”、“.fn-hide”四种样式。<br />
+			8、“.ui-”前缀：组件样式，如“.ui-btn”、“.ui-input”、“.ui-alignLeft”、“.ui-mt10”、“.ui-w100”。<br />
+			9、“.page-”前缀：页面样式，如“.page-index”<br />
+		</dd>
+	</dl>
+</div>

@@ -1,0 +1,167 @@
+.l-select-wrap{
+	position:relative;
+	float:left;
+	
+	select{
+		display:none;
+	}
+	
+	.l-select-down{
+		//display:none;
+	}
+	
+	.l-select-single{
+	
+		.l-select-single-arrow{
+			position: absolute;
+			top: 12px;
+			right: 5px;
+			.arrow(#333, down, 4px);
+		}
+		
+		.l-select-single-init-arrow{
+			padding-right:15px;
+		}
+		
+		.l-select-down{
+			position:absolute;
+			z-index:2;
+			top:30px;
+			left:0
+		}
+		
+		.l-select-single-ul{
+			position:absolute;
+			z-index:2;
+			border:1px solid @col-form-border;
+			background:#fff;
+			max-height:180px;
+			overflow-y:auto;
+		}
+		
+		.l-select-single-li{
+			padding:3px 5px;
+            line-height:20px;
+			
+			&.on{
+				background:@col-form-select;
+				color:@col-blue;
+			}
+		}
+	}
+	
+	.l-select-multiple{
+
+		ul.fn-clear{
+			padding:0;
+			margin:0;
+		}
+		
+		.l-select-multiple-selected{
+			
+			.ui-form-stauts();
+			
+			li{
+				float:left;
+				display:inline;
+				width:auto;
+				margin:0;
+			}
+			
+			.l-select-multiple-input{
+				height:24px;
+				line-height:24px;
+				border:0 none;
+				outline:0;
+				width:10px;
+				margin:1px 0;
+				background:none;
+			}
+			
+			.l-select-multiple-selected-li{
+				height:20px;
+				line-height:20px;
+				position:relative;
+				padding:0 16px 0 5px;
+				border:1px dashed #ccc;
+				background:#fff;
+				margin:2px 0 2px 5px;
+				.border-radius(3px);
+				cursor:pointer;
+				overflow:hidden;
+				
+				&:hover{
+					border-color:@col-red;
+					color:@col-red;
+				}
+			}
+			.l-select-multiple-selected-del{
+				position:absolute;
+				top:0px;
+				right:2px;
+				display:block;
+				height:20px;
+				width:10px;
+				line-height:16px;
+				text-align:center;
+				cursor:pointer;
+			}
+			.on{
+				background:#eee;
+			}
+		}
+
+		.l-select-multiple-down{
+			position:absolute;
+			top:26px;
+			left:0;
+			z-index:2;
+			border:1px solid @col-form-border;
+			background:#fff;
+			max-height:180px;
+			overflow-y:auto;
+			
+			li{
+				padding:3px 5px;
+				cursor:pointer;
+				
+				.l-checkbox, .l-radio{
+					margin:3px 3px 0;
+				}
+			}
+			
+			.on{
+				background:@col-form-select;
+				color:@col-blue;
+			}
+		}
+	}
+	
+	.l-select-tree{
+		position:relative;
+		.ui-form-stauts(true,false);
+		
+        
+		.l-select-tree-selected{
+			padding:0 5px;
+		}
+        .l-select-tree-input{
+            height:26px;
+            line-height:26px;
+            border:0 none;
+            outline:0;
+            width:100%;
+        }
+        
+        .l-select-tree-down{
+			position:absolute;
+			top:26px;
+			left:-1px;
+			z-index:2;
+			border:1px solid @col-form-border;
+			background:#fff;
+			max-height:180px;
+			overflow:auto;
+		}
+	}
+}

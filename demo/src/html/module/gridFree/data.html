@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"gridFree": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<h4>调用效果</h4>
+				<div id="grid" class="fn-clear"></div>
+				<div id="markdown">
+					@@include(markdown('./data.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+<script type="text/html" id="gridHtml" >
+	<table>
+		<tr>
+			<th>ID</th>
+			<th>姓名</th>
+			<th>email</th>
+			<th>地址</th>
+			<th>添加时间</th>
+		</tr>
+		{{each rows as item i}}
+			<tr>
+				<td>{{item.id}}</td>
+				<td>{{item.name}}</td>
+				<td>{{item.email}}</td>
+				<td>{{item.address}}</td>
+				<td>{{item.time}}</td>
+			</tr>
+		{{/each}}
+	</table>
+</script>
+<script>
+	var gridFree = nic.ui.gridFree({
+		template: 'gridHtml',
+		templateRender: [{
+			name: 'dateFormat',
+			handle: function(date, format){
+				return new Date(date*1000).format(format);
+			}
+		}],
+		wrap:'grid',
+		data: {"rows":[{"id":313,"name":"俞颖言1","email":"e.harris@brown.edu","address":"陕西省","time":"1974-05-15 02:33:03"},{"id":373,"name":"施璐1","email":"s.gonzalez@harris.gov","address":"天津市","time":"1976-09-07 23:28:31"},{"id":329,"name":"喻龙","email":"g.garcia@davis.gov","address":"青海省","time":"2009-12-13 06:05:15"},{"id":738,"name":"许茂","email":"g.white@lee.net","address":"甘肃省","time":"2012-06-22 17:37:44"},{"id":91,"name":"鲁锦","email":"b.perez@smith.org","address":"青海省","time":"1983-02-02 12:25:08"},{"id":491,"name":"喻富","email":"e.miller@brown.org","address":"新疆维吾尔自治区","time":"1979-06-06 04:57:54"},{"id":339,"name":"严江茂","email":"f.harris@hall.edu","address":"江西省","time":"1988-07-23 07:55:43"},{"id":690,"name":"曹浩","email":"d.brown@robinson.edu","address":"福建省","time":"2011-12-29 20:52:25"},{"id":228,"name":"吴浩露","email":"t.hernandez@jackson.io","address":"江西省","time":"2010-11-22 21:19:27"},{"id":134,"name":"韩秋江","email":"c.garcia@moore.org","address":"黑龙江省","time":"2007-04-04 11:10:17"},{"id":313,"name":"俞颖言2","email":"e.harris@brown.edu","address":"陕西省","time":"1974-05-15 02:33:03"},{"id":373,"name":"施璐2","email":"s.gonzalez@harris.gov","address":"天津市","time":"1976-09-07 23:28:31"},{"id":329,"name":"喻龙","email":"g.garcia@davis.gov","address":"青海省","time":"2009-12-13 06:05:15"},{"id":738,"name":"许茂","email":"g.white@lee.net","address":"甘肃省","time":"2012-06-22 17:37:44"},{"id":91,"name":"鲁锦","email":"b.perez@smith.org","address":"青海省","time":"1983-02-02 12:25:08"},{"id":491,"name":"喻富","email":"e.miller@brown.org","address":"新疆维吾尔自治区","time":"1979-06-06 04:57:54"},{"id":339,"name":"严江茂","email":"f.harris@hall.edu","address":"江西省","time":"1988-07-23 07:55:43"},{"id":690,"name":"曹浩","email":"d.brown@robinson.edu","address":"福建省","time":"2011-12-29 20:52:25"},{"id":228,"name":"吴浩露","email":"t.hernandez@jackson.io","address":"江西省","time":"2010-11-22 21:19:27"},{"id":134,"name":"韩秋江","email":"c.garcia@moore.org","address":"黑龙江省","time":"2007-04-04 11:10:17"},{"id":313,"name":"俞颖言3","email":"e.harris@brown.edu","address":"陕西省","time":"1974-05-15 02:33:03"},{"id":373,"name":"施璐3","email":"s.gonzalez@harris.gov","address":"天津市","time":"1976-09-07 23:28:31"},{"id":329,"name":"喻龙","email":"g.garcia@davis.gov","address":"青海省","time":"2009-12-13 06:05:15"},{"id":738,"name":"许茂","email":"g.white@lee.net","address":"甘肃省","time":"2012-06-22 17:37:44"},{"id":91,"name":"鲁锦","email":"b.perez@smith.org","address":"青海省","time":"1983-02-02 12:25:08"},{"id":491,"name":"喻富","email":"e.miller@brown.org","address":"新疆维吾尔自治区","time":"1979-06-06 04:57:54"},{"id":339,"name":"严江茂","email":"f.harris@hall.edu","address":"江西省","time":"1988-07-23 07:55:43"},{"id":690,"name":"曹浩","email":"d.brown@robinson.edu","address":"福建省","time":"2011-12-29 20:52:25"},{"id":228,"name":"吴浩露","email":"t.hernandez@jackson.io","address":"江西省","time":"2010-11-22 21:19:27"},{"id":134,"name":"韩秋江","email":"c.garcia@moore.org","address":"黑龙江省","time":"2007-04-04 11:10:17"},{"id":313,"name":"俞颖言4","email":"e.harris@brown.edu","address":"陕西省","time":"1974-05-15 02:33:03"},{"id":373,"name":"施璐","email":"s.gonzalez@harris.gov","address":"天津市","time":"1976-09-07 23:28:31"},{"id":329,"name":"喻龙4","email":"g.garcia@davis.gov","address":"青海省","time":"2009-12-13 06:05:15"},{"id":738,"name":"许茂","email":"g.white@lee.net","address":"甘肃省","time":"2012-06-22 17:37:44"},{"id":91,"name":"鲁锦","email":"b.perez@smith.org","address":"青海省","time":"1983-02-02 12:25:08"},{"id":491,"name":"喻富","email":"e.miller@brown.org","address":"新疆维吾尔自治区","time":"1979-06-06 04:57:54"},{"id":339,"name":"严江茂","email":"f.harris@hall.edu","address":"江西省","time":"1988-07-23 07:55:43"},{"id":690,"name":"曹浩","email":"d.brown@robinson.edu","address":"福建省","time":"2011-12-29 20:52:25"},{"id":228,"name":"吴浩露","email":"t.hernandez@jackson.io","address":"江西省","time":"2010-11-22 21:19:27"},{"id":134,"name":"韩秋江","email":"c.garcia@moore.org","address":"黑龙江省","time":"2007-04-04 11:10:17"},{"id":313,"name":"俞颖言","email":"e.harris@brown.edu","address":"陕西省","time":"1974-05-15 02:33:03"},{"id":373,"name":"施璐5","email":"s.gonzalez@harris.gov","address":"天津市","time":"1976-09-07 23:28:31"},{"id":329,"name":"喻龙5","email":"g.garcia@davis.gov","address":"青海省","time":"2009-12-13 06:05:15"},{"id":738,"name":"许茂","email":"g.white@lee.net","address":"甘肃省","time":"2012-06-22 17:37:44"},{"id":91,"name":"鲁锦","email":"b.perez@smith.org","address":"青海省","time":"1983-02-02 12:25:08"},{"id":491,"name":"喻富","email":"e.miller@brown.org","address":"新疆维吾尔自治区","time":"1979-06-06 04:57:54"},{"id":339,"name":"严江茂","email":"f.harris@hall.edu","address":"江西省","time":"1988-07-23 07:55:43"},{"id":690,"name":"曹浩","email":"d.brown@robinson.edu","address":"福建省","time":"2011-12-29 20:52:25"},{"id":228,"name":"吴浩露","email":"t.hernandez@jackson.io","address":"江西省","time":"2010-11-22 21:19:27"},{"id":134,"name":"韩秋江","email":"c.garcia@moore.org","address":"黑龙江省","time":"2007-04-04 11:10:17"}],"total":50}
+	});
+ 
+
+</script>

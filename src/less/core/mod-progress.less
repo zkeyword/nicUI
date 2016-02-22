@@ -1,0 +1,62 @@
+.mod-progress{
+
+	width:100%;height:36px;line-height:36px;table-layout:fixed;
+	
+	td{text-align:center;background:#03a4d9 url(../img/progress.png) no-repeat 100% 0;color: #fff;}
+	  
+	.first{
+		background-color:#03a4d9;
+		background-position:100% -72px;
+	}
+	
+	.first.pass{
+		background-color:#03a4d9;
+		background-position:100% 0;
+	}
+
+	.last.disabled{
+		background:#fff;
+	}
+	
+	.last.cur{
+		background:#1bb8ec;
+	}
+	
+	.cur{
+		background-color:#1bb8ec;
+		background-position:100% -36px;
+	}
+	
+	.first.cur-prev, .cur-prev{
+		background-color: #03a4d9;
+		background-position:100% -72px;
+	}
+	
+	.disabled{
+		background-color:#fff;
+		background-position:100% -108px;
+		color: #666;
+	}
+	
+}
+
+.mod-progress-item{
+
+	width:100%;height:7px;line-height:7px;table-layout:fixed;font-size:16px;
+
+	td{text-align:center;background:#c8c8c8;color:#fff;position:relative;}
+	.first{
+		background-color:#2bc86b;
+	}
+	.first_div{
+		width:68px;position:absolute;left:-5px;top:-34px;text-align:center;
+	}
+	.center_div{
+		width:170px;position:absolute;left:-85px;top:-34px;text-align:center;
+	}
+	.last_div{
+		width:68px;position:absolute;right:-5px;top:-34px;text-align:center;
+	}
+		i{line-height:68px;font-size:18px;}
+		p{overflow:hidden;color:#666;line-height:24px;}
+}

@@ -1,0 +1,74 @@
+<div class="block">
+	<h2>接口说明：</h2>
+	<p>获取当前页数据的API是getCurrentData，其中如果表格是ajax数据源，请用pageAjax提供的success方式获取。</p>
+</div>
+
+<div class="block">
+	<h2>应用代码：</h2>
+<pre>
+var grid = nic.ui.grid({
+	wrap:'#grid',
+	pageAjax: {
+		url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+		data:'type=1&sex=man',
+		success:function(data){
+			getCurrentData(data);
+		}
+	},
+	columns: [
+		{ display: '编码.', name: 'id', width: 50},
+		{ display: '姓名', name: 'name', width: 50},
+		{ display: '类别', name: 'type', width: 50},
+		{ display: '性别', name: 'sex', width: 50},
+		{ display: '电话', name: 'tel', width: 50},
+		{ display: 'Email', name: 'email', width: 50}
+	]
+});
+
+//ajax请求未返回时，获取到的数据为[]
+console.log(grid.getCurrentData());
+
+var getCurrentData = function(data){
+	console.log(data)
+	console.log(grid.getCurrentData());
+}
+</pre>
+</div>
+
+<div class="block">
+	<h2>调用后效果(可打开chrome控制台查看请求)：</h2>
+	<div id="grid"></div>
+</div>
+
+<script>
+require(['app/main'], function(nic){
+
+	var grid = nic.ui.grid({
+		wrap:'#grid',
+		pageAjax: {
+			url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+			data:'type=1&sex=man',
+			success:function(data){
+				getCurrentData(data);
+			}
+		},
+		columns: [
+			{ display: '编码.', name: 'id', width: 50},
+			{ display: '姓名', name: 'name', width: 50},
+			{ display: '类别', name: 'type', width: 50},
+			{ display: '性别', name: 'sex', width: 50},
+			{ display: '电话', name: 'tel', width: 50},
+			{ display: 'Email', name: 'email', width: 50}
+		]
+	});
+
+	//ajax请求未返回时，获取到的数据为[]
+	console.log(grid.getCurrentData());
+
+	var getCurrentData = function(data){
+		console.log(data)
+		console.log(grid.getCurrentData());
+	}
+
+});
+</script>

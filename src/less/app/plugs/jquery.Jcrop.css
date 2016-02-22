@@ -1,0 +1,173 @@
+.wrap{margin-left:48px;}
+.wl{ float:left; width: 300px;}
+.wr{ float:left; margin-left: 26px; display: inline;color:#999;line-height: 24px;}
+.jc-demo-box{position: relative; background-color: #e7e7e7; width: 300px; height: 300px; overflow: hidden; border: 1px solid #c8c8c8;}
+.jcrop_w{ width: 300px; height: 300px; overflow: hidden; }
+.jcrop_w img{ position: absolute; }
+.pre-1,.pre-2,.pre-3{ border: 1px solid #c8c8c8; padding: 2px; }
+.pre-1{ width: 100px; height: 100px; overflow:hidden; }
+.pre-2{ width: 50px; height: 50px; overflow:hidden; margin-top: 13px; }
+.pre-3{ width: 30px; height: 30px; overflow:hidden;margin-top: 13px; }
+.jcrop-holder {
+  direction: ltr;
+  text-align: left;
+  -ms-touch-action: none;
+}
+.jcrop-vline,
+.jcrop-hline {
+  font-size: 0;
+  position: absolute;
+}
+.jcrop-vline {
+  height: 100%;
+  width: 1px !important;
+}
+.jcrop-vline.right {
+  right: 0;
+}
+.jcrop-hline {
+  height: 1px !important;
+  width: 100%;
+}
+.jcrop-hline.bottom {
+  bottom: 0;
+}
+.jcrop-tracker {
+  height: 100%;
+  width: 100%;
+  /* "turn off" link highlight */
+  -webkit-tap-highlight-color: transparent;
+  /* disable callout, image save panel */
+  -webkit-touch-callout: none;
+  /* disable cut copy paste */
+  -webkit-user-select: none;
+}
+/* Dragbars */
+.jcrop-dragbar{
+    font-size: 1px;
+}
+.jcrop-dragbar.ord2-n,
+.jcrop-dragbar.ord2-s {
+  height: 7px;
+  width: 100%;
+}
+.jcrop-dragbar.ord2-e,
+.jcrop-dragbar.ord2-w {
+  height: 100%;
+  width: 7px;
+}
+.jcrop-dragbar.ord2-n {
+  margin-top: -4px;
+  top: 0px;
+  left: 0px;
+}
+.jcrop-dragbar.ord2-s {
+  bottom: 0;
+  margin-bottom: -4px;
+}
+.jcrop-dragbar.ord2-e {
+  margin-right: -4px;
+  right: 0;
+}
+.jcrop-dragbar.ord2-w {
+  margin-left: -4px;
+  top: 0px;
+  left: 0px;
+}
+
+/* Selection Handles */
+.jcrop-handle {
+    background-color: #333333;
+    border: 1px #eeeeee solid;
+    width: 7px !important;
+    height: 7px !important;
+    font-size: 1px;
+}
+.jcrop-handle.ord-n {
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 0;
+}
+.jcrop-handle.ord-s {
+    bottom: 0;
+    left: 50%;
+    margin-bottom: -4px;
+    margin-left: -4px;
+}
+.jcrop-handle.ord-e {
+    margin-right: -4px;
+    margin-top: -4px;
+    right: 0;
+    top: 50%;
+}
+.jcrop-handle.ord-w {
+    left: 0;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 50%;
+
+}
+.jcrop-handle.ord-nw {
+    left: 0px;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 0px;
+}
+.jcrop-handle.ord-ne {
+    margin-right: -4px;
+    margin-top: -4px;
+    right: 0;
+    top: 0;
+}
+.jcrop-handle.ord-se {
+    bottom: 0;
+    margin-bottom: -4px;
+    margin-right: -4px;
+    right: 0;
+}
+.jcrop-handle.ord-sw {
+    bottom: 0;
+    left: 0;
+    margin-bottom: -4px;
+    margin-left: -4px;
+}
+
+/* The "jcrop-light" class/extension */
+.jcrop-light .jcrop-vline,
+.jcrop-light .jcrop-hline {
+  background: #ffffff;
+  filter: alpha(opacity=70) !important;
+  opacity: .70!important;
+}
+.jcrop-light .jcrop-handle {
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #000000;
+  border-color: #ffffff;
+  border-radius: 3px;
+}
+/* The "jcrop-dark" class/extension */
+.jcrop-dark .jcrop-vline,
+.jcrop-dark .jcrop-hline {
+  background: #000000;
+  filter: alpha(opacity=70) !important;
+  opacity: 0.7 !important;
+}
+.jcrop-dark .jcrop-handle {
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #ffffff;
+  border-color: #000000;
+  border-radius: 3px;
+}
+/* Simple macro to turn off the antlines */
+.solid-line .jcrop-vline,
+.solid-line .jcrop-hline {
+  background: #ffffff;
+}
+/* Fix for twitter bootstrap et al. */
+.jcrop-holder img,
+img.jcrop-preview {
+  max-width: none;
+}

@@ -1,0 +1,158 @@
+/* 公用按钮背景颜色及边框样式 */
+.ui-btn-stauts(@fontCol, @col, @hoverCol){
+	background:@col;
+	border:0 none;
+	color:@fontCol;
+	transition:background ease 0.5s;
+	&:hover{
+		background:@hoverCol;
+		color:@fontCol;
+		text-decoration:none;
+	}
+	&:active{
+		.box-shadow(0, 3px, 5px, .1, inset);
+	}
+}
+
+/*普通按钮*/
+.ui-btn{
+	height:30px;
+	line-height:30px;
+	padding:0 10px;
+	display:inline-block;
+	font-size:12px;
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+	cursor:pointer;
+	
+	.border-radius(4px);
+	.ui-btn-stauts(@col-white, @col-btn, @col-btn-hover);
+	
+	.icon{
+		&:first-child{
+			padding:0 3px 0 0;
+		}
+		&:last-child{
+			padding:0 0 0 3px;
+		}
+
+	}
+}
+.ui-btn-default{
+	.ui-btn-stauts(@col-white, @col-btn, @col-btn-hover);
+	font-size:14px;
+	a{color:@col-white}
+}
+.ui-btn-minor{
+	.ui-btn-stauts(@col-blue2, @col-btn-minor, @col-btn-minor-hover);
+	font-size:14px;
+	a{color:@col-blue}
+}
+.ui-btn-disabled{
+	.ui-btn-stauts(@col-gray2, @col-gray3, @col-gray3);
+	font-size:14px;
+	a{color:@col-white}
+}
+
+	
+/* 下拉框按钮 */
+.ui-btn-dropdown{
+	display:inline-block;
+	position:relative;
+	vertical-align:middle;
+	
+	.ui-btn{height:26px;line-height:26px;font-size:12px;}
+		
+	.ui-btn-dropdown-icon{
+		position:absolute;
+		top:0;
+		right:10px;
+		display:inline-block;
+		margin:0;
+		height:26px;
+		line-height:26px;
+		cursor:pointer;
+		right:-22px;
+		padding:0 8px;
+		.ui-btn-stauts(@col-white, @col-btn, @col-btn-hover);
+		.border-radius(4px, right);
+		border-left:1px solid #fff;
+	}
+	
+	.ui-btn-dropdown-menu{
+		min-width:66px;
+		position:absolute;
+		top:26px;
+		z-index:1000;
+		background:#fff;
+		border:1px solid @col-form-border;
+		max-height:180px;
+		overflow-y:auto;
+		.box-sizing();
+		
+		li{
+			padding:3px 5px;
+			cursor:pointer;
+			white-space:nowrap;
+			
+			&:hover{
+				background:@col-form-select;
+				color:#fff;
+			}
+		}
+	}
+}
+
+/* 并排按钮样式 */
+.ui-btn-group{float:left;}
+	.ui-btn-group .ui-btn{
+		float:left;
+		.border-radius(0px);
+		border-right:1px solid @col-white;
+	}
+	.ui-btn-group .ui-btn:first-child{
+		.border-radius(4px, left);
+	}
+	.ui-btn-group .ui-btn:last-child{
+		.border-radius(4px, right);
+		border-right:none;
+	}
+
+
+/*开关按钮*/
+.ui-btn-switch{
+	position:relative;
+	height:20px;
+	line-height:20px;
+	.border-radius(25px);
+	i{	
+		display:block;
+		background:#fff;
+		position:absolute;
+		top:2px;
+		height:16px;
+		width:16px;
+		.border-radius(25px);
+		transition:left .2s ease;
+	}
+}
+.ui-btn-switch-open{
+	padding:0 10px 0 22px;
+	i{
+		left:2px;
+	}
+}
+.ui-btn-switch-close{
+	background:@col-btn-disable;
+	padding:0 22px 0 10px;
+	
+	i{
+		left:50px;
+	}
+	&:hover{
+		background:@col-btn-disable-hover;
+	}
+}
+
+	

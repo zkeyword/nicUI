@@ -1,0 +1,43 @@
+/*弹出框表单样式*/
+.l-pop-wrap{
+	
+	.fn-clear{
+		padding-bottom:4px;
+		
+		.fn-clear:last-child{
+			padding-bottom::0;	
+		}
+	}
+
+	.ui-search .fn-clear{
+		&:last-child{
+			padding:0;	
+		}
+	}
+	
+	.ui-forms{
+		&:last-child{
+			padding:0;	
+		}
+	}
+	
+	.l-pop-content{
+		td,th{
+			border:1px solid #bcbec2;
+			padding:5px 8px;
+		}
+		.l-grid1 table,
+		.l-grid1 tr,
+			.l-grid1 th,.l-grid1 td{border-right:0 none}
+				.l-grid-header table,.l-grid-header tr,.l-grid-header th{border-bottom:0 none}
+		.l-grid-hd-cell-inner b{top:-1px}
+	}
+
+}
+.l-pop-wrap .l-grid .fn-clear{padding:0}
+.l-pop-wrap .tab{padding:0}
+.l-pop-wrap .tab-main{
+	.fn-clear:last-child{
+		padding:0;	
+	}
+}

@@ -1,0 +1,227 @@
+/*
+Icon classes can be used entirely standalone. They are named after their original file names.
+
+```html
+<!-- `display: block` sprite -->
+<div class="icon-home"></div>
+
+<!-- `display: inline-block` sprite -->
+<img class="icon-home" />
+```
+*/
+.icon-app {
+  background-image: url(../img/sprite.png);
+  background-position: -170px 0px;
+  width: 14px;
+  height: 22px;
+}
+.icon-arrowRight {
+  background-image: url(../img/sprite.png);
+  background-position: -179px -56px;
+  width: 5px;
+  height: 9px;
+}
+.icon-dot {
+  background-image: url(../img/sprite.png);
+  background-position: -179px -65px;
+  width: 5px;
+  height: 5px;
+}
+.icon-error {
+  background-image: url(../img/sprite.png);
+  background-position: -51px -155px;
+  width: 16px;
+  height: 16px;
+}
+.icon-footerAbout {
+  background-image: url(../img/sprite.png);
+  background-position: 0px 0px;
+  width: 50px;
+  height: 50px;
+}
+.icon-footerApp {
+  background-image: url(../img/sprite.png);
+  background-position: -50px -50px;
+  width: 50px;
+  height: 50px;
+}
+.icon-footerFollow {
+  background-image: url(../img/sprite.png);
+  background-position: -50px 0px;
+  width: 50px;
+  height: 50px;
+}
+.icon-footerHelp {
+  background-image: url(../img/sprite.png);
+  background-position: 0px -50px;
+  width: 50px;
+  height: 50px;
+}
+.icon-headline {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -56px;
+  width: 9px;
+  height: 9px;
+}
+.icon-line-tip1 {
+  background-image: url(../img/sprite.png);
+  background-position: -100px 0px;
+  width: 70px;
+  height: 30px;
+}
+.icon-line-tip2 {
+  background-image: url(../img/sprite.png);
+  background-position: -100px -30px;
+  width: 70px;
+  height: 30px;
+}
+.icon-line-tip3 {
+  background-image: url(../img/sprite.png);
+  background-position: -100px -60px;
+  width: 70px;
+  height: 30px;
+}
+.icon-line-tip4 {
+  background-image: url(../img/sprite.png);
+  background-position: 0px -100px;
+  width: 70px;
+  height: 30px;
+}
+.icon-listLike {
+  background-image: url(../img/sprite.png);
+  background-position: -34px -155px;
+  width: 17px;
+  height: 17px;
+}
+.icon-login-code {
+  background-image: url(../img/sprite.png);
+  background-position: -70px -100px;
+  width: 31px;
+  height: 25px;
+}
+.icon-login-peo {
+  background-image: url(../img/sprite.png);
+  background-position: 0px -130px;
+  width: 23px;
+  height: 25px;
+}
+.icon-login-progress-pass {
+  background-image: url(../img/sprite.png);
+  background-position: -101px -100px;
+  width: 24px;
+  height: 24px;
+}
+.icon-login-pw {
+  background-image: url(../img/sprite.png);
+  background-position: -23px -130px;
+  width: 20px;
+  height: 25px;
+}
+.icon-login-qq {
+  background-image: url(../img/sprite.png);
+  background-position: -151px -130px;
+  width: 18px;
+  height: 20px;
+}
+.icon-login-sina {
+  background-image: url(../img/sprite.png);
+  background-position: -147px -100px;
+  width: 22px;
+  height: 19px;
+}
+.icon-moreDown {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -86px;
+  width: 9px;
+  height: 5px;
+}
+.icon-moreUp {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -91px;
+  width: 9px;
+  height: 5px;
+}
+.icon-navDown {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -80px;
+  width: 9px;
+  height: 6px;
+}
+.icon-navUp {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -74px;
+  width: 9px;
+  height: 6px;
+}
+.icon-news-1 {
+  background-image: url(../img/sprite.png);
+  background-position: -61px -130px;
+  width: 18px;
+  height: 21px;
+}
+.icon-news-10 {
+  background-image: url(../img/sprite.png);
+  background-position: -133px -130px;
+  width: 18px;
+  height: 21px;
+}
+.icon-news-2 {
+  background-image: url(../img/sprite.png);
+  background-position: -97px -130px;
+  width: 18px;
+  height: 21px;
+}
+.icon-news-3 {
+  background-image: url(../img/sprite.png);
+  background-position: -79px -130px;
+  width: 18px;
+  height: 21px;
+}
+.icon-news-8 {
+  background-image: url(../img/sprite.png);
+  background-position: -43px -130px;
+  width: 18px;
+  height: 21px;
+}
+.icon-news-9 {
+  background-image: url(../img/sprite.png);
+  background-position: -115px -130px;
+  width: 18px;
+  height: 21px;
+}
+.icon-news-location {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -22px;
+  width: 11px;
+  height: 17px;
+}
+.icon-news-time {
+  background-image: url(../img/sprite.png);
+  background-position: -17px -155px;
+  width: 17px;
+  height: 17px;
+}
+.icon-position {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -39px;
+  width: 11px;
+  height: 17px;
+}
+.icon-search {
+  background-image: url(../img/sprite.png);
+  background-position: -125px -100px;
+  width: 22px;
+  height: 22px;
+}
+.icon-selectedItem {
+  background-image: url(../img/sprite.png);
+  background-position: -170px -65px;
+  width: 9px;
+  height: 9px;
+}
+.icon-time {
+  background-image: url(../img/sprite.png);
+  background-position: 0px -155px;
+  width: 17px;
+  height: 17px;
+}

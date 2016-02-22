@@ -1,0 +1,44 @@
+<div class="block">
+	<h2>HTML规范 - 整体结构</h2>
+	<dl>
+		<dt>1)、HTML基础结构</dt>
+		<dd>
+			<p>文件应以“&lt;!DOCTYPE ......&gt;”首行顶格开始，推荐使用“&lt;!DOCTYPE html&gt;”。</p>
+			<p>必须申明文档的编码charset，且与文件本身编码保持一致，推荐使用UTF-8编码&lt;meta charset=&quot;utf-8&quot;/&gt;。</p>
+			<p>在页面添加最外层添加“page-页面文件名或唯一的页面标示”的前缀，保证后面使用该class快速的找到对应的页面。</p>
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;/&gt;
+&lt;title&gt;nic&lt;/title&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;/&gt;
+&lt;meta name=&quot;renderer&quot; content=&quot;webkit&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;!-- 页面开始 --&gt;
+	&lt;div id=&quot;lt-wrap&quot; class=&quot;page-index&quot;&gt;
+		nic
+	&lt;/div&gt;
+	&lt;!-- /页面结束 --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+		</dd>
+		<dt>2)、结构、表现、行为三者分离，避免内联。</dt>
+		<dd>
+			<p>使用link将css文件引入，并置于head中。</p>
+			<p>使用script将js文件引入，并置于body底部。</p>
+		</dd>
+		<dt>3)、保持良好的简洁的树形结构</dt>
+		<dd>
+			<p>每一个块级元素都另起一行，每一行都使用Tab缩进对齐（head和body的子元素不需要缩进）。删除冗余的行尾的空格。<p>
+			<p>使用4个空格代替1个Tab（大多数编辑器中可设置）。<p>
+		</dd>
+		<dt>4)、另外，请做到以下几点</dt>
+		<dd>
+			<p>一个标签上引用的className不要过多，越少越好。<p>
+			<p>一个页面上只允许出现一个ID。<p>
+		</dd>
+	</dl>
+</div>

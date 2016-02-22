@@ -1,0 +1,65 @@
+/* 公共表单样式 */
+button[disabled], html input[disabled], html select[disabled]{background-color:#eee}
+input,button,select,textarea{outline:none}
+textarea{resize:none}
+
+.ui-form-stauts(@radius: true; @boxSizing: true){
+	background:#fff;
+	border:1px solid @col-form-border;
+	color:@col-font;
+	
+	.radius(@radius) when (@radius = true){
+		.border-radius(4px);
+	}
+	.boxSizing(@boxSizing) when (@boxSizing = true){
+		.box-sizing();
+	}
+	.radius(@radius);
+	.boxSizing(@boxSizing);
+	.transition(All 0.3s ease-in-out);
+
+	&:hover,&:focus{
+		border-color:@col-form-border-hover;
+		.box-shadow(0, 0, 3px, @col-form-border-hover);
+	}
+}
+.ui-form{
+	span,label{float:left;position:relative}
+	.ui-label{display:block;height:30px;line-height:30px;float:left;cursor:pointer;text-align:right;position:relative;}
+}
+
+/* input */
+.ui-input{
+	height:30px;line-height:30px;padding:0 3px;vertical-align:middle;float:left;
+	
+	.ui-form-stauts();
+	&:-webkit-autofill{
+		background:#fff;
+	}
+}
+
+/* 时间 */
+.ui-input-datatime{background:url(../images/app/datePicker.png) right center no-repeat @col-white;cursor:default;font-size:12px;}
+
+/* textarea */
+.ui-textarea {
+	padding:6px;float:left;
+	
+	.ui-form-stauts();
+}
+
+/* select */
+.ui-select{
+	height:28px;line-height:27px;padding:0 5px;vertical-align:middle;float:left;
+	.ui-form-stauts(true,false);
+}
+.ui-select-disable{background:@col-form-disable;}
+
+/* checkbox&radio */
+.ui-checkbox,.ui-radio{position:absolute;margin:9px 0 0;}
+.ui-checkbox-label,.ui-radio-label{margin-left:16px;}
+
+/* 验证 */
+.l-form-error{border:1px solid @col-validator;}
+.ui-form-message{position:relative;margin:0 0 0 10px;height:26px;line-height:26px;}
+.ui-form-message-absolute{border:1px solid #ff0001}

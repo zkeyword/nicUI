@@ -1,0 +1,48 @@
+/*ui框*/
+#l-ui-wrap{}
+	.l-ui{position:fixed;}
+	.l-ui tr{line-height:normal}
+	
+/*ui锁屏*/
+.l-ui-lock{position:absolute;top:0;left:0;height:100%;width:100%;background:#000;z-index:99998;opacity:0.6}
+
+
+/*复选框*/
+.l-checkbox{
+	display:block;width:13px;height:13px;cursor:pointer;background:url(../images/l-checkbox.gif) no-repeat;
+	&:hover{
+		background-position:-13px 0;
+	}
+	&.l-checkbox-disabled{
+		background-position:-39px 0;
+	}
+}
+.l-checkbox-selected{
+	background-position:0 -13px;
+	&:hover{
+		background-position:-13px -13px;
+	}
+	&.l-checkbox-disabled{
+		background-position:-39px -13px;
+	}
+}
+
+/*单选框*/
+.l-radio{
+	display:block;width:13px;height:13px;cursor:pointer;background:url(../images/l-radio.gif) no-repeat;
+	&:hover{
+		background-position:-13px 0;
+	}
+	&.l-radio-disabled{
+		background-position:-39px 0;
+	}
+}
+.l-radio-selected{
+	background-position:0 -13px;
+	&:hover{
+		background-position:-13px  -13px;
+	}
+	&.l-radio-disabled{
+		background-position:-39px -13px;
+	}
+}

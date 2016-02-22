@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"tip": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<div id="lt-wrap">
+						<div data-message="请速发货1！" class="buyerMessagePop">鼠标移动到此</div>
+						<div data-message="请速发货2！" class="buyerMessagePop">鼠标移动到此</div>
+						<div data-message="请速发货3！" class="buyerMessagePop">鼠标移动到此</div>
+						<div data-message="请速发货4！" class="buyerMessagePop">鼠标移动到此</div>
+						<div data-message="请速发货5！" class="buyerMessagePop">鼠标移动到此</div>
+						<div data-message="请速发货6！" class="buyerMessagePop">鼠标移动到此</div>
+						<div data-message="请速发货7！" class="buyerMessagePop">鼠标移动到此</div>
+					</div>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./render.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+
+<script>
+	nic.ui.tip({
+		target:'.buyerMessagePop',
+		targetWrap:'#lt-wrap',
+		width:100,
+		render:function(obj){
+			var h = '';
+			h += '<div>买家留言</div>';
+							
+			if($.trim(obj.attr("data-message"))!=''){
+				h += '<div>'+obj.attr("data-message")+'</div>';
+			}	
+			else{
+				h += '<div>暂无</div>';
+			}
+			return h;
+		}
+	}); 
+</script>

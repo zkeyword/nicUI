@@ -1,0 +1,38 @@
+/**
+* @Author:      norion
+* @Update:      2013.01.07
+* @Update by:   norion
+* @overview:    日历控件
+*/
+
+.l-ui-calendarWrap{position:relative;float:left;}
+	.l-ui-calendarMain{position:absolute;width:210px;background:#fff;border:1px solid #ddd;display:none;z-index:1000;}
+		.l-ui-calendarHeader{position:relative;}
+			.l-ui-calendarHeader-btn{width:16px;height:16px;position:absolute;top:7px;background:url(../images/l-ui-calendar.gif) no-repeat}
+				.l-ui-calendarHeader-prev{left:3px;background-position:-16px 0}
+				.l-ui-calendarHeader-next{right:3px;background-position:-32px 0}
+			.l-ui-calendarHeader-text{width:140px;height:30px;line-height:30px;margin:0 auto;}
+		.l-ui-calendarWeeks{background:#f1f1f1}
+			.l-ui-calendarWeek{display:block;width:30px;height:30px;line-height:30px;text-align:center;float:left;}
+			.l-ui-calendarWeek-saturday{color:#f60}
+			.l-ui-calendarWeek-sunday{color:#06f}
+		.l-ui-calendarDays{}
+			.l-ui-calendarDay{display:block;width:30px;height:24px;line-height:24px;text-align:center;float:left;color:#333}
+			.l-ui-calendarDay-current{background:#eee}
+			.l-ui-calendarDay-saturday{color:#f60}
+			.l-ui-calendarDay-sunday{color:#06f}
+			.l-ui-calendarDay-disable{color:#999}
+			.l-ui-calendarDay-next{}
+			.l-ui-calendarDay-prev{}
+		.l-ui-calendarTime{padding:5px 10px;border-top:1px solid #ddd;}
+			.l-ui-calendarTimeTitle{width:35px;height:20px;line-height:20px;float:left;}
+			.l-ui-calendarTimeWrap{width:110px;border:1px solid #ddd;float:left;}
+				.l-ui-calendarTime-timeWrap{float:left;position:relative;}
+				.l-ui-calendarTime-timeWrap input{width:30px;height:20px;line-height:20px;text-align:center;border:0 none;float:left;}
+				.l-ui-calendarTime-timeWrap span{width:10px;height:20px;line-height:20px;text-align:center;float:left;}
+				.l-ui-calendarTime-timeWrap div{position:absolute;bottom:22px;background:#fff;border:1px solid #ddd;display:none}
+				.l-ui-calendarTime-timeWrap a{display:block;width:20px;height:20px;text-align:center;float:left;}
+				.l-ui-calendarTime-hour{width:120px;}
+				.l-ui-calendarTime-minute{width:200px;left:-82px;}
+				.l-ui-calendarTime-second{width:200px;left:-122px;}
+			.l-ui-calendarTimeBtn{display:block;width:35px;height:20px;line-height:20px;text-align:center;color:#333;border:1px solid #ddd;float:left;margin:0 0 0 5px}

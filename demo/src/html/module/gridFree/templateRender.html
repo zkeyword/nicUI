@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"gridFree": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<h4>调用效果</h4>
+				<div id="grid" class="fn-clear"></div>
+				<div id="markdown">
+					@@include(markdown('./templateRender.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+<script type="text/html" id="gridHtml" >
+	<table>
+		<tr>
+			<th>ID</th>
+			<th>姓名</th>
+			<th>email</th>
+			<th>地址</th>
+			<th>添加时间</th>
+		</tr>
+		{{each rows as item i}}
+			<tr>
+				<td>{{item.id}}</td>
+				<td>{{item.name | addPre: '--'}}</td>
+				<td>{{item.email}}</td>
+				<td>{{item.address}}</td>
+				<td>{{item.time}}</td>
+			</tr>
+		{{/each}}
+	</table>
+</script>
+<script>
+	var gridFree = nic.ui.gridFree({
+		template: 'gridHtml',
+		templateRender: [{
+			name: 'addPre',
+			handle: function(str, pre){
+				return pre + str;
+			}
+		}],
+		wrap:'grid',
+		pageAjax:{
+			url: '/grid',
+			success:function(data){}
+		}
+	});
+	
+	$.ajax({
+		url: '/put',
+		type: 'PUT',
+		success: function(result) {
+			// Do something with the result
+		}
+	});
+	$.ajax({
+		url: '/del',
+		type: 'DELETE',
+		success: function(result) {
+			// Do something with the result
+		}
+	});
+</script>
