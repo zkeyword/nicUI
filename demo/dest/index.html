@@ -158,9 +158,21 @@
 
 <ul><li><p>webpack</p></li><li><p>less</p></li><li><p>gulp</p></li><li><p>jQuery</p></li><li><p>artTemplate</p></li></ul>
 
-<h4>存在问题</h4>
+<h4>运行方式</h4>
 
-<p>目前nicUI处于比较粗狂的阶段，在css方面，并没有考虑太多兼容低版本浏览的情况，如果需要可做相应修改，而在js方面，控件的数量并不是太丰富，由于是采用webpack的打包机制编写，模块化比较好，如果需要可以做相应修改。</p>
+<p>首先，请先安装node环境，然后在安装nicUI内依赖的工具：</p>
+
+<pre><code>npm install</code></pre>
+
+<p>运行：</p>
+
+<pre><code>gulp</code></pre>
+
+<h4>调用文件</h4>
+
+<pre><code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;dest/css/styles.css&quot;&gt;
+&lt;script src=&quot;dest/js/lib/jquery1.10.2.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;dest/js/main.js&quot;&gt;&lt;/script&gt;</code></pre>
 
 <h4>目录结构</h4>
 
@@ -209,11 +221,11 @@
 
 <p>nicUI的css依赖文件在dev/less/styles.less文件内</p>
 
-<h4>调用文件</h4>
+<h4>存在问题</h4>
 
-<pre><code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;dest/css/styles.css&quot;&gt;
-&lt;script src=&quot;dest/js/lib/jquery1.10.2.js&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;dest/js/main.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>目前nicUI处于比较粗狂的阶段，在css方面，并没有考虑太多兼容低版本浏览的情况，如果需要可做相应修改，而在js方面，控件的数量并不是太丰富，由于是采用webpack的打包机制编写，模块化比较好，如果需要可以做相应修改。</p>
+
+<p>由于用了gulp-htmlmin、gulp-imagemin插件，在压缩html和img的时候在windows系统上可能会出错，目前的解决方式只有重启，还没找到合适的插件。</p>
 				</div>
 			</div>
 		</div>

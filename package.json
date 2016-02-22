@@ -1,10 +1,6 @@
 {
-  "name": "erp",
+  "name": "nic",
   "version": "0.1.0",
-  "scripts": {
-    "gulp": "gulp",
-    "build": "npm run gulp"
-  },
   "devDependencies": {
     "express": "*",
     "gulp": "*",

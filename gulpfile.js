@@ -226,6 +226,7 @@ gulp.task('default', ['clean', 'copy', 'sprite',  'js', 'server', 'demo'], funct
 	//监听demo
 	gulp.watch(path.demo+'src/html/**', ['demo']);
 	gulp.watch(path.demo+'src/less/**', ['demo']);	
+	gulp.watch('./README.md', ['demo']);	
 	
 	//监听不合并图片
 	gulp.watch(path.src+'img/default/**', ['copy:images']);
