@@ -1,11 +1,14 @@
 {
   "name": "nic",
-  "version": "0.1.0",
+  "version": "1.0",
   "devDependencies": {
     "express": "*",
     "gulp": "*",
     "gulp-clean": "*",
-    "gulp-file-include": "^0.13.7",
+	"gulp-rev": "*",
+	"gulp-rev-collector": "*",
+    "gulp-cssurl": "*",
+    "gulp-file-include": "*",
     "gulp-imagemin": "*",
     "gulp-jshint": "*",
     "gulp-less": "*",

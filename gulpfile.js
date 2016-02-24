@@ -4,6 +4,9 @@ var gulp          = require('gulp'),
 	jshint        = require('gulp-jshint'),
 	maps          = require('gulp-sourcemaps'),
 	minifycss     = require('gulp-minify-css'),
+	rev           = require('gulp-rev'),
+	cssurl        = require('gulp-cssurl'),
+	revCollector  = require('gulp-rev-collector'),
 	sprite        = require('gulp.spritesmith'),
 	imagemin      = require('gulp-imagemin'),
 	clean         = require('gulp-clean'),
@@ -26,15 +29,33 @@ var gulp          = require('gulp'),
 gulp.task('less', function () {
     gulp
 		.src(path.src+'less/styles.less')
-        .pipe(maps.init())
+        //.pipe(maps.init())
 		.pipe(plumber(function(error){
 			console.log(error);
 			console.log('--------------------------  less Syntax Error! --------------------------');
 		}))
 		.pipe(less())
 		.pipe(minifycss({compatibility: 'ie7'}))
+		.pipe(rev())
+		.pipe(cssurl())
 		//.pipe(maps.write('./'))
-        .pipe(gulp.dest(path.dest+'css/'));
+        .pipe(gulp.dest(path.dest+'css/'))
+		.pipe( rev.manifest('cssRev.json') )
+        .pipe(gulp.dest(path.src+'rev/'));
+		
+	gulp
+		.src(path.demo+'src/less/styles.less')
+		.pipe(plumber(function(error){
+			console.log(error);
+			console.log('--------------------------  less Syntax Error! --------------------------');
+		}))
+		.pipe(less())
+		.pipe(minifycss({compatibility: 'ie7'}))
+		.pipe(rev())
+		.pipe(cssurl())
+        .pipe(gulp.dest(path.demo+'dest/css/'))
+		.pipe( rev.manifest('cssRev.json') )
+        .pipe(gulp.dest(path.demo+'src/rev/'));
 });
 
 
@@ -54,8 +75,12 @@ gulp.task('js', function () {
 	gulp.src(path.src+'src/')
 		.pipe(webpack(webpackConfig))
 		//.pipe(minifyJs())
+		.pipe(rev())
 		.pipe(gulp.dest(path.dest+'js/'))
-		.pipe(gulp.dest(path.demo+'dest/js/'));
+		.pipe(gulp.dest(path.demo+'dest/js/'))
+		.pipe( rev.manifest('jsRev.json') )
+		.pipe(gulp.dest(path.src+'rev/'))
+        .pipe(gulp.dest(path.demo+'src/rev/'));
 });
 
 
@@ -174,7 +199,7 @@ gulp.task('server', function(){
 //demo
 gulp.task('demo', function(){
 	
-	gulp.src(path.demo+'src/html/module/**/*.html')
+	gulp.src([path.demo+'src/rev/*.json', path.demo+'src/html/module/**/*.html'])
 		.pipe(htmlInclude({
 			prefix: '@@',
 			basepath: '@file',
@@ -182,9 +207,10 @@ gulp.task('demo', function(){
 				markdown: markdown.parse
 			}
 		}))
+		.pipe( revCollector() )
 		.pipe(gulp.dest(path.demo+'dest/html/'));
 		
-	gulp.src(path.demo+'src/html/index.html')
+	gulp.src([path.demo+'src/rev/*.json', path.demo+'src/html/index.html'])
 		.pipe(htmlInclude({
 			prefix: '@@',
 			basepath: '@file',
@@ -192,6 +218,7 @@ gulp.task('demo', function(){
 				markdown: markdown.parse
 			}
 		}))
+		.pipe( revCollector() )
 		.pipe(gulp.dest(path.demo+'dest/'));
 
 	gulp
@@ -202,30 +229,14 @@ gulp.task('demo', function(){
 			interlaced: true
 		}))
 		.pipe(gulp.dest(path.demo+'dest/html/'));
-		
-	/*
-	gulp
-		.src(path.demo+'src/js/prettify.js')
-		.pipe(gulp.dest(path.demo+'dest/js/'));
-	*/
-
-	gulp
-		.src(path.demo+'/src/less/styles.less')
-		.pipe(plumber(function(error){
-			console.log(error);
-			console.log('--------------------------  less Syntax Error! --------------------------');
-		}))
-		.pipe(less())
-		.pipe(minifycss({compatibility: 'ie7'}))
-        .pipe(gulp.dest(path.demo+'/dest/css/'));
 });
 
 //默认任务
-gulp.task('default', ['clean', 'copy', 'sprite',  'js', 'server', 'demo'], function(){
+gulp.task('default', ['clean', 'copy', 'sprite',  'js', 'less', 'server', 'demo'], function(){
 	
 	//监听demo
 	gulp.watch(path.demo+'src/html/**', ['demo']);
-	gulp.watch(path.demo+'src/less/**', ['demo']);	
+	gulp.watch(path.demo+'src/less/**', ['less']);	
 	gulp.watch('./README.md', ['demo']);	
 	
 	//监听不合并图片
@@ -241,6 +252,6 @@ gulp.task('default', ['clean', 'copy', 'sprite',  'js', 'server', 'demo'], funct
     gulp.watch(path.src+'js/**', ['js']);
 	
     //监听less
-    gulp.watch(path.src+'less/**', ['less', 'demo']);
+    gulp.watch(path.src+'less/**', ['less']);
 	
 });

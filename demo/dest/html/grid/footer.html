@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>nicUI 使用手册</title>
-<link rel="stylesheet" type="text/css" href="/css/styles.css">
+<link rel="stylesheet" type="text/css" href="/css/styles-0bde8f2f0d.css">
 <script src="/js/lib/jquery1.10.2.js"></script>
-<script src="/js/main.js"></script>
+<script src="/js/main-9165cc9463.js"></script>
 </head>
 <body>
 	<div id="demo-wrap">
@@ -151,7 +151,8 @@
 					<h4>调用效果</h4>
 					<div id="grid"></div>
 				</div>
-				<h4>说明</h4>
+				<div id="markdown">
+					<h4>说明</h4>
 
 <ul><li><p>下拉选项</p><p>下拉选项的接口pageSizeOptions可选择设定的每页结果数，默认[10, 20, 50, 100, 200]，不显示时可设置null</p></li><li><p>统计文字描述</p><p>统计文字的接口是countFont，默认设置为：每页显示：{{size}}条，当前显示从{{start}}到{{end}}，总{{count}}条 。</p><p>其中，{{size}}为数据显示条数；{{start}}数据的开始索引；{{end}}数据的结束索引；{{count}}数据的总数。文字可以只有组合，但是大括号里面的不能修改，否则不能正确显示。</p></li><li><p>翻页事件</p><p>翻页事件的接口是onPageFn</p></li><li><p>底部开关</p><p>表格底部的开关接口是isPage，默认为true，为false以上设置都无效。</p></li></ul>
 
@@ -192,6 +193,7 @@
 		{ display: &#39;Email&#39;, name: &#39;email&#39;, width: 50}
 	]
 });</code></pre>
+				</div>
 			</div>
 		</div>
 	</div>

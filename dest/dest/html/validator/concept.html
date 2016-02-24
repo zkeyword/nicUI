@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>nicUI 使用手册</title>
+<link rel="stylesheet" type="text/css" href="/css/styles-0bde8f2f0d.css">
+<script src="/js/lib/jquery1.10.2.js"></script>
+<script src="/js/main.js"></script>
+</head>
+<body>
+	<div id="demo-wrap">
+		<header id="demo-header">
+	<div id="demo-header-main" class="fn-clear">
+		<a id="demo-logo" href="./index.html" class="fn-left">nicUI</a>
+	</div>
+</header>
+		<div id="demo-main" class="fn-clear">
+			<dl id="demo-left" class="fn-left">
+	<dt><a href="/index.html">概述</a></dt>
+	<dt>JS组件</dt>
+	<dd class="on">
+		<dl>
+			<dt>grid 格式化表格</dt>
+			<dd class="@@grid">
+				<a href="/html/grid/staticData.html">静态数据源</a>
+				<a href="/html/grid/ajaxData.html">ajax数据源</a>
+				<a href="/html/grid/columns.html">列控制</a>
+				<a href="/html/grid/footer.html">表格底部控制</a>
+				<a href="/html/grid/width.html">宽度控制</a>
+				<a href="/html/grid/checkbox.html">复选框支持</a>
+				<a href="/html/grid/isMemory.html">复选框记忆</a>
+				<a href="/html/grid/isPageCache.html">ajax数据源缓存设置</a>
+				<a href="/html/grid/refresh.html">刷新表格</a>
+				<a href="/html/grid/statis.html">当前页面数据统计</a>
+				<a href="/html/grid/isSort.html">排序</a>
+				<a href="/html/grid/getCurrentData.html">获取当前页数据</a>
+				<a href="/html/grid/getSelectData.html">获取选中的数据</a>
+				<a href="/html/grid/detail.html">表格分组</a>
+			</dd>
+			<dt>gridFree 模板化表格</dt>
+			<dd class="@@gridFree">
+				<a href="/html/gridFree/api.html">api</a>
+				<!--<a href="/html/gridFree/data.html">静态调用</a>-->
+				<a href="/html/gridFree/index.html">基本用法</a>
+				<a href="/html/gridFree/sort.html">排序</a>
+				<a href="/html/gridFree/refresh.html">刷新表格</a>
+				<a href="/html/gridFree/checkbox.html">复选框功能</a>
+				<a href="/html/gridFree/templateRender.html">扩展列的辅助函数</a>
+			</dd>
+			<dt>validator 校验</dt>
+			<dd class="on">
+				<a href="/html/validator/api.html">api</a>
+				<a href="/html/validator/index.html">基本用法</a>
+				<a href="/html/validator/concept.html">基本概念</a>
+				<a href="/html/validator/position.html">提示信息定位</a>
+				<a href="/html/validator/reload.html">表单刷新后重载</a>
+				<a href="/html/validator/ajax.html">复杂的ajax调用</a>
+				<a href="/html/validator/rules.html">自定义方法</a>
+				<a href="/html/validator/name.html">多框单选校验</a>
+				<a href="/html/validator/reset.html">表单重置</a>
+			</dd>
+			<dt>pop 弹出框</dt>
+			<dd class="@@pop">
+				<a href="/html/pop/api.html">api</a>
+				<a href="/html/pop/html.html">html方式加载</a>
+				<a href="/html/pop/ajax.html">ajax方式加载</a>
+				<a href="/html/pop/modifyBtns.html">修改按钮</a>
+				<a href="/html/pop/modifyWrap.html">修改窗体大小</a>
+				<a href="/html/pop/modifyTitle.html">修改窗体标题</a>
+			</dd>
+			<dt>dialog 对话框</dt>
+			<dd class="@@dialog">
+				<a href="/html/dialog/alert.html">alert</a>
+				<a href="/html/dialog/confirm.html">confirm</a>
+				<a href="/html/dialog/error.html">error</a>
+			</dd>
+			<dt>tip 提示控件</dt>
+			<dd class="@@tip">
+				<a href="/html/tip/title.html">title模拟</a>
+				<a href="/html/tip/html.html">html插入</a>
+				<a href="/html/tip/render.html">render方式多行渲染</a>
+			</dd>
+			<dt>tab 页签控件</dt>
+			<dd class="@@tab">
+				<a href="/html/tab/auto.html">自动切换</a>
+				<a href="/html/tab/click.html">触发切换</a>
+				<a href="/html/tab/index.html">切换索引</a>
+			</dd>
+			<dt>selectArea 地区联动控件</dt>
+			<dd class="@@selectArea">
+				<a href="/html/selectArea/init.html">地区初始化</a>
+				<a href="/html/selectArea/show.html">省市区显示控制</a>
+				<a href="/html/selectArea/reset.html">地区清空重置</a>
+			</dd>
+			<dt>select 控件</dt>
+			<dd class="@@select">
+				<a href="/html/select/single.html">单选</a>
+				<a href="/html/select/multiple.html">多选</a>
+				<a href="/html/select/multiple-refresh.html">多选刷新</a>
+				<a href="/html/select/multiple-selected.html">多选已选</a>
+				<a href="/html/select/multiple-checkbox.html">带复选框的多选</a>
+				<a href="/html/select/tree.html">树形单选</a>
+			</dd>
+			<dt>suggestion 搜索建议</dt>
+			<dd class="@@suggestion">
+				<a href="/html/suggestion/index.html">参数说明</a>
+				<a href="/html/suggestion/static.html">静态数据</a>
+				<a href="/html/suggestion/only.html">一次性请求</a>
+				<a href="/html/suggestion/multi.html">多次触发请求</a>
+				<a href="/html/suggestion/name.html">指定name</a>
+			</dd>
+			<dt>tree 树控件</dt>
+			<dd class="@@tree">
+				<a href="/html/tree/data.html">静态数据源</a>
+				<a href="/html/tree/ajax.html">ajax数据源</a>
+			</dd>
+			<dt><a href="/html/btnSwitch/index.html">开关按钮</a></dt>
+			<!--
+			<dt><a href="/html/demo/btn.html">手风琴</a></dt>
+			<dt><a href="/html/demo/btn.html">图片轮播</a></dt>
+			<dt><a href="/html/demo/btn.html">图片放大</a></dt>
+			<dt>calendar 日历控件</dt>
+			-->
+		</dl>
+	</dd>
+	<dt>UI组件</dt>
+	<dd class="@@ui">
+		<dl>
+			<!--<dt><a href="/html/ui/font/index.html">fonticon 图标</a></dt>-->
+			<dt><a href="/html/ui/btn.html">btn 按钮</a></dt>
+			<dt><a href="/html/ui/form.html">form 表单</a></dt>
+			<dt><a href="/html/ui/pagination.html">pagination 分页</a></dt>
+			<!--<dt><a href="/html/ui/tips.html">tips 提示信息</a></dt>-->
+			<dt><a href="/html/ui/progress.html">progress 进度条/步骤条</a></dt>
+			<!--<dt><a href="/html/ui/breadcrumb.htmll">breadcrumb 面包屑</a></dt>-->
+		</dl>
+	</dd>
+	<!--
+	<dt>开发规范</dt>
+	<dd class="@@rules">
+		<dl>
+			<dt><a href="/html/ui/breadcrumb.htmll">html 规范</a></dt>
+			<dt><a href="/html/ui/breadcrumb.htmll">js 规范</a></dt>
+			<dt><a href="/html/ui/breadcrumb.htmll">css 规范</a></dt>
+		</dl>
+	</dd>
+	-->
+</dl>
+			<div id="demo-right" class="fn-right">
+				<h4>html标签属性</h4>
+
+<p>在html标签添加以 data-validator 开头的属性，在调用 nic.ui.validator 时会识别，配置校验规则一般也是在这个地方指定。</p>
+
+<ul><li><p>data-validator：指定校验类型、指定类型的参数、指定改类型的浮动的提示位置，如：data-validator=&quot;length=2|{left:10,top:0}&quot;.</p></li><li><p>data-validate-(校验类型)Text：指定类型的提示文字，如：data-validate-requiredText。</p></li><li><p>data-validate-name：指定虚拟name用于同一类型等校验。</p></li><li><p>data-validate-position：指定提示信息的浮动位置。</p></li></ul>
+
+<h4>占位符</h4>
+
+<ul><li><p>类型的提示文字占位符{{param}}是用于指定校验类型参数的设置，如：data-validator-lengthText=&quot;输入字符长度等于{{param}}个字符&quot;。</p></li><li><p>校验值占位符{{value}}是指有值校验类型传参需要的值，目前用到的场景也只有ajax的情况，如：data-validator=&quot;ajax=http://127.0.0.1/api?param={{value}}&quot;</p></li></ul>
+
+<h4>已有校验类型</h4>
+
+<h5>无值类型</h5>
+
+<ul><li><p>必填 required</p></li><li><p>数字 number</p></li><li><p>整数 integer</p></li><li><p>正整数 digits</p></li><li><p>邮箱 email</p></li><li><p>网址 url</p></li><li><p>电话(含手机) phone</p></li><li><p>手机 mobile</p></li><li><p>自定义规则 process</p></li><li><p>ajax校验 ajax</p></li><li><p>单选框/复选框 check</p></li></ul>
+
+<h5>有值类型</h5>
+
+<ul><li><p>下拉框 select</p></li><li><p>浮点 floatNumber</p></li><li><p>固定长度 length</p></li><li><p>最小长度 minLength</p></li><li><p>最大长度 maxLength</p></li><li><p>最小值 minValue</p></li><li><p>最大值 maxValue</p></li><li><p>ajax校验 ajax</p></li></ul>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+$(function(){
+	$('#demo-left dt').on('click', function(){
+		var that = $(this),
+			dd   = that.next('dd') 
+		if( dd.is(':visible') ){
+			dd.siblings('dd').slideUp();
+			dd.slideUp();
+		}else{
+			dd.siblings('dd').slideUp();
+			dd.slideDown();
+		}
+	});
+});
+</script>
+</body>
+</html>
+<script>
+	var validator = nic.ui.validator({
+		target:'#test',
+        rules:function(obj, fn){
+            if( obj[0].id == "testProcess" ){
+                if( obj.val() != 1 ){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+        },
+        ajax:function(obj, fn){
+            if( obj[0].id == "testProcess2" ){
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://127.0.0.1/nic/www/temp/validate.php',
+                    data: {name:obj.val()},
+                    cache: false,
+                    dataType: "json",
+                    beforeSend: function(){
+                        
+                    },
+                    success: function(data){
+                        if( data ){
+                            fn(true)
+                        }else{
+                            fn(false, true)
+                        }
+                    },
+                    error: function(data){
+                        console.log(data);
+                    }
+                });
+            }
+        }
+	});
+
+	$('input[name="textRaio"]').click(function(){
+		if( $(this).val() == '1' ){
+			$('#requiredWrap').removeClass('fn-hide');
+		}else{
+			$('#requiredWrap').addClass('fn-hide');
+		}
+	})
+	
+	$('body')
+		.off('click','#submitLink')
+		.on('click','#submitLink', function(){
+			if( validator.validatorAll() ){
+				console.log('验证通过！');
+			}
+		});
+		
+	$('input[type="submit"]').on('submit', function(){
+		if( validator.getStatus() ){
+			console.log('验证通过！');
+		};
+	})
+	    
+    $('#reset').click(function(){
+        validator.reset();
+    });
+
+</script>
