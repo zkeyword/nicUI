@@ -32,40 +32,37 @@ nicUI是一款基于jQuery开发的UI库，也是我本人在前端开发工作�
 
 #### 调用文件
 
-    <link rel="stylesheet" type="text/css" href="dest/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="dest/css/styles/styles.css">
     <script src="dest/js/lib/jquery1.10.2.js"></script>
-    <script src="dest/js/main.js"></script>
+    <script src="dest/js/nicUI.js"></script>
+	
+nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-rev-collector修改对应的html，如若不需要或有具体需求请自行修改gulp的配置gulpfile.js。
 
 #### 目录结构
-	
-    -- dest 打包压缩后的目录
- 
-        -- js
-           -- main.js主业务文件
-        -- css
-        -- images
- 
-    -- dev 开发目录
- 
-        -- js
-            -- app 业务代码
-               -- main.js主业务文件
-            -- core 通用可移植的代码
-            -- lib 第三方基本库
- 
-        -- less
-            -- app
-                -- mod 公用模块
-                -- page 页面级代码
-            -- core 通用可移植的代码
-            -- lib 第三方基本库
-            -- styles.less 统一入口
- 
-        -- img
-            -- default 一般图片
-            -- sprite 需要合并的图片
-	
-	-- doc 实例文档
+
+	/ 根目录
+	|__ dest 实例文档
+	|__ dest 压缩合并后目录
+	|__ src 开发目录
+	|	|__ rev 版本配置(自动生成)
+	|	|__ img 图片目录
+	|	|	|__ default 一般图片
+	|	|	|__ sprite 需要合并的图片
+	|	|__ less 样式目录
+	|	|	|__ app 业务代码
+	|	|	|	|__ mod 公用模块
+	|	|	|	|__ page 页面级代码
+	|	|	|__ core 通用可移植的代码
+	|	|	|__ lib 第三方基本库
+	|	|	|__ styles.less 统一入口
+	|	|__ js  脚本文件
+	|		|__ app 业务代码
+	|		|	|__ main.js 主业务文件，也是用来管理js依赖的地方
+	|		|__ core 通用可移植的代码
+	|		|__ lib 第三方基本库
+	|__ index.js express路由
+	|__ webpack.config.js webpack配置文件
+	|__ gulpfile.js gulp配置文件
 
 #### 依赖管理
 

@@ -5,7 +5,7 @@
 <title>nicUI 使用手册</title>
 <link rel="stylesheet" type="text/css" href="/css/styles-0bde8f2f0d.css">
 <script src="/js/lib/jquery1.10.2.js"></script>
-<script src="/js/main-9165cc9463.js"></script>
+<script src="/js/nicUI-9165cc9463.js"></script>
 </head>
 <body>
 	<div id="demo-wrap">
@@ -172,46 +172,43 @@
 
 <h4>调用文件</h4>
 
-<pre><code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;dest/css/styles-0bde8f2f0d.css&quot;&gt;
+<pre><code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;dest/css/styles/styles-0bde8f2f0d.css&quot;&gt;
 &lt;script src=&quot;dest/js/lib/jquery1.10.2.js&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;dest/js/main-9165cc9463.js&quot;&gt;&lt;/script&gt;</code></pre>
+&lt;script src=&quot;dest/js/nicUI-9165cc9463.js&quot;&gt;&lt;/script&gt;</code></pre>
+
+<p>nicUI通过gulp-rev会生成带版本号styles-0bde8f2f0d.css和nicUI-9165cc9463.js，并通过gulp-rev-collector修改对应的html，如若不需要或有具体需求请自行修改gulp的配置gulpfile.js。</p>
 
 <h4>目录结构</h4>
 
-<pre><code>-- dest 打包压缩后的目录
-
-    -- js
-       -- main-9165cc9463.js主业务文件
-    -- css
-    -- images
-
--- dev 开发目录
-
-    -- js
-        -- app 业务代码
-           -- main-9165cc9463.js主业务文件
-        -- core 通用可移植的代码
-        -- lib 第三方基本库
-
-    -- less
-        -- app
-            -- mod 公用模块
-            -- page 页面级代码
-        -- core 通用可移植的代码
-        -- lib 第三方基本库
-        -- styles.less 统一入口
-
-    -- img
-        -- default 一般图片
-        -- sprite 需要合并的图片
-
--- doc 实例文档</code></pre>
+<pre><code>/ 根目录
+|__ dest 实例文档
+|__ dest 压缩合并后目录
+|__ src 开发目录
+|	|__ rev 版本配置(自动生成)
+|	|__ img 图片目录
+|	|	|__ default 一般图片
+|	|	|__ sprite 需要合并的图片
+|	|__ less 样式目录
+|	|	|__ app 业务代码
+|	|	|	|__ mod 公用模块
+|	|	|	|__ page 页面级代码
+|	|	|__ core 通用可移植的代码
+|	|	|__ lib 第三方基本库
+|	|	|__ styles.less 统一入口
+|	|__ js  脚本文件
+|		|__ app 业务代码
+|		|	|__ main.js 主业务文件，也是用来管理js依赖的地方
+|		|__ core 通用可移植的代码
+|		|__ lib 第三方基本库
+|__ index.js express路由
+|__ webpack.config.js webpack配置文件
+|__ gulpfile.js gulp配置文件</code></pre>
 
 <h4>依赖管理</h4>
 
 <h5>js部分</h5>
 
-<p>nicUI的js依赖管理文件在dev/js/app/main-9165cc9463.js文件内，nicUI分为3种调用方式：</p>
+<p>nicUI的js依赖管理文件在dev/js/app/main.js文件内，nicUI分为3种调用方式：</p>
 
 <ul><li><p>第三的且有独立调用方式，直接挂载在window对象下</p></li><li><p>需要返回对象，并提供相对应接口的，挂载在nic.ui的命名空间下面</p></li><li><p>jquery插件方式，第三方的也有用这种方式挂载在jquery的对象下</p></li></ul>
 

@@ -21,7 +21,7 @@ module.exports = {
 	},
 	output: {
 		path: __dirname + "/dest/js/",
-		filename: "main.js"
+		filename: "nicUI.js"
 	},
 	module: {
 		loaders: [
