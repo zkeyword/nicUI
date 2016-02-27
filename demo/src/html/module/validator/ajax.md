@@ -1,20 +1,62 @@
+##待优化
+
+
 #### 使用场景
 
-在校验控件调用的时候，校验对象已经生成，而后面生成DOM对象，并不在校验对象的目标范围内，这时我们需要在DOM对象生成之后重新reload一下校验对象，如：弹窗中的表单校验，ajax生成的表单校验。
 
 #### 调用方式 ####
+
+html:
+
+	<form name="formWrap" id="formWrap" class="fn-clear">
+		<div class="ui-form fn-clear">
+			<label>
+				<i class="ui-label">ajax：</i>
+				<input id="ajax" class="ui-input" type="text" data-validate="ajax" data-validate-ajaxText="请按照条件填写" />
+				<span class="ui-form-message"></span>
+			</label>
+		</div>
+		<div class="fn-clear">
+			<a href="#" id="submitLink">提交</a>
+			<a href="#" id="reset">重置</a>
+		</div>
+	</form>
 	
 js:
 
 	var validator = nic.ui.validator({
-		target:'#test'
+		target:'#formWrap',
+		ajax:function(obj, fn){
+            if( obj[0].id === "ajax" ){
+                $.ajax({
+                    type: 'POST',
+                    url: '/validate',
+                    data: {name:obj.val()},
+                    cache: false,
+                    dataType: "json",
+                    beforeSend: function(){},
+                    success: function(data){
+                        if( data ){
+                            fn(true)
+                        }else{
+                            fn(false, true)
+                        }
+                    },
+                    error: function(data){
+                        console.log(data);
+                    }
+                });
+            }
+        }
 	});
 
-	$('#addForm').click(function(){
-		/*
-			...
-			动态创建表单的业务
-			...
-		*/
-		validator.reload();
-	});
+	$('#formWrap')
+		.on('click', '#submitLink', function(){
+			console.log( validator.validatorAll() )
+	        if( validator.validatorAll() ){
+				alert('提交通过')
+			}
+		})
+		.on('click', '#reset', function(){
+			validator.reset();
+		})

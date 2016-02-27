@@ -10,10 +10,21 @@
 			@@include('../../common/menu.html', {"validator": "on", "js":"on"})
 			<div id="demo-right" class="fn-right">
 				<h4>调用效果</h4>
-				<a href="javascript:;" id="addForm">点击我，动态创建一个表单</a>
-				<div id="formWrap"></div>
+				<form name="formWrap" id="formWrap" class="fn-clear">
+					<div class="ui-form fn-clear">
+						<label>
+							<i class="ui-label">ajax：</i>
+							<input id="ajax" class="ui-input" type="text" data-validate="ajax" data-validate-ajaxText="请按照条件填写" />
+							<span class="ui-form-message"></span>
+						</label>
+					</div>
+					<div class="fn-clear">
+						<a href="#" id="submitLink">提交</a>
+						<a href="#" id="reset">重置</a>
+					</div>
+				</form>
 				<div id="markdown">
-					@@include(markdown('./reload.md'))
+					@@include(markdown('./ajax.md'))
 				</div>
 			</div>
 		</div>
@@ -21,40 +32,41 @@
 	@@include('../../common/footer.html')
 </body>
 </html>
-<script type="text/html" id="formHtml">
-	<form name="test" id="test" class="fn-clear">
-		<div class="ui-form fn-clear">
-			<label>
-				<i class="ui-label ui-w400">必填：</i>
-				<input class="ui-input" type="text" data-validate="required" />
-				<span class="ui-form-message"></span>
-			</label>
-		</div>
-
-		<div class="fn-clear">
-			<a href="#" id="submitLink">提交</a>
-			<a href="#" id="reset">重置</a>
-		</div>
-	</form>
-</script>
 <script>
 	var validator = nic.ui.validator({
-		target:'#test'
-	});
-
-	$('#addForm').click(function(){
-		$('#formWrap').html( $('#formHtml').html() );
-		validator.reload();
+		target:'#formWrap',
+		ajax:function(obj, fn){
+            if( obj[0].id === "ajax" ){
+                $.ajax({
+                    type: 'POST',
+                    url: '/validate',
+                    data: {name:obj.val()},
+                    cache: false,
+                    dataType: "json",
+                    beforeSend: function(){},
+                    success: function(data){
+                        if( data ){
+                            fn(true)
+                        }else{
+                            fn(false, true)
+                        }
+                    },
+                    error: function(data){
+                        console.log(data);
+                    }
+                });
+            }
+        }
 	});
 
 	$('#formWrap')
-	.on('click', '#submitLink', function(){
-		console.log( validator.validatorAll() )
-        if( validator.validatorAll() ){
-			alert('提交通过')
-		}
-	})
-	.on('click', '#reset', function(){
-		validator.reset();
-	})
+		.on('click', '#submitLink', function(){
+			console.log( validator.validatorAll() )
+	        if( validator.validatorAll() ){
+				alert('提交通过')
+			}
+		})
+		.on('click', '#reset', function(){
+			validator.reset();
+		})
 </script>

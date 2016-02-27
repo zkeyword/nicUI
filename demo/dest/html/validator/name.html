@@ -5,7 +5,7 @@
 <title>nicUI 使用手册</title>
 <link rel="stylesheet" type="text/css" href="/css/styles-0bde8f2f0d.css">
 <script src="/js/lib/jquery1.10.2.js"></script>
-<script src="/js/nicUI-9165cc9463.js"></script>
+<script src="/js/nicUI-2525e7e973.js"></script>
 </head>
 <body>
 	<div id="demo-wrap">
@@ -57,7 +57,7 @@
 				<a href="/html/validator/ajax.html">复杂的ajax调用</a>
 				<a href="/html/validator/rules.html">自定义方法</a>
 				<a href="/html/validator/name.html">多框单选校验</a>
-				<a href="/html/validator/reset.html">表单重置</a>
+				<!-- sss -->
 			</dd>
 			<dt>pop 弹出框</dt>
 			<dd class="@@pop">
@@ -148,29 +148,74 @@
 </dl>
 			<div id="demo-right" class="fn-right">
 				<h4>调用效果</h4>
-				<a href="javascript:;" id="addForm">点击我，动态创建一个表单</a>
-				<div id="formWrap"></div>
+				<div id="formWrap">
+					<div class="ui-form fn-clear">
+						<label>
+							<i class="ui-label ui-w400">多框单项校验(data-validate-name)：</i>
+						</label>
+						<label class="ui-pl10">
+							<input type="text" class="ui-input" data-validate="required;number;floatNumber=2" data-validate-name="xxx" data-validate-requiredText="xxx,必填1"  />
+						</label>
+						<label class="ui-pl10">
+							<input type="text" class="ui-input" data-validate="required;number;floatNumber=2" data-validate-name="xxx" data-validate-requiredText="xxx,必填2"  />
+						</label>
+						<label class="ui-pl10">
+							<input type="text" class="ui-input" data-validate="required;number;floatNumber=2" data-validate-name="xxx" data-validate-requiredText="xxx,必填2"  />
+						</label>
+						<span class="ui-form-message"></span>
+					</div>
+					<div class="fn-clear">
+						<a href="#" id="submitLink">提交</a>
+						<a href="#" id="reset">重置</a>
+					</div>
+				</div>
 				<div id="markdown">
 					<h4>使用场景</h4>
 
-<p>在校验控件调用的时候，校验对象已经生成，而后面生成DOM对象，并不在校验对象的目标范围内，这时我们需要在DOM对象生成之后重新reload一下校验对象，如：弹窗中的表单校验，ajax生成的表单校验。</p>
+<p>只要有一项目校验通过，其他的表单无错即可通过。</p>
 
 <h4>调用方式</h4>
+
+<p>html:</p>
+
+<pre><code>&lt;div id=&quot;formWrap&quot;&gt;
+	&lt;div class=&quot;ui-form fn-clear&quot;&gt;
+		&lt;label&gt;
+			&lt;i class=&quot;ui-label ui-w400&quot;&gt;多框单项校验(data-validate-name)：&lt;/i&gt;
+		&lt;/label&gt;
+		&lt;label class=&quot;ui-pl10&quot;&gt;
+			&lt;input type=&quot;text&quot; class=&quot;ui-input&quot; data-validate=&quot;required;number;floatNumber=2&quot; data-validate-name=&quot;xxx&quot; data-validate-requiredText=&quot;xxx,必填1&quot;  /&gt;
+		&lt;/label&gt;
+		&lt;label class=&quot;ui-pl10&quot;&gt;
+			&lt;input type=&quot;text&quot; class=&quot;ui-input&quot; data-validate=&quot;required;number;floatNumber=2&quot; data-validate-name=&quot;xxx&quot; data-validate-requiredText=&quot;xxx,必填2&quot;  /&gt;
+		&lt;/label&gt;
+		&lt;label class=&quot;ui-pl10&quot;&gt;
+			&lt;input type=&quot;text&quot; class=&quot;ui-input&quot; data-validate=&quot;required;number;floatNumber=2&quot; data-validate-name=&quot;xxx&quot; data-validate-requiredText=&quot;xxx,必填2&quot;  /&gt;
+		&lt;/label&gt;
+		&lt;span class=&quot;ui-form-message&quot;&gt;&lt;/span&gt;
+	&lt;/div&gt;
+	&lt;div class=&quot;fn-clear&quot;&gt;
+		&lt;a href=&quot;#&quot; id=&quot;submitLink&quot;&gt;提交&lt;/a&gt;
+		&lt;a href=&quot;#&quot; id=&quot;reset&quot;&gt;重置&lt;/a&gt;
+	&lt;/div&gt;
+&lt;/div&gt;</code></pre>
 
 <p>js:</p>
 
 <pre><code>var validator = nic.ui.validator({
-	target:&#39;#test&#39;
+	target:&#39;#formWrap&#39;
 });
 
-$(&#39;#addForm&#39;).click(function(){
-	/*
-		...
-		动态创建表单的业务
-		...
-	*/
-	validator.reload();
-});</code></pre>
+$(&#39;#formWrap&#39;)
+	.on(&#39;click&#39;, &#39;#submitLink&#39;, function(){
+		console.log( validator.validatorAll() )
+        if( validator.validatorAll() ){
+			alert(&#39;提交通过&#39;)
+		}
+	})
+	.on(&#39;click&#39;, &#39;#reset&#39;, function(){
+		validator.reset();
+	});</code></pre>
 				</div>
 			</div>
 		</div>
@@ -192,40 +237,19 @@ $(function(){
 </script>
 </body>
 </html>
-<script type="text/html" id="formHtml">
-	<form name="test" id="test" class="fn-clear">
-		<div class="ui-form fn-clear">
-			<label>
-				<i class="ui-label ui-w400">必填：</i>
-				<input class="ui-input" type="text" data-validate="required" />
-				<span class="ui-form-message"></span>
-			</label>
-		</div>
-
-		<div class="fn-clear">
-			<a href="#" id="submitLink">提交</a>
-			<a href="#" id="reset">重置</a>
-		</div>
-	</form>
-</script>
 <script>
 	var validator = nic.ui.validator({
-		target:'#test'
-	});
-
-	$('#addForm').click(function(){
-		$('#formWrap').html( $('#formHtml').html() );
-		validator.reload();
+		target:'#formWrap'
 	});
 
 	$('#formWrap')
-	.on('click', '#submitLink', function(){
-		console.log( validator.validatorAll() )
-        if( validator.validatorAll() ){
-			alert('提交通过')
-		}
-	})
-	.on('click', '#reset', function(){
-		validator.reset();
-	})
+		.on('click', '#submitLink', function(){
+			console.log( validator.validatorAll() )
+	        if( validator.validatorAll() ){
+				alert('提交通过')
+			}
+		})
+		.on('click', '#reset', function(){
+			validator.reset();
+		});
 </script>
