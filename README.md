@@ -18,6 +18,9 @@ nicUI是一款基于jQuery开发的UI库，也是我本人在前端开发工作�
 
 - mockjs
 
+- iconfont
+
+
 #### 运行方式
 
 首先，请先安装node环境，然后在安装nicUI内依赖的工具：
@@ -44,6 +47,7 @@ nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-re
 	|__ dest 实例文档
 	|__ dest 压缩合并后目录
 	|__ src 开发目录
+	|	|__ font 字体图标目录
 	|	|__ rev 版本配置(自动生成)
 	|	|__ img 图片目录
 	|	|	|__ default 一般图片
@@ -87,6 +91,12 @@ nicUI的js依赖管理文件在dev/js/app/main.js文件内，nicUI分为3种调�
 ##### css部分
 
 nicUI的css依赖文件在dev/less/styles.less文件内
+
+#### 关于iconfont和sprite
+
+目前前端圈子比较流行的图标一般是采用这两种方式，这里优劣性我不再讨论，这里建议：单一颜色的图标采用iconfont；多色图图标或者图片文件可采用sprite。
+
+对于iconfont的字体文件可使用在线的icomoon.io进行制作，nicUI提供初级的解决方案，使用者可适当修改gulpfile.js文件。
 
 #### 存在问题
 
