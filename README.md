@@ -1,3 +1,7 @@
+###########
+准备将less替换成stylus或postcss
+###########
+
 # nicUI 一个基于jQuery的UI库 #
 
 #### 简介
