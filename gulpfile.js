@@ -83,6 +83,12 @@ gulp.task('js', function () {
         .pipe(gulp.dest(path.demo+'src/rev/'));
 });
 
+gulp.task('djs', function () {
+	gulp.src('app.65b32be3f985189a67e5.js')
+		.pipe(uglify())
+		.pipe(gulp.dest('a'));		
+});
+
 
 
 //tmod.js

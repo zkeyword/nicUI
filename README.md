@@ -84,7 +84,7 @@ nicUI的js依赖管理文件在dev/js/app/main.js文件内，nicUI分为3种调�
 
 - nic.base 基础层，所有的基础函数库、工具函数库，如cookie、isFunction、isArray等
 
-- nic.ui 显示层，用来重构和回流DOM，前端的特效显示处理
+- nic.ui 显示层，用来呈现DOM，前端的特效显示处理
 
 - nic.app 应用层，挂载一些应用的业务类，业务上的代码可以挂载在该空间下。
 
@@ -97,6 +97,8 @@ nicUI的css依赖文件在dev/less/styles.less文件内
 目前前端圈子比较流行的图标一般是采用这两种方式，这里优劣性我不再讨论，这里建议：单一颜色的图标采用iconfont；多色图图标或者图片文件可采用sprite。
 
 对于iconfont的字体文件可使用在线的icomoon.io进行制作，nicUI提供初级的解决方案，使用者可适当修改gulpfile.js文件。
+
+如果不需要兼容低版本的浏览器，那么我可以考虑将一部分小图除了iconfont和sprite化，我们还可以选择base64处理，直接减少http请求数。
 
 #### 存在问题
 
