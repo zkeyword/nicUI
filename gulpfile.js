@@ -25,6 +25,17 @@ var gulp          = require('gulp'),
 
 					
 					
+//var lessPluginFunction = require('less-plugin-functions')	
+/*
+
+.function {
+    .rem(@val) {
+        return: @val*2+0rem;
+    }
+}
+
+*/					
+					
 //less
 gulp.task('less', function () {
     gulp
@@ -35,6 +46,7 @@ gulp.task('less', function () {
 			console.log('--------------------------  less Syntax Error! --------------------------');
 		}))
 		.pipe(less())
+		//.pipe(less({ plugins: [new lessPluginFunction()] }))
 		.pipe(minifycss({compatibility: 'ie7'}))
 		.pipe(rev())
 		.pipe(cssurl())
@@ -57,6 +69,7 @@ gulp.task('less', function () {
 		.pipe( rev.manifest('cssRev.json') )
         .pipe(gulp.dest(path.demo+'src/rev/'));
 });
+
 
 
 
