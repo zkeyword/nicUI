@@ -25,6 +25,24 @@ var gulp          = require('gulp'),
 
 					
 					
+/*var lessPluginFunction = require('less-plugin-functions')	
+		postcss          = require('gulp-postcss'),
+		autoprefixer    = require('autoprefixer'),
+		cssnano         = require('cssnano')
+	*/
+	
+	//.pipe(less({ plugins: [new lessPluginFunction()] }))
+	//.pipe(postcss([autoprefixer,mqpacker,cssnano]))
+/*
+
+.function {
+    .rem(@val) {
+        return: @val*2+0rem;
+    }
+}
+
+*/					
+					
 //less
 gulp.task('less', function () {
     gulp
@@ -35,6 +53,7 @@ gulp.task('less', function () {
 			console.log('--------------------------  less Syntax Error! --------------------------');
 		}))
 		.pipe(less())
+		
 		.pipe(minifycss({compatibility: 'ie7'}))
 		//.pipe(rev())
 		.pipe(cssurl())
@@ -57,6 +76,7 @@ gulp.task('less', function () {
 		//.pipe( rev.manifest('cssRev.json') )
         .pipe(gulp.dest(path.demo+'src/rev/'));
 });
+
 
 
 
