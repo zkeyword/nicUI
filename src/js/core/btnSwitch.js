@@ -1,8 +1,7 @@
-define(['./nic'], function(nic){
-	
-	'use strict';
+'use strict';
 
-	var BtnSwitch = function(o){
+var nic       = require('./nic'),
+	BtnSwitch = function(o){
 		
 		var 
 			/**
@@ -106,11 +105,10 @@ define(['./nic'], function(nic){
 
 		return c.init(o);
 	};
-	
-	return function(o){
-		if( !o ){
-			return {};
-		}
-		return new BtnSwitch(o);
-	};
-});
+
+module.exports = function(o){
+	if( !o ){
+		return {};
+	}
+	return new BtnSwitch(o);
+};

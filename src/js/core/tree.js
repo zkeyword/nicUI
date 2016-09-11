@@ -1,35 +1,34 @@
-define(['./nic'], function(nic){
+'use strict';
 	
-	'use strict';
-		
-	/**
-	* nic.ui.tree 树形控件
-	* @class nic.ui.tree
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} o 树形参数
-    * @param {String} o.id 树形id
-    * @param {String} o.data 树形数据
-    * @param {String} o.ajax 树形ajax数据，与o.data互斥
-    * @param {String} o.ajax.url
-    * @param {String} o.ajax.data
-    * @param {String} o.ajax.beforeSend
-    * @param {String} o.ajax.success
-    * @param {String} o.ajax.error
-    * @param {String} o.isSimple 简单数据格式，已经经过递归的数据
-    * @param {String} o.target 树形容器
-    * @param {Object} o.height o.target的高度
-    * @param {Object} o.selectedID 初始化选中的ID
-    * @param {Object} o.isOpen 初始化是否打开
-    * @param {Object} o.onClick 树形item的click事件
-    * @param {Object} o.onRightClick 树形item的RightClick事件
-    * @param {Object} o.onMouseOver 树形item的onmouseover事件
-    * @param {Object} o.onMouseOut 树形item的onmouseout事件
-    * @param {Object} o.onLoad 树形加载完触发的事件
-	* @return {Object} tree对象
-	*/
-	
-	var Tree = function(o){
+/**
+* nic.ui.tree 树形控件
+* @class nic.ui.tree
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} o 树形参数
+* @param {String} o.id 树形id
+* @param {String} o.data 树形数据
+* @param {String} o.ajax 树形ajax数据，与o.data互斥
+* @param {String} o.ajax.url
+* @param {String} o.ajax.data
+* @param {String} o.ajax.beforeSend
+* @param {String} o.ajax.success
+* @param {String} o.ajax.error
+* @param {String} o.isSimple 简单数据格式，已经经过递归的数据
+* @param {String} o.target 树形容器
+* @param {Object} o.height o.target的高度
+* @param {Object} o.selectedID 初始化选中的ID
+* @param {Object} o.isOpen 初始化是否打开
+* @param {Object} o.onClick 树形item的click事件
+* @param {Object} o.onRightClick 树形item的RightClick事件
+* @param {Object} o.onMouseOver 树形item的onmouseover事件
+* @param {Object} o.onMouseOut 树形item的onmouseout事件
+* @param {Object} o.onLoad 树形加载完触发的事件
+* @return {Object} tree对象
+*/
+
+var nic  = require('./nic'),
+	Tree = function(o){
 		
 		var g = this,
         
@@ -600,10 +599,9 @@ define(['./nic'], function(nic){
 		return c.init(o);
 	};
 	
-	return function(o){
-		if( !o ){
-			return {};
-		}
-		return new Tree(o);
-	};
-});
+module.exports = function(o){
+	if( !o ){
+		return {};
+	}
+	return new Tree(o);
+};

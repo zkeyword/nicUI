@@ -1,18 +1,17 @@
-define(['./nic'], function(nic){
+'use strict';
 	
-	'use strict';
-		
-	/**
-	* nic.ui.select 下拉框控件
-	* @class nic.ui.select
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} o 下拉框参数
-    * @param {String} o.id 下拉框id
-	* @return {Object} select对象
-	*/
-	
-	var Select = function(o){
+/**
+* nic.ui.select 下拉框控件
+* @class nic.ui.select
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} o 下拉框参数
+* @param {String} o.id 下拉框id
+* @return {Object} select对象
+*/
+
+var nic    = require('./nic'),
+	Select = function(o){
 		
 		var 
 			/**
@@ -1135,10 +1134,9 @@ define(['./nic'], function(nic){
 		return c.init(o);
 	};
 	
-	return function(o){
-		if( !o ){
-			return {};
-		}
-		return new Select(o);
-	};
-});
+module.exports = function(o){
+	if( !o ){
+		return {};
+	}
+	return new Select(o);
+};

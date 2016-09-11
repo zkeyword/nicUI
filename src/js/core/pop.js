@@ -1,42 +1,42 @@
-define(['./nic'], function(nic){
-	
-	'use strict';
-	
-	/**
-	* nic.ui.pop 弹出窗控件
-	* @class nic.ui.pop
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} o 弹出窗参数
-    * @param {String} o.id 弹出窗ID
-    * @param {String} o.titleId 标题ID
-    * @param {String} o.title 弹出框的标题
-    * @param {Number} o.width 弹出框内部的宽，不包括边框的宽度
-    * @param {Number} o.height 弹出框内部的高，不包括边框的高度
-    * @param {Number} o.top 弹出框的top
-    * @param {Number} o.left 弹出框的left
-    * @param {String} o.cls 定义class
-    * @param {String} o.url 用iframe方式加载
-    * @param {String} o.ajax 用ajax方式加载pop.js
-    * @param {String} o.ajaxType ajax请求类型
-    * @param {String|Object} o.ajaxData ajax请求条件
-    * @param {String} o.async ajax同步方式
-    * @param {String} o.html 用html方式加载
-    * @param {Function} o.onloadFn 载入完成后要触发的事件
-    * @param {Function} o.closeFn 关闭时要触发的事件
-    * @param {Object} o.btns 弹出框的按钮集合
-    * @param {Function} o.btns.onclick 点击按钮要执行的动作，如果要执行一些异步的动作，closePop必须是false
-    * @param {Function} o.btns.closePop 点击按钮之后是否直接关闭弹出框，默认直接关闭
-    * @param {Function} o.btns.cls 按钮自定义class
-    * @param {Function} o.btns.text 按钮文本
-    * @param {Boolean} o.isMask 是否允许遮罩,默认true
-    * @param {Boolean} o.isMaskClose 是否点击遮罩关闭,默认false
-    * @param {Boolean} o.allowClose 允许关闭,默认true
-    * @param {Boolean} o.allowEscClose 允许esc关闭,默认true
-    * @param {Boolean} o.isDrag 允许拖拽,默认true
-	* @return {Object} pop对象
-	*/
-	var Pop = function(o){
+'use strict';
+
+/**
+* nic.ui.pop 弹出窗控件
+* @class nic.ui.pop
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} o 弹出窗参数
+* @param {String} o.id 弹出窗ID
+* @param {String} o.titleId 标题ID
+* @param {String} o.title 弹出框的标题
+* @param {Number} o.width 弹出框内部的宽，不包括边框的宽度
+* @param {Number} o.height 弹出框内部的高，不包括边框的高度
+* @param {Number} o.top 弹出框的top
+* @param {Number} o.left 弹出框的left
+* @param {String} o.cls 定义class
+* @param {String} o.url 用iframe方式加载
+* @param {String} o.ajax 用ajax方式加载pop.js
+* @param {String} o.ajaxType ajax请求类型
+* @param {String|Object} o.ajaxData ajax请求条件
+* @param {String} o.async ajax同步方式
+* @param {String} o.html 用html方式加载
+* @param {Function} o.onloadFn 载入完成后要触发的事件
+* @param {Function} o.closeFn 关闭时要触发的事件
+* @param {Object} o.btns 弹出框的按钮集合
+* @param {Function} o.btns.onclick 点击按钮要执行的动作，如果要执行一些异步的动作，closePop必须是false
+* @param {Function} o.btns.closePop 点击按钮之后是否直接关闭弹出框，默认直接关闭
+* @param {Function} o.btns.cls 按钮自定义class
+* @param {Function} o.btns.text 按钮文本
+* @param {Boolean} o.isMask 是否允许遮罩,默认true
+* @param {Boolean} o.isMaskClose 是否点击遮罩关闭,默认false
+* @param {Boolean} o.allowClose 允许关闭,默认true
+* @param {Boolean} o.allowEscClose 允许esc关闭,默认true
+* @param {Boolean} o.isDrag 允许拖拽,默认true
+* @return {Object} pop对象
+*/
+var nic  = require('./nic'),
+	drag = require('./drag'),
+	Pop  = function(o){
 		var g      = this,
 			
 			/**
@@ -126,7 +126,7 @@ define(['./nic'], function(nic){
 											  .html(title);
 						
 						if( isDrag ){
-							nic.ui.drag({
+							drag({
 								dragItem:'#'+titleId,
 								dragWrap:'#'+id
 							});
@@ -158,7 +158,7 @@ define(['./nic'], function(nic){
 						ajaxType    = p.ajaxType,
 						ajaxData    = p.ajaxData,
 						async       = p.async,
-                        ajaxSuccess = p.ajaxSuccess,
+	                    ajaxSuccess = p.ajaxSuccess,
 						html        = p.html,
 						popContent  = popMain.find('.l-pop-content');
 					
@@ -172,9 +172,9 @@ define(['./nic'], function(nic){
 							cache   : false,
 							async   : async,
 							success : function(data){
-                                if( nic.base.isFunction(ajaxSuccess) ){
-                                    ajaxSuccess(data);
-                                }
+	                            if( nic.base.isFunction(ajaxSuccess) ){
+	                                ajaxSuccess(data);
+	                            }
 								popContent.append(data);
 							}
 						}); 
@@ -319,7 +319,7 @@ define(['./nic'], function(nic){
 								left: left, 
 							}, 500);
 					});*/
-   
+
 				},
 				
 				/**
@@ -484,8 +484,7 @@ define(['./nic'], function(nic){
 		
 		return _core.init(o);
 	};
-	
-	return function(o){
-		return new Pop(o);
-	};
-});
+
+module.exports = function(o){
+	return new Pop(o);
+};

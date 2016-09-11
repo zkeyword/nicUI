@@ -1,6 +1,7 @@
-define(['./nic'], function(nic){
-	
-	var calendar = function(options){
+'use strict';
+
+var nic      = require('./nic'),
+	calendar = function(options){
 		var o = options || {};
 		if(!o.trigger){return;}
 		var trigger    = $(o.trigger).wrap('<div class="l-ui-calendarWrap"></div>'),
@@ -405,5 +406,4 @@ define(['./nic'], function(nic){
 		});
 	};
 	
-	return calendar;
-});
+module.exports = calendar;

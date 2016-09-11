@@ -1,26 +1,25 @@
-define(function(){
-	'use strict';
-	
-	/**
-	* nic.ui.pop 弹出窗控件
-	* @class nic.ui.tip
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} options 弹出窗参数
-    * @param {String} options.id tip的id
-    * @param {String} options.target tip的触发对象
-    * @param {String} options.targetWrap target的最外层，默认网页的最外层为body，因为有可能在其他元素中定位
-    * @param {String} options.header tip标题
-    * @param {String} options.html tip的html内容
-    * @param {String} options.render render事件，动态内容
-    * @param {String} options.width 宽度
-    * @param {String} options.isTrack 是否鼠标跟随
-    * @param {String} options.isArrow 是否需要箭头
-    * @param {String} options.arrowDirection 设箭头位置，默认是向上向下，可选是向左向右
-    * @param {String} options.event 触发显示tip
-	* @return {Object} tip对象
-	*/
-	var Tip = function(o){
+'use strict';
+
+/**
+* nic.ui.pop 弹出窗控件
+* @class nic.ui.tip
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} options 弹出窗参数
+* @param {String} options.id tip的id
+* @param {String} options.target tip的触发对象
+* @param {String} options.targetWrap target的最外层，默认网页的最外层为body，因为有可能在其他元素中定位
+* @param {String} options.header tip标题
+* @param {String} options.html tip的html内容
+* @param {String} options.render render事件，动态内容
+* @param {String} options.width 宽度
+* @param {String} options.isTrack 是否鼠标跟随
+* @param {String} options.isArrow 是否需要箭头
+* @param {String} options.arrowDirection 设箭头位置，默认是向上向下，可选是向左向右
+* @param {String} options.event 触发显示tip
+* @return {Object} tip对象
+*/
+var Tip = function(o){
 		var 
 			/**
 			* 全局对象
@@ -286,7 +285,6 @@ define(function(){
 		return c.init(o);
 	};
 	
-	return function(o){
-		return new Tip(o);
-	};
-});
+module.exports = function(o){
+	return new Tip(o);
+};

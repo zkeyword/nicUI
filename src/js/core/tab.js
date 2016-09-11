@@ -1,24 +1,23 @@
-define(['./nic'], function(nic){
-	
-	'use strict';
-	
-	/**
-	* nic.ui.pop 弹出窗控件
-	* @class nic.ui.tab
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} options 弹出窗参数
-    * @param {String} options.tabItem tab选卡对象
-    * @param {String} options.tabWrap tab切换内容对象
-    * @param {String} options.tabEvent 切换事件，默认click
-    * @param {Number} options.tabIndex tab选卡起始位置，从0开始，默认0
-    * @param {Boolean} options.isAuto 是否自动播放，默认false
-    * @param {Number} options.autoTime 自动播放时间
-    * @param {Number} options.autoSpeed 自动播放速度
-    * @param {Function} options.onclick 切换后执行的函数
-	* @return {Object} tab对象
-	*/	
-	var tab = function(options){
+'use strict';
+
+/**
+* nic.ui.pop 弹出窗控件
+* @class nic.ui.tab
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} options 弹出窗参数
+* @param {String} options.tabItem tab选卡对象
+* @param {String} options.tabWrap tab切换内容对象
+* @param {String} options.tabEvent 切换事件，默认click
+* @param {Number} options.tabIndex tab选卡起始位置，从0开始，默认0
+* @param {Boolean} options.isAuto 是否自动播放，默认false
+* @param {Number} options.autoTime 自动播放时间
+* @param {Number} options.autoSpeed 自动播放速度
+* @param {Function} options.onclick 切换后执行的函数
+* @return {Object} tab对象
+*/	
+var nic = require('./nic'),
+	tab = function(options){
 
 		var o = options || {};
 		
@@ -109,5 +108,4 @@ define(['./nic'], function(nic){
 		tabFn.init();
 	};
 	
-	return tab;
-});
+module.exports = tab;

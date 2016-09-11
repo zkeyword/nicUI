@@ -1,92 +1,92 @@
 /**
- **┏┓　　　┏┓ 
- *┏┛┻━━━┛┻┓ 
- *┃　　　　　　　┃ 　 
- *┃　　　━　　　┃ 
- *┃　┳┛　┗┳　┃ 
- *┃　　　　　　　┃ 
- *┃　　　┻　　　┃ 
- *┃　　　　　　　┃ 
- *┗━┓　　　┏━┛ 
- ****┃　　　┃　　　　 
- ****┃　　　┃ 神兽保护，代码无bug
- ****┃　　　┗━━━┓ 
- ****┃　　　　　　　┣┓ 
- ****┃　　　　　　　┏┛ 
- ****┗┓┓┏━┳┓┏┛ 
- ******┃┫┫　┃┫┫ 
- ******┗┻┛　┗┻┛  
+**┏┓　　　┏┓ 
+*┏┛┻━━━┛┻┓ 
+*┃　　　　　　　┃ 　 
+*┃　　　━　　　┃ 
+*┃　┳┛　┗┳　┃ 
+*┃　　　　　　　┃ 
+*┃　　　┻　　　┃ 
+*┃　　　　　　　┃ 
+*┗━┓　　　┏━┛ 
+****┃　　　┃　　　　 
+****┃　　　┃ 神兽保护，代码无bug
+****┃　　　┗━━━┓ 
+****┃　　　　　　　┣┓ 
+****┃　　　　　　　┏┛ 
+****┗┓┓┏━┳┓┏┛ 
+******┃┫┫　┃┫┫ 
+******┗┻┛　┗┻┛  
 */
-define(['./nic'], function(nic){
+
+'use strict';
+
+/**
+* nic.ui.grid 表格控件
+* @class nic.ui.grid
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} o 表格参数
+* @param {String} o.wrap 表格容器
+* @param {String} o.id 表格id
+* @param {Object} o.pageAjax ajax数据
+* @param {String} o.pageAjax.url ajax请求的url
+* @param {String} o.pageAjax.type ajax请求类型，默认是GET
+* @param {String} o.pageAjax.data ajax请求的条件
+* @param {Object} o.data 静态数据
+* @param {String|Number} o.width 表格宽度
+* @param {Boolean} o.isFixedWidth 表宽度是否为固定宽度，默认为false，会去对比grid外框的宽度和o.columns.width，而达到自适应列的目的
+* @param {Object} o.columns 列结构
+* @param {String} o.columns.display 表头名称
+* @param {String} o.columns.name 数据字段名
+* @param {Number} o.columns.width 列宽度，这里是占比
+* @param {Function} o.columns.render 列自定义显示函数
+* @param {Function} o.columns.statisRender 统计列自定义显示函数
+* @param {String} o.columns.statisType 统计类型
+* @param {String} o.columns.statisWrap 统计容器
+* @param {Object} o.statis 统计
+* @param {Object} o.detail 表格详细
+* @param {Object} o.bottomBtns 底部按钮
+* @param {Boolean} o.isPage 是否显示分页
+* @param {Boolean} o.isHead 是否显示头部
+* @param {Boolean} o.showAllRow 显示所有数据，默认false，以分页和显示条数互斥 ，isPage=false、pageSize = total
+* @param {String} o.pageIndex 分页起始页
+* @param {String} o.pageSize 每页显示的条数
+* @param {Array} o.pageSizeOptions 可选择设定的每页结果数，默认[10, 20, 50, 100, 200]，不显示时可设置null
+* @param {Function} o.onPageFn 翻页事件
+* @param {Boolean} o.isPageCache 翻页时是否缓存当页数据
+* @param {Boolean} o.isMemory 翻页是否记住选择记录，默认false
+* @param {Boolean} o.checkbox 是否有checkbox
+* @param {Function} o.onCheckFn 点击checkbox事件
+* @param {Function} o.onRowFn 点击行事件
+* @param {Boolean} o.isSelectSingleRow 点击是否选中单行,onRowFn有设置时才生效
+* @param {Boolean} o.isOnRowCheckbox 点击行选中checkbox
+* @param {Function} o.initSelected 初始化选中事件
+* @param {String}  o.nullText 空文本
+* @param {String}  o.requestText 请求文本
+* @param {Boolean} o.isSort 是否排序，默认false
+* @param {Boolean} o.isSortCurrent 排序当前页中数据，默认false，使用时isSort必须是true，isPageCache必须是true
+* @param {Boolean} o.isShowLoading 是否显示loading效果，默认true
+* @param {String} o.countFont 统计文字
+* @param {String} o.refreshIndex 刷新当前页索引pageIndex,默认false
+* @param {String} o.isHideColumns 是否要隐藏列Columns, 隐藏列是请设置ID
+* @return {Object} grid对象
+*/
+
+
+// XXX
+var lang = {
+	/*grid*/
+    nextPage: '&gt;',
+    prevPage: '&lt;',
+    //countFont: '每页显示：{{size}}条，当前显示从{{start}}到{{end}}，总{{count}}条 。',
+    countFont:'',
+    nullText: '暂无数据，请确认！',
+    requestText: '数据请求中，请稍后...'
+}
+
+var nic  = require('./nic'),
+	Grid = function(o){
 	
-	'use strict';
-	
-	/**
-	* nic.ui.grid 表格控件
-	* @class nic.ui.grid
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} o 表格参数
-    * @param {String} o.wrap 表格容器
-    * @param {String} o.id 表格id
-    * @param {Object} o.pageAjax ajax数据
-    * @param {String} o.pageAjax.url ajax请求的url
-    * @param {String} o.pageAjax.type ajax请求类型，默认是GET
-    * @param {String} o.pageAjax.data ajax请求的条件
-    * @param {Object} o.data 静态数据
-    * @param {String|Number} o.width 表格宽度
-    * @param {Boolean} o.isFixedWidth 表宽度是否为固定宽度，默认为false，会去对比grid外框的宽度和o.columns.width，而达到自适应列的目的
-    * @param {Object} o.columns 列结构
-    * @param {String} o.columns.display 表头名称
-    * @param {String} o.columns.name 数据字段名
-    * @param {Number} o.columns.width 列宽度，这里是占比
-    * @param {Function} o.columns.render 列自定义显示函数
-    * @param {Function} o.columns.statisRender 统计列自定义显示函数
-    * @param {String} o.columns.statisType 统计类型
-    * @param {String} o.columns.statisWrap 统计容器
-    * @param {Object} o.statis 统计
-    * @param {Object} o.detail 表格详细
-    * @param {Object} o.bottomBtns 底部按钮
-    * @param {Boolean} o.isPage 是否显示分页
-    * @param {Boolean} o.isHead 是否显示头部
-    * @param {Boolean} o.showAllRow 显示所有数据，默认false，以分页和显示条数互斥 ，isPage=false、pageSize = total
-    * @param {String} o.pageIndex 分页起始页
-    * @param {String} o.pageSize 每页显示的条数
-    * @param {Array} o.pageSizeOptions 可选择设定的每页结果数，默认[10, 20, 50, 100, 200]，不显示时可设置null
-    * @param {Function} o.onPageFn 翻页事件
-    * @param {Boolean} o.isPageCache 翻页时是否缓存当页数据
-    * @param {Boolean} o.isMemory 翻页是否记住选择记录，默认false
-    * @param {Boolean} o.checkbox 是否有checkbox
-    * @param {Function} o.onCheckFn 点击checkbox事件
-    * @param {Function} o.onRowFn 点击行事件
-    * @param {Boolean} o.isSelectSingleRow 点击是否选中单行,onRowFn有设置时才生效
-    * @param {Boolean} o.isOnRowCheckbox 点击行选中checkbox
-    * @param {Function} o.initSelected 初始化选中事件
-    * @param {String}  o.nullText 空文本
-    * @param {String}  o.requestText 请求文本
-    * @param {Boolean} o.isSort 是否排序，默认false
-    * @param {Boolean} o.isSortCurrent 排序当前页中数据，默认false，使用时isSort必须是true，isPageCache必须是true
-    * @param {Boolean} o.isShowLoading 是否显示loading效果，默认true
-    * @param {String} o.countFont 统计文字
-    * @param {String} o.refreshIndex 刷新当前页索引pageIndex,默认false
-    * @param {String} o.isHideColumns 是否要隐藏列Columns, 隐藏列是请设置ID
-	* @return {Object} grid对象
-	*/
-
-
-	// XXX
-	var lang = {
-		/*grid*/
-	    nextPage: '&gt;',
-	    prevPage: '&lt;',
-	    //countFont: '每页显示：{{size}}条，当前显示从{{start}}到{{end}}，总{{count}}条 。',
-	    countFont:'',
-	    nullText: '暂无数据，请确认！',
-	    requestText: '数据请求中，请稍后...'
-	}
-
-	var Grid = function(o){
-		
 		var 
 			/**
 			* 全局对象
@@ -931,7 +931,7 @@ define(['./nic'], function(nic){
 								that.tBodyCreateHtml(index);
 								that.pageCreateHtml();
 							}
-	
+
 							/*全部选上时给表头全选*/
 							if( gridBody.find('.l-checkbox-selected').length === pageSize ){
 								gridHeader.find('.l-checkbox').addClass('l-checkbox-selected');
@@ -1124,7 +1124,7 @@ define(['./nic'], function(nic){
 				getRowData: function(index){
 					var	pageIndex = p.pageIndex,
 						data      = _cache.tmpData[pageIndex - 1]; //表格数据
-	
+
 					if( index === -1 ){
 						return false;
 					}
@@ -1950,19 +1950,19 @@ define(['./nic'], function(nic){
 			}
 			return g;
 		};
-        */
-        g.uncheckRowByID = function(id){
+	    */
+	    g.uncheckRowByID = function(id){
 			if( id !== undefined ){
 				var grid1       = g.grid1,
 					grid2       = g.grid2,
 					grid1Header = grid1.find('.l-grid-header'), //表格头
 					grid1Body   = grid1.find('.l-grid-body'),   //表格主体
 					grid2Body   = grid2.find('.l-grid-body'),   //表格主体
-                    i           = getIndex(),
+	                i           = getIndex(),
 					grid1Row    = grid1Body.find('.l-grid-row').eq(i),
 					grid2Row    = grid2Body.find('.l-grid-row').eq(i),
 					checkbox    = grid1Body.find('.l-checkbox').eq(i);
-                
+	            
 				checkbox.removeClass('l-checkbox-selected');
 				grid1Row.removeClass('l-grid-row-selected');
 				grid2Row.removeClass('l-grid-row-selected');
@@ -1970,28 +1970,28 @@ define(['./nic'], function(nic){
 				
 				_core.initCheckbox();
 			}
-            
+	        
 			return g;
-            
-            function getIndex(){
-                var selectedArr = _cache.rowSelected,
-                    len         = selectedArr.length,
-                    index       = 0;
-                    
-                for(; index<len; index++){
-                    if( selectedArr[index] ){
-                        var subSelectedArr = selectedArr[index],
-                            subLen         = subSelectedArr.length,
-                            subIndex       = 0;
-                        for(; subIndex<subLen; subIndex++){
-                            if( subSelectedArr[subIndex] && subSelectedArr[subIndex].id == id ){
-                                subSelectedArr[subIndex] = null;
-                                return subIndex;
-                            }
-                        }
-                    }
-                }
-            }
+	        
+	        function getIndex(){
+	            var selectedArr = _cache.rowSelected,
+	                len         = selectedArr.length,
+	                index       = 0;
+	                
+	            for(; index<len; index++){
+	                if( selectedArr[index] ){
+	                    var subSelectedArr = selectedArr[index],
+	                        subLen         = subSelectedArr.length,
+	                        subIndex       = 0;
+	                    for(; subIndex<subLen; subIndex++){
+	                        if( subSelectedArr[subIndex] && subSelectedArr[subIndex].id == id ){
+	                            subSelectedArr[subIndex] = null;
+	                            return subIndex;
+	                        }
+	                    }
+	                }
+	            }
+	        }
 		};
 		
 		/*g.uncheckRow2 = function(key, val){
@@ -2031,7 +2031,6 @@ define(['./nic'], function(nic){
 		return _core.init(o);
 	};
 
-	return function(options){
-		return new Grid(options);
-	};
-});
+module.exports = function(options){
+	return new Grid(options);
+};

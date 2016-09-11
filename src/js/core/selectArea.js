@@ -1,23 +1,22 @@
-define(['./nic'], function(nic){
-	
-	'use strict';
-	
-	/**
-	* nic.ui.selectArea 地区控件
-	* @class nic.ui.selectArea
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} options selectArea参数
-    * @param {Object} options.data 数据源
-    * @param {Object} options.initValue 初始值
-    * @param {String} options.initValue.province 省级初始值
-    * @param {String} options.initValue.city 市级初始值
-    * @param {String} options.initValue.county 区、县级初始值
-    * @param {String} options.province 省级对象选择器
-    * @param {String} options.city 市级对象选择器
-    * @param {String} options.county 区、县级对象选择器
-	*/
-	var selectArea = function(options){
+'use strict';
+
+/**
+* nic.ui.selectArea 地区控件
+* @class nic.ui.selectArea
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} options selectArea参数
+* @param {Object} options.data 数据源
+* @param {Object} options.initValue 初始值
+* @param {String} options.initValue.province 省级初始值
+* @param {String} options.initValue.city 市级初始值
+* @param {String} options.initValue.county 区、县级初始值
+* @param {String} options.province 省级对象选择器
+* @param {String} options.city 市级对象选择器
+* @param {String} options.county 区、县级对象选择器
+*/
+var nic        = require('./nic'),
+	selectArea = function(options){
 		var data         = options.data ? options.data : [],
 			initValue    = options.initValue ? options.initValue : {province:'',city:'',county:''},
 			provinceWrap = $(options.province),
@@ -139,11 +138,10 @@ define(['./nic'], function(nic){
 		
 	};
 	
-	return function(o){
-		if( !o ){
-			return {};
-		}
-		return new selectArea(o);
-	};
+module.exports = function(o){
+	if( !o ){
+		return {};
+	}
+	return new selectArea(o);
+};
 
-});

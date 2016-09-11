@@ -36,11 +36,11 @@ gulp.task('less', function () {
 		}))
 		.pipe(less())
 		.pipe(minifycss({compatibility: 'ie7'}))
-		.pipe(rev())
+		//.pipe(rev())
 		.pipe(cssurl())
 		//.pipe(maps.write('./'))
         .pipe(gulp.dest(path.dest+'css/'))
-		.pipe( rev.manifest('cssRev.json') )
+		//.pipe( rev.manifest('cssRev.json') )
         .pipe(gulp.dest(path.src+'rev/'));
 		
 	gulp
@@ -51,10 +51,10 @@ gulp.task('less', function () {
 		}))
 		.pipe(less())
 		.pipe(minifycss({compatibility: 'ie7'}))
-		.pipe(rev())
+		//.pipe(rev())
 		.pipe(cssurl())
         .pipe(gulp.dest(path.demo+'dest/css/'))
-		.pipe( rev.manifest('cssRev.json') )
+		//.pipe( rev.manifest('cssRev.json') )
         .pipe(gulp.dest(path.demo+'src/rev/'));
 });
 
@@ -75,10 +75,10 @@ gulp.task('js', function () {
 	gulp.src(path.src+'src/')
 		.pipe(webpack(webpackConfig))
 		//.pipe(minifyJs())
-		.pipe(rev())
+		//.pipe(rev())
 		.pipe(gulp.dest(path.dest+'js/'))
 		.pipe(gulp.dest(path.demo+'dest/js/'))
-		.pipe( rev.manifest('jsRev.json') )
+		//.pipe( rev.manifest('jsRev.json') )
 		.pipe(gulp.dest(path.src+'rev/'))
         .pipe(gulp.dest(path.demo+'src/rev/'));
 });
@@ -213,7 +213,7 @@ gulp.task('demo', function(){
 				markdown: markdown.parse
 			}
 		}))
-		.pipe( revCollector() )
+		//.pipe( revCollector() )
 		.pipe(gulp.dest(path.demo+'dest/html/'));
 		
 	gulp.src([path.demo+'src/rev/*.json', path.demo+'src/html/index.html'])
@@ -224,7 +224,7 @@ gulp.task('demo', function(){
 				markdown: markdown.parse
 			}
 		}))
-		.pipe( revCollector() )
+		//.pipe( revCollector() )
 		.pipe(gulp.dest(path.demo+'dest/'));
 
 	gulp

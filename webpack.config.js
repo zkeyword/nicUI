@@ -4,9 +4,10 @@ var path = require('path');
 var webpack = require('webpack'); 
 
 module.exports = {
-	entry: [
-		'./src/js/main.js'
-	],
+	entry: {
+		pop: './src/js/core/pop.js',
+		nicUI: './src/js/main.js'
+	},
 	resolve: {
 		modulesDirectories: [
 			'node_modules',
@@ -21,7 +22,7 @@ module.exports = {
 	},
 	output: {
 		path: __dirname + "/dest/js/",
-		filename: "nicUI.js"
+		filename: "[name].js"
 	},
 	module: {
 		loaders: [

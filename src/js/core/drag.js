@@ -1,18 +1,26 @@
-define(function(){
-	
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('jquery'));
+    } else {
+        root.Drag = factory(root.jQuery);
+    }
+}(this, function ($) {
+
 	'use strict';
-	
+
 	/**
 	* nic.ui.drag 拖拽控件
 	* @class nic.ui.drag
 	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} options drag参数
-    * @param {String} options.dragItem 拖拽触发对象选择器
-    * @param {String} options.dragWrap 拖拽移动对象选择器
+	* @blog http://zkeyword.com/
+	* @param {Object} options drag参数
+	* @param {String} options.dragItem 拖拽触发对象选择器
+	* @param {String} options.dragWrap 拖拽移动对象选择器
 	*/
 	var Drag = function(options){         //IE下 iframe内的的拖动还是有问题
-	
+
 		var o = options || {};
 		if( !o.dragItem ){return false;}
 		var	dragItem = $('body').find(o.dragItem),
@@ -53,6 +61,7 @@ define(function(){
 				$(win).off('mousemove', _moveDialog);
 			});
 	};
-	
+
 	return Drag;
-});
+
+}));

@@ -1,21 +1,21 @@
-define(['./nic', './drag'], function(nic, drag){
-	
-	/**
-	* nic.ui.dialog 拖拽控件
-	* @class nic.ui.dialog
-	* @author norion.z
-    * @blog http://zkeyword.com/
-	*/
-	// XXX
-	var lang = {
-		close: '关闭',
-	    /*dialog*/
-	    alert: '提示？',
-	    confirm: '确认？',
-	    error: '错误'
-	}
+/**
+* nic.ui.dialog 拖拽控件
+* @class nic.ui.dialog
+* @author norion.z
+* @blog http://zkeyword.com/
+*/
+// XXX
+var lang = {
+	close: '关闭',
+    /*dialog*/
+    alert: '提示？',
+    confirm: '确认？',
+    error: '错误'
+}
 
-	var dialog = {
+var nic    = require('./nic'),
+	drag   = require('./drag'),
+	dialog = {
 		init: function(options){
 			var o             = options || {},
 				title         = o.title || '',
@@ -380,9 +380,6 @@ define(['./nic', './drag'], function(nic, drag){
 		}
 			
 	};
-	
-	//nic.ui.dialog = dialog;
-	
-	return dialog;
-	
-});
+
+
+module.exports = dialog;

@@ -1,18 +1,11 @@
-define(['./nic'], function(nic){
+'use strict';
 	
-	'use strict';
-		
-	/**
-	* nic.ui.check 下拉框控件
-	* @class nic.ui.check
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} o 下拉框参数
-    * @param {String} o.id 下拉框id
-	* @return {Object} select对象
-	*/
-	
-	var Check = function(o){
+/**
+check模拟
+*/
+
+var nic   = require('./nic'),
+	Check = function(o){
 		
 		var 
 			/**
@@ -157,7 +150,7 @@ define(['./nic'], function(nic){
 				};
 		
 		/**
-		* 刷新下拉框
+		* 刷新
 		*/
 		g.refresh = function(o){
 			for(var key in o){
@@ -173,10 +166,9 @@ define(['./nic'], function(nic){
 		return c.init(o);
 	};
 	
-	return function(o){
-		if( !o ){
-			return {};
-		}
-		return new Check(o);
-	};
-});
+module.exports = function(o){
+	if( !o ){
+		return {};
+	}
+	return new Check(o);
+};

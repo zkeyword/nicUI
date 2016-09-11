@@ -1,40 +1,39 @@
-define(['./nic'], function(nic){
+'use strict';
 	
-	'use strict';
-		
-	/**
-	* TODO
-	* nic.ui.validator
-	* @class nic.ui.validator
-	* @author norion.z
-    * @blog http://zkeyword.com/
-    * @param {Object} o 
-    * @param {String} o.id 
-	* @return {Object} select对象
-	*/
+/**
+* TODO
+* nic.ui.validator
+* @class nic.ui.validator
+* @author norion.z
+* @blog http://zkeyword.com/
+* @param {Object} o 
+* @param {String} o.id 
+* @return {Object} select对象
+*/
+
+var nic       = require('./nic'),
+    Validator = function(o){
 	
-	var Validator = function(o){
-		
-		var 
-			/**
-			* 当前对象
-			*/
-			g = this,
-			
-			/**
-			* 默认配置
-			*/
-			p = {
-				target: null,
-				//label: null,
+    	var 
+    		/**
+    		* 当前对象
+    		*/
+    		g = this,
+    		
+    		/**
+    		* 默认配置
+    		*/
+    		p = {
+    			target: null,
+    			//label: null,
                 text: {
                     check: '必须勾选！',
                     required: '不能为空！',
-					select: '请选择！',
+    				select: '请选择！',
                     length: '输入字符长度等于{{param}}个字符',
                     minLength: '输入字符长度不小于{{param}}个字符',
                     maxLength: '输入字符长度大小于{{param}}个字符',
-					minValue: '请输入不能小于{{param}}',
+    				minValue: '请输入不能小于{{param}}',
                     maxValue: '请输入不能大于{{param}}',
                     integer: '请输入一个正确的整数值',
                     digits: '请输入一个正确的正整数',
@@ -50,21 +49,21 @@ define(['./nic'], function(nic){
                 },
                 rules:null,
                 ajax:null,
-				position: null
-			},
-				
-			/**
-			* 缓存池
-			*/
-			t = {
-				//submit: false
-			},
-			
-			/**
-			* XXX
-			* 代码逻辑
-			*/
-			c = {
+    			position: null
+    		},
+    			
+    		/**
+    		* 缓存池
+    		*/
+    		t = {
+    			//submit: false
+    		},
+    		
+    		/**
+    		* XXX
+    		* 代码逻辑
+    		*/
+    		c = {
                 
                 rule: {
 
@@ -76,8 +75,8 @@ define(['./nic'], function(nic){
                         if( !sVal.length ){
                             return false;
                         }
-						
-						// XXX
+    					
+    					// XXX
                         
                         if( oItem[0].type === 'checkbox' && !$("input:checkbox[name='"+ oItem[0].name +"']:checked").length ){
                             return c.handleText(oItem, 'check');
@@ -87,19 +86,19 @@ define(['./nic'], function(nic){
                             return c.handleText(oItem, 'check');
                         }
                     },
-					
-					/* 强制选择 */
-					select: function(sVal, oItem, sParam){
+    				
+    				/* 强制选择 */
+    				select: function(sVal, oItem, sParam){
                         if(sVal === sParam){
                             return c.handleText(oItem, 'select', sParam);
                         }
-					},
+    				},
                     
                     /* 非空 */
-					//TODO
+    				//TODO
                     required: function(sVal, oItem){
                         if( !sVal.trims() ){
-							return c.handleText(oItem, 'required');
+    						return c.handleText(oItem, 'required');
                         }
                     },
                     
@@ -144,8 +143,8 @@ define(['./nic'], function(nic){
                             return c.handleText(oItem, 'maxLength', sParam);
                         }
                     },
-					
-					/* 最小值 */
+    				
+    				/* 最小值 */
                     minValue: function(sVal, oItem, sParam){
                         
                     	sVal   = Number(sVal);
@@ -282,9 +281,9 @@ define(['./nic'], function(nic){
                             return c.handleText(oItem, 'phone');
                         }
                     },
-					
-					/* 身份证 */
-					idCard: function(sVal, oItem){
+    				
+    				/* 身份证 */
+    				idCard: function(sVal, oItem){
                         sVal = sVal.trims();
 
                         if( !sVal.length ){
@@ -354,7 +353,7 @@ define(['./nic'], function(nic){
                             success: function(data){
                                 if( !data ){
                                     oItem.addClass('l-form-error');
-									c.handleMessage(oItem, c.handleText(oItem, 'ajax'));
+    								c.handleMessage(oItem, c.handleText(oItem, 'ajax'));
                                 }else{
                                     oItem.removeClass('l-form-error');
                                 }
@@ -366,213 +365,213 @@ define(['./nic'], function(nic){
                     }
                 
                 },
-				
-				handlePositionStr: function(s){
-					if( !s ) return;
-					var sStr    = s.replace(/\{|\}/g, ''),
-						oArr    = sStr.split(','),
-						len     = oArr.length,
-						i       = 0,
-						oReturn = {}
-						
-					for(; i<len; i++){
-						var oChlid = oArr[i].split(':');
-						oReturn[oChlid[0]] = Number(oChlid[1]);
-					}
-					return oReturn;
-				},
-				
-				route: function(oItem){
-					
-					if( !oItem.length ){ return; }
-					
-					var oThat      = this,
-						sVal       = oItem.val(),
-						aRule      = oItem.attr('data-validate').split(';'),
-						len        = aRule.length,
-						i          = 0,
-						rCode      = /\=/,
-						rFormat    = /format\=|ajax\=/,
-						rPosition  = /\|/,
-						isFunction = nic.base.isFunction;
-						
-					for(; i<len; i++){
-						var fRule     = null,
-							sText     = '',
-							sType     = '',
-							sTypeVal  = '',
-							sPosition = '';
-						
-						if( rCode.test(aRule[i]) ){
-							var aChild = aRule[i].split('=');
-							
-							if( rFormat ){
-								if( aChild[0] === 'format' ){
-									aChild = ['format', aRule[i].replace(rFormat,'')];
-								}else{
-									var tmpVal = '';
-									tmpVal = aRule[i].replace(rFormat,'');
-									tmpVal = tmpVal.replace(/{{value}}/, sVal);
-									aChild = ['ajax', tmpVal];
-								}
-							}else if( aChild[0] === 'position' ){
-								console.log(1)
-							}
-							
-							fRule    = oThat.rule[aChild[0]];
-							sType    = aChild[0];
-							sTypeVal = aChild[1];
-							
-							if( fRule && isFunction(fRule) ){
-								sText = fRule(sVal, oItem, aChild[1]);
-							}
-							
-						}else{
-							
-							if( rPosition.test(aRule[i]) ){
-								var aRuleChild = aRule[i].split('|');
-								fRule     = oThat.rule[aRuleChild[0]];
-								sType     = aRuleChild[0];
-								sPosition = aRuleChild[1];
-								if( !/\{.*\}/g.test(sPosition) ){
-									sPosition = '';
-									console.log('定位的格式不正确');
-								}
-							}else{
-								fRule = oThat.rule[aRule[i]];
-								sType = aRule[i];
-							}
-							
-							if( fRule && isFunction(fRule) ){
-								sText = fRule(sVal, oItem);
-							}
-						}
+    			
+    			handlePositionStr: function(s){
+    				if( !s ) return;
+    				var sStr    = s.replace(/\{|\}/g, ''),
+    					oArr    = sStr.split(','),
+    					len     = oArr.length,
+    					i       = 0,
+    					oReturn = {}
+    					
+    				for(; i<len; i++){
+    					var oChlid = oArr[i].split(':');
+    					oReturn[oChlid[0]] = Number(oChlid[1]);
+    				}
+    				return oReturn;
+    			},
+    			
+    			route: function(oItem){
+    				
+    				if( !oItem.length ){ return; }
+    				
+    				var oThat      = this,
+    					sVal       = oItem.val(),
+    					aRule      = oItem.attr('data-validate').split(';'),
+    					len        = aRule.length,
+    					i          = 0,
+    					rCode      = /\=/,
+    					rFormat    = /format\=|ajax\=/,
+    					rPosition  = /\|/,
+    					isFunction = nic.base.isFunction;
+    					
+    				for(; i<len; i++){
+    					var fRule     = null,
+    						sText     = '',
+    						sType     = '',
+    						sTypeVal  = '',
+    						sPosition = '';
+    					
+    					if( rCode.test(aRule[i]) ){
+    						var aChild = aRule[i].split('=');
+    						
+    						if( rFormat ){
+    							if( aChild[0] === 'format' ){
+    								aChild = ['format', aRule[i].replace(rFormat,'')];
+    							}else{
+    								var tmpVal = '';
+    								tmpVal = aRule[i].replace(rFormat,'');
+    								tmpVal = tmpVal.replace(/{{value}}/, sVal);
+    								aChild = ['ajax', tmpVal];
+    							}
+    						}else if( aChild[0] === 'position' ){
+    							console.log(1)
+    						}
+    						
+    						fRule    = oThat.rule[aChild[0]];
+    						sType    = aChild[0];
+    						sTypeVal = aChild[1];
+    						
+    						if( fRule && isFunction(fRule) ){
+    							sText = fRule(sVal, oItem, aChild[1]);
+    						}
+    						
+    					}else{
+    						
+    						if( rPosition.test(aRule[i]) ){
+    							var aRuleChild = aRule[i].split('|');
+    							fRule     = oThat.rule[aRuleChild[0]];
+    							sType     = aRuleChild[0];
+    							sPosition = aRuleChild[1];
+    							if( !/\{.*\}/g.test(sPosition) ){
+    								sPosition = '';
+    								console.log('定位的格式不正确');
+    							}
+    						}else{
+    							fRule = oThat.rule[aRule[i]];
+    							sType = aRule[i];
+    						}
+    						
+    						if( fRule && isFunction(fRule) ){
+    							sText = fRule(sVal, oItem);
+    						}
+    					}
 
-						if( sText ){
-							return {
-								html: sText,
-								type: sType,
-								typeVal: sTypeVal,
-								position: oThat.handlePositionStr(sPosition)
-							};
-						}
-					}
-					
-					return null;
-				},
-				
+    					if( sText ){
+    						return {
+    							html: sText,
+    							type: sType,
+    							typeVal: sTypeVal,
+    							position: oThat.handlePositionStr(sPosition)
+    						};
+    					}
+    				}
+    				
+    				return null;
+    			},
+    			
                 handleText: function(oItem, sMark, sParam){
                     var arrtText    = oItem.attr('data-validate-'+ sMark +'Text'),
                         defaultText = p.text[sMark],
                         text        = arrtText ? arrtText : defaultText,
                         reg         = /{{param}}/;
-					oItem.attr('data-validate-'+ sMark +'Text', text);
+    				oItem.attr('data-validate-'+ sMark +'Text', text);
                     return text.replace(reg, sParam);
                 },
-				
-				handleMessage: function(oSelf, sContents, sType, sTypeVal, position){
-					var oThat     = this,
-						parents   = oSelf.parents('.ui-form'),
-						message   = parents.find('.ui-form-message'),
-						error     = parents.find('.l-form-error'),
-						oItems    = parents.find('[data-validate]'),
-						oTarget   = p.target,
-						oPosition = oThat.handlePositionStr( oItems.attr('data-validate-position') ),
-						html      = '<span class="error"><i></i>'+ sContents +'</span>',
-						fPosition = function(position){
-							message
-								.attr('style', '')
-								.css(position)
-								.css({position:'absolute'})
-								.addClass('ui-form-message-absolute')
-							parents.css({position:'relative'});
-							
-							message.append('<i class="ui-form-message-arrow"></i>');
+    			
+    			handleMessage: function(oSelf, sContents, sType, sTypeVal, position){
+    				var oThat     = this,
+    					parents   = oSelf.parents('.ui-form'),
+    					message   = parents.find('.ui-form-message'),
+    					error     = parents.find('.l-form-error'),
+    					oItems    = parents.find('[data-validate]'),
+    					oTarget   = p.target,
+    					oPosition = oThat.handlePositionStr( oItems.attr('data-validate-position') ),
+    					html      = '<span class="error"><i></i>'+ sContents +'</span>',
+    					fPosition = function(position){
+    						message
+    							.attr('style', '')
+    							.css(position)
+    							.css({position:'absolute'})
+    							.addClass('ui-form-message-absolute')
+    						parents.css({position:'relative'});
+    						
+    						message.append('<i class="ui-form-message-arrow"></i>');
 
-							message
-								.append(function(){
-									if( !message.find('.ui-form-message-arrow').length ) return '<i class="ui-form-message-arrow"></i>';
-								})
-								.find('.ui-form-message-arrow')
-								.addClass(function(){
-									if( position.top ) return 'arrowTop';
-									if( position.bottom ) return 'arrowBottom';
-								});
-						}
-						
-					if( !message.length ){
-						if( oSelf.next('.ui-form-message').length ){
-							message = oSelf.next('.ui-form-message');
-						}else if( message.length === 0 ){
-							message = oTarget.find('.ui-form-message');
-							message.length === 1 && message.html( html );
-							if(!g.getStatus()){
-								return;
-							}
-						}
-					}
+    						message
+    							.append(function(){
+    								if( !message.find('.ui-form-message-arrow').length ) return '<i class="ui-form-message-arrow"></i>';
+    							})
+    							.find('.ui-form-message-arrow')
+    							.addClass(function(){
+    								if( position.top ) return 'arrowTop';
+    								if( position.bottom ) return 'arrowBottom';
+    							});
+    					}
+    					
+    				if( !message.length ){
+    					if( oSelf.next('.ui-form-message').length ){
+    						message = oSelf.next('.ui-form-message');
+    					}else if( message.length === 0 ){
+    						message = oTarget.find('.ui-form-message');
+    						message.length === 1 && message.html( html );
+    						if(!g.getStatus()){
+    							return;
+    						}
+    					}
+    				}
 
-					if( !sContents ){
-						message.empty();
-						return false;
-					}
-					if( oItems.length !== 1 && error.length && sType ){
-						html = '<span class="error"><i></i>'+ oThat.handleText(error.eq(0), sType, sTypeVal) +'</span>';
-		 			}
-					
-					message.html( html );
-					
-					if( position ){
-						fPosition(position);
-					}else if(oPosition){
-						fPosition(oPosition);
-					}else if( p.position ){
-						fPosition(p.position);
-					}
-				},
-				
-				handleError: function(oSelf, oRoute){
-					var oThat      = this,
-						sHideError = oSelf.attr('data-ishideValidte'),
-						errorCls   = (sHideError === "true" && sHideError) ? 'l-form-error l-form-hideError' :'l-form-error',
-						type       = oRoute ? oRoute.type : null,
-						html       = oRoute ? oRoute.html : null,
-						typeVal    = oRoute ? oRoute.typeVal : null,
-						position   = oRoute ? oRoute.position : null;
+    				if( !sContents ){
+    					message.empty();
+    					return false;
+    				}
+    				if( oItems.length !== 1 && error.length && sType ){
+    					html = '<span class="error"><i></i>'+ oThat.handleText(error.eq(0), sType, sTypeVal) +'</span>';
+    	 			}
+    				
+    				message.html( html );
+    				
+    				if( position ){
+    					fPosition(position);
+    				}else if(oPosition){
+    					fPosition(oPosition);
+    				}else if( p.position ){
+    					fPosition(p.position);
+    				}
+    			},
+    			
+    			handleError: function(oSelf, oRoute){
+    				var oThat      = this,
+    					sHideError = oSelf.attr('data-ishideValidte'),
+    					errorCls   = (sHideError === "true" && sHideError) ? 'l-form-error l-form-hideError' :'l-form-error',
+    					type       = oRoute ? oRoute.type : null,
+    					html       = oRoute ? oRoute.html : null,
+    					typeVal    = oRoute ? oRoute.typeVal : null,
+    					position   = oRoute ? oRoute.position : null;
 
-					if( html ){
-						oSelf
-							.addClass(errorCls)
-							.attr('data-validate-result', 'false')
-							.parents('.l-select-wrap')
-							.find('.l-select-single-init')
-							.addClass(errorCls);
-						oThat.handleMessage(oSelf, html, type, typeVal, position);
-					}else{
-						oSelf
-							.removeClass(errorCls)
-							.attr('data-validate-result', 'true')
-							.parents('.l-select-wrap')
-							.find('.l-select-single-init')
-							.removeClass(errorCls);
-						oThat.handleMessage(oSelf);
-					}
-					
-					return html;
-				},
-				
-				run: function(){
-					var oThat      = this,
-						oTarget    = p.target,
+    				if( html ){
+    					oSelf
+    						.addClass(errorCls)
+    						.attr('data-validate-result', 'false')
+    						.parents('.l-select-wrap')
+    						.find('.l-select-single-init')
+    						.addClass(errorCls);
+    					oThat.handleMessage(oSelf, html, type, typeVal, position);
+    				}else{
+    					oSelf
+    						.removeClass(errorCls)
+    						.attr('data-validate-result', 'true')
+    						.parents('.l-select-wrap')
+    						.find('.l-select-single-init')
+    						.removeClass(errorCls);
+    					oThat.handleMessage(oSelf);
+    				}
+    				
+    				return html;
+    			},
+    			
+    			run: function(){
+    				var oThat      = this,
+    					oTarget    = p.target,
                         fRules     = p.rules,
                         fAjax      = p.ajax,
-						fAction    = function(oSelf){
-										var sVal     = oSelf.val(),
-											sRule    = oSelf.attr('data-validate'),
-											name     = oSelf.attr('data-validate-name'),
-											allName  = oTarget.find('[data-validate-name="'+ name +'"]'),
-											errorLen = oSelf.parents('.ui-form').find('.l-form-error').length,
-											oRoute   = null;
+    					fAction    = function(oSelf){
+    									var sVal     = oSelf.val(),
+    										sRule    = oSelf.attr('data-validate'),
+    										name     = oSelf.attr('data-validate-name'),
+    										allName  = oTarget.find('[data-validate-name="'+ name +'"]'),
+    										errorLen = oSelf.parents('.ui-form').find('.l-form-error').length,
+    										oRoute   = null;
 
                                         if( nic.base.isFunction(fRules) && sRule === 'process' ){
                                             return processHandle(sRule, fRules(oSelf), true );
@@ -586,190 +585,190 @@ define(['./nic'], function(nic){
                                             return true;
                                         }
 
-										oRoute = oThat.route(oSelf);
-										
-										if( name ){
-											
-											if( oRoute ){
-												if( oRoute.type !== 'required' ){
-													return sVal && oThat.handleError(oSelf, oRoute);
-												}
-												
-												return allNameHandle();
-											}
-											
-											return oThat.handleError(allName);
-										}
-										
-										return oRoute ? 
-													oThat.handleError(oSelf, oRoute) : 
-													oThat.handleError(oSelf);
-										
-										function allNameHandle(){
-											
-											var obj     = allName.filter(function(){
-																return this.value;
-															}),
-												nullObj = allName.filter(function(){
-																return !this.value;
-															}),
-												okObj   = allName.filter(function(){
-																return this.getAttribute('data-validate-result') === 'true';
-															}),
-												noObj   = allName.filter(function(){
-																return this.getAttribute('data-validate-result') === 'false';
-															})
-											/*				
-											console.log(
-												errorLen, 
-												nullObj.length, 
-												okObj.length, 
-												!sVal, 
-												oSelf, 
-												noObj, 
-												oSelf.hasClass('l-form-error')
-											)*/			
-											
-											if( errorLen ){
-												
-												//全部不通过
-												if( errorLen === allName.length ){
-													return ;
-												}
-												
-												//当前无值且当前不通过、不是全部空值
-												if( !sVal && oSelf.hasClass('l-form-error') && nullObj.length !== allName.length ){
-													return oThat.handleError(oSelf);
-												}
-												
-												//当前无值且有不通过
-												if( !sVal && noObj.length ){
-													return ;
-												}
-												
-												//当前无值且有通过
-												if( !sVal && okObj.length ){
-													return ;
-												}
+    									oRoute = oThat.route(oSelf);
+    									
+    									if( name ){
+    										
+    										if( oRoute ){
+    											if( oRoute.type !== 'required' ){
+    												return sVal && oThat.handleError(oSelf, oRoute);
+    											}
+    											
+    											return allNameHandle();
+    										}
+    										
+    										return oThat.handleError(allName);
+    									}
+    									
+    									return oRoute ? 
+    												oThat.handleError(oSelf, oRoute) : 
+    												oThat.handleError(oSelf);
+    									
+    									function allNameHandle(){
+    										
+    										var obj     = allName.filter(function(){
+    															return this.value;
+    														}),
+    											nullObj = allName.filter(function(){
+    															return !this.value;
+    														}),
+    											okObj   = allName.filter(function(){
+    															return this.getAttribute('data-validate-result') === 'true';
+    														}),
+    											noObj   = allName.filter(function(){
+    															return this.getAttribute('data-validate-result') === 'false';
+    														})
+    										/*				
+    										console.log(
+    											errorLen, 
+    											nullObj.length, 
+    											okObj.length, 
+    											!sVal, 
+    											oSelf, 
+    											noObj, 
+    											oSelf.hasClass('l-form-error')
+    										)*/			
+    										
+    										if( errorLen ){
+    											
+    											//全部不通过
+    											if( errorLen === allName.length ){
+    												return ;
+    											}
+    											
+    											//当前无值且当前不通过、不是全部空值
+    											if( !sVal && oSelf.hasClass('l-form-error') && nullObj.length !== allName.length ){
+    												return oThat.handleError(oSelf);
+    											}
+    											
+    											//当前无值且有不通过
+    											if( !sVal && noObj.length ){
+    												return ;
+    											}
+    											
+    											//当前无值且有通过
+    											if( !sVal && okObj.length ){
+    												return ;
+    											}
 
-												return oThat.handleError(oSelf, oRoute);
-											}
-											
-											//全部空值
-											if( nullObj.length === allName.length ){
-												return oThat.handleError(allName, oRoute);
-											}
-											
-											//无错且无空值
-											if( !nullObj.length ){
-												return ;
-											}
-											
-											//无错且当前是空值
-											if( !sVal ){
-												return ;
-											}
-											
-											return oThat.handleError(allName, oRoute);
-										}
+    											return oThat.handleError(oSelf, oRoute);
+    										}
+    										
+    										//全部空值
+    										if( nullObj.length === allName.length ){
+    											return oThat.handleError(allName, oRoute);
+    										}
+    										
+    										//无错且无空值
+    										if( !nullObj.length ){
+    											return ;
+    										}
+    										
+    										//无错且当前是空值
+    										if( !sVal ){
+    											return ;
+    										}
+    										
+    										return oThat.handleError(allName, oRoute);
+    									}
 
                                         function processHandle(type, status, isShow){
-											return !status ?
-														oThat.handleError(
-															oSelf, 
-															type, 
-															isShow ? oSelf.attr('data-validate-'+ type +'Text') : ''
-														):
-														oThat.handleError(oSelf);
+    										return !status ?
+    													oThat.handleError(
+    														oSelf, 
+    														type, 
+    														isShow ? oSelf.attr('data-validate-'+ type +'Text') : ''
+    													):
+    													oThat.handleError(oSelf);
                                         }
-									},
-						fUnAction  = function(oSelf){
-										var sHideError   = oSelf.attr('data-ishideValidte'),
-											hideErrorCls = sHideError === "true" && sHideError ?
-																'l-form-error l-form-hideError' :
-																'l-form-error',
-											name         = oSelf.attr('data-validate-name'),
-											allName      = oTarget.find('[data-validate-name="'+ name +'"]'),
-											errorLen     = allName.parents('.ui-form').find('.l-form-error').length;
+    								},
+    					fUnAction  = function(oSelf){
+    									var sHideError   = oSelf.attr('data-ishideValidte'),
+    										hideErrorCls = sHideError === "true" && sHideError ?
+    															'l-form-error l-form-hideError' :
+    															'l-form-error',
+    										name         = oSelf.attr('data-validate-name'),
+    										allName      = oTarget.find('[data-validate-name="'+ name +'"]'),
+    										errorLen     = allName.parents('.ui-form').find('.l-form-error').length;
 
                                         if( oSelf[0].type === 'checkbox' || oSelf[0].type === 'radio' ){
                                             $("input[name='"+ oSelf[0].name +"']").removeClass(hideErrorCls);
                                         }
-										
-										if( allName.length && errorLen ){
-											return ;
-										}
-										
-										if( allName.length ){
-											oThat.handleError(allName);
-										}else{
-											oThat.handleError(oSelf);
-										}
-									},
-						fActionAll = function(){
-										var oItem = oTarget.find('[data-validate]'),
-											len   = oItem.length,
-											i     = 0;
-											
-										for(; i<len; i++){
-											if( !fAction( oItem.eq(i) ) ){
-												fUnAction( oItem.eq(i) );
-											}
-										}
-										return g.getStatus();
-									};
-					
-					oTarget
-						.on('blur', '[data-validate]', function(e){
-							fAction( $(e.currentTarget) );
-						})
-						.on('focus', '[data-validate]', function(e){
-							fUnAction( $(e.currentTarget) );
-						})
-						.on('change', 'select[data-validate]', function(e){
-							fAction( $(e.currentTarget) );
-						})
-						.on('submit', function(){
-							return fActionAll();
-						})
-						.on('all', function(){
-							return fActionAll();
-						});
-						
-					/*oTarget.on('blur', '.l-select-single-init', function(e){
-						var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
-						if( obj.length ){
-							fAction( obj );
-						}
-					});
-					
-					oTarget.on('focus', '.l-select-single-init', function(e){
-						var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
-						if( obj.length ){
-							fUnAction( $(e.currentTarget) );
-						}
-					});*/
-				},
-				
-				init: function(o){
-					for(var key in o){
-						if( o.hasOwnProperty(key) && o[key] !== undefined && p[key] !== undefined ){
-							p[key] = o[key];
-						}
-					}
-					
-					p.target = $(p.target);
-					
-					if( !p.target.length ){
-						console.log('target not find');
-					}
-					
-					c.run();
-				}
-			};
-			
-		g.reset = function(){
-			var oTarget  = p.target,
+    									
+    									if( allName.length && errorLen ){
+    										return ;
+    									}
+    									
+    									if( allName.length ){
+    										oThat.handleError(allName);
+    									}else{
+    										oThat.handleError(oSelf);
+    									}
+    								},
+    					fActionAll = function(){
+    									var oItem = oTarget.find('[data-validate]'),
+    										len   = oItem.length,
+    										i     = 0;
+    										
+    									for(; i<len; i++){
+    										if( !fAction( oItem.eq(i) ) ){
+    											fUnAction( oItem.eq(i) );
+    										}
+    									}
+    									return g.getStatus();
+    								};
+    				
+    				oTarget
+    					.on('blur', '[data-validate]', function(e){
+    						fAction( $(e.currentTarget) );
+    					})
+    					.on('focus', '[data-validate]', function(e){
+    						fUnAction( $(e.currentTarget) );
+    					})
+    					.on('change', 'select[data-validate]', function(e){
+    						fAction( $(e.currentTarget) );
+    					})
+    					.on('submit', function(){
+    						return fActionAll();
+    					})
+    					.on('all', function(){
+    						return fActionAll();
+    					});
+    					
+    				/*oTarget.on('blur', '.l-select-single-init', function(e){
+    					var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
+    					if( obj.length ){
+    						fAction( obj );
+    					}
+    				});
+    				
+    				oTarget.on('focus', '.l-select-single-init', function(e){
+    					var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
+    					if( obj.length ){
+    						fUnAction( $(e.currentTarget) );
+    					}
+    				});*/
+    			},
+    			
+    			init: function(o){
+    				for(var key in o){
+    					if( o.hasOwnProperty(key) && o[key] !== undefined && p[key] !== undefined ){
+    						p[key] = o[key];
+    					}
+    				}
+    				
+    				p.target = $(p.target);
+    				
+    				if( !p.target.length ){
+    					console.log('target not find');
+    				}
+    				
+    				c.run();
+    			}
+    		};
+    		
+    	g.reset = function(){
+    		var oTarget  = p.target,
                 oItem    = oTarget.find('[data-validate]'),
                 oMessage = oTarget.find('.ui-form-message'),
                 len      = oItem.length,
@@ -785,40 +784,39 @@ define(['./nic'], function(nic){
                     .removeClass('l-form-error');
                 oMessage.eq(i).empty();
             }
-		};
-		
-		g.getStatus = function(){
-			var oTarget         = p.target,
-				oError          = oTarget.find('.l-form-error'),
-				oVisibleError   = oError.filter(function(){
-										var that = $(this);
-										return that.filter(':visible').length && ( that.filter(':enabled').length || that.hasClass('l-select-single-init') );
-									}),
-				oHideError      = oError.filter('.l-form-hideError'),
-				len             = oVisibleError.length + oHideError.length,
-				nErrorOffsetTop = oVisibleError.length ? oVisibleError.offset().top : 0;
-			
-			if( oVisibleError.length && $(window).height() < nErrorOffsetTop ){
-				$('html, body').animate({scrollTop:nErrorOffsetTop}, 500);
-				//oVisibleError.focus();
-			}
+    	};
+    	
+    	g.getStatus = function(){
+    		var oTarget         = p.target,
+    			oError          = oTarget.find('.l-form-error'),
+    			oVisibleError   = oError.filter(function(){
+    									var that = $(this);
+    									return that.filter(':visible').length && ( that.filter(':enabled').length || that.hasClass('l-select-single-init') );
+    								}),
+    			oHideError      = oError.filter('.l-form-hideError'),
+    			len             = oVisibleError.length + oHideError.length,
+    			nErrorOffsetTop = oVisibleError.length ? oVisibleError.offset().top : 0;
+    		
+    		if( oVisibleError.length && $(window).height() < nErrorOffsetTop ){
+    			$('html, body').animate({scrollTop:nErrorOffsetTop}, 500);
+    			//oVisibleError.focus();
+    		}
 
-			return !len;
-		};
-		
-		g.validatorAll = function(){
+    		return !len;
+    	};
+    	
+    	g.validatorAll = function(){
             return p.target.triggerHandler('all');
-		};
-		
-		g.reload = function(){
-			console.log('target overloaded');
-			c.init(o);
-		};
+    	};
+    	
+    	g.reload = function(){
+    		console.log('target overloaded');
+    		c.init(o);
+    	};
 
-		return c.init(o);
-	};
-	
-	return function(o){
-		return o ? new Validator(o) : {};
-	};
-});
+    	return c.init(o);
+    };
+
+module.exports = function(o){
+	return o ? new Validator(o) : {};
+};

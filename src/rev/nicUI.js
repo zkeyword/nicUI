@@ -44,42 +44,436 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1);
+	var nic;
 
+	/* 基本依赖 */
+	nic               = __webpack_require__(1);
+	nic.ui.drag       = __webpack_require__(3);
+	nic.ui.pagination = __webpack_require__(4);
+
+	/* 一般组件 */
+	nic.ui.grid       = __webpack_require__(5);
+	nic.ui.gridFree   = __webpack_require__(6);
+	nic.ui.validator  = __webpack_require__(8);
+	nic.ui.pop        = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./core/pop\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	nic.ui.dialog     = __webpack_require__(9);
+	nic.ui.check      = __webpack_require__(10);
+	nic.ui.tab        = __webpack_require__(11);
+	nic.ui.tip        = __webpack_require__(12);
+	nic.ui.tree       = __webpack_require__(13);
+	nic.ui.btnSwitch  = __webpack_require__(14);
+
+	/* 其他$.fn插件 */
+	__webpack_require__(15);
+	__webpack_require__(16);
+
+	/* 第三方插件 */
+	window.ZeroClipboard = __webpack_require__(17);
+
+	module.exports = window.nic = nic;
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var nic;
+	'use strict';
 
-	/* 第三方插件 */
-	window.$             = __webpack_require__(2);
-	window.ZeroClipboard = __webpack_require__(3);
+	/*载入jquery依赖*/
+	window.$ = __webpack_require__(2);
 
+	(function() {
+		/**
+		 * 针对原型的方法添加应用支持
+		 */
+		
+		/**
+		 * 获取中文长度
+		 * @method getLength
+		 */
+		String.prototype.getLength = function(){
+			return this.replace(/[^\x00-\xff]/g, "en").length; //若为中文替换成两个字母
+		};
+		
+		/**
+		 * 清空空格
+		 * @method trims
+		 * @return {String}
+		 */
+		String.prototype.trims = function(){
+			return this.replace(/^[\s\xa0\u3000]+|[\u3000\xa0\s]+$/g, "");
+		};
+		
+		/**
+		 * 转为unicode编码
+		 * @method toUnicode
+		 * @return {String}
+		 */
+		String.prototype.toUnicode = function(){
+			return escape( this.toLocaleLowerCase() ).replace(/\%/gi, '\\') ;
+		};
+		
+		/**
+		 * 转为unicode编码
+		 * @method unicodeTo
+		 * @return {String}
+		 */
+		String.prototype.unicodeTo = function(){
+			return unescape( this.toLocaleLowerCase().replace(/%u/gi, '\\') );
+		};
+		
+		// 对Date的扩展，将 Date 转化为指定格式的String
+		// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
+		// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
+		// 例子： 
+		// (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
+		// (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
+		Date.prototype.format = function(fmt) { //author: meizz 
+			var o = {
+				"M+": this.getMonth() + 1, //月份 
+				"d+": this.getDate(), //日 
+				"h+": this.getHours(), //小时 
+				"m+": this.getMinutes(), //分 
+				"s+": this.getSeconds(), //秒 
+				"q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+				"S": this.getMilliseconds() //毫秒 
+			};
+			if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			for (var k in o)
+			if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+			return fmt;
+		}
+		
+		/**
+		 * 重写console
+		 */
+		if(!window.console){
+			window.console = {};
+		}
+		if(!console.log){
+			console.log = function(){};
+		}
+		
+		/**
+		 * 设定基本命名空间
+		 * @namespace nic
+		 * @author norion
+		 * @blog http://zkeyword.com/
+		 */
+		var nic = window.nic || {};
 
-	/* nic */
-	nic              = __webpack_require__(4);
-	nic.ui.grid      = __webpack_require__(5);
-	nic.ui.gridFree  = __webpack_require__(6);
-	nic.ui.validator = __webpack_require__(9);
+		/*设定基本构架*/
+		nic = {
+			_INSTALL: function(){
+				window.nic = nic;
+			},
+			base: {}, //基础层，所有的基础函数库，如cookie等
+			ui: {},   //前端显示层，用来重构和回流DOM，前端的特效显示处理
+			app:{}    //应用层，挂载一些应用的通用类。
+		};
+		
+		nic._INSTALL();
+	}(window));
 
-	nic.ui.drag      = __webpack_require__(10);
-	nic.ui.pop       = __webpack_require__(11);
-	nic.ui.dialog    = __webpack_require__(12);
+	/*鼠标滚轮监听*/
+	/*(function($){
+	    $.fn.preventScroll = function(){
+	        var that = this[0];
+	        if($.browser.mozilla){
+	        	that.addEventListener('DOMMouseScroll',function(e){
+	        		that.scrollTop += e.detail > 0 ? 60 : -60;   
+	                e.preventDefault();
+	            },false); 
+	        }else{
+	        	that.onmousewheel = function(e){   
+	                e = e || window.event;   
+	                that.scrollTop += e.wheelDelta > 0 ? -60 : 60;   
+	                e.returnValue = false;  
+	            };
+	        }
+	        return this;
+	    };
+	})(jQuery);*/
 
+	/**
+	 * 基础函数库
+	 * @class nic.base 基础函数库
+	 * @author norion
+	 * @blog http://zkeyword.com/
+	 */
+	nic.base = {
+		
+		/**
+		 * 判断是否是数组
+		 * @method nic.base.isArray
+		 * @param {Object} 数组对象
+		 * @return {Boolean}
+		 */
+		isArray: function(o){
+			return o ? jQuery.isArray(o) : false;
+		},
+		
+		/**
+		 * 判断是否是对象
+		 * @method nic.base.isObject
+		 * @param {Object} 字符串对象
+		 * @return {Boolean}
+		 */
+		isObject: function(o){
+			return o ? Object.prototype.toString.call(o) === "[object Object]" : false;
+		},
+		
+		/**
+		 * 判断是否是函数
+		 * @method nic.base.isFunction
+		 * @param {Function} Function对象
+		 * @return {Boolean}
+		 */
+		isFunction: function(o){
+			return o ? Object.prototype.toString.call(o) === "[object Function]" : false;
+		},
+		
+		/**
+		 * 判断是否是空值
+		 * @method nic.base.isEmpty
+		 * @param {Object} 对象
+		 * @return {Boolean}
+		 */
+		isEmpty: function(){
+			if( Object.keys ){
+				return Object.keys(o)
+			}else{
+				if( obj == null) return true;
+				if( obj.length > 0) return false;
+				if( obj.length === 0) return true;
+				for( var key in obj ){
+					if( Object.prototype.hasOwnProperty.call(obj, key) ) return false;
+				}
+				return true;
+			}
+		},
+		
+		/**
+		 * 获取浏览器 userAgent
+		 * @method nic.base.browser
+		 * @return {Object}
+		 */
+		browser: (function(){
+			var na            = window.navigator,
+				browserTester = /(msie|webkit|gecko|presto|opera|safari|firefox|chrome|maxthon|android|ipad|iphone|webos|hpwos)[ \/os]*([\d_.]+)/ig,
+				ua            = na.userAgent.toLowerCase(),
+				browser       = {
+									platform: na.platform
+								};
+			ua.replace(browserTester, function(a, b, c) {
+				var bLower = b.toLowerCase();
+				if (!browser[bLower]) {
+					browser[bLower] = c; 
+				}
+			});
+			if( browser.msie ){
+				browser.ie = browser.msie;
+				var v = parseInt(browser.msie, 10);
+				browser['ie' + v] = true;
+			}	
+			return browser;
+		}()),
+		
+		/**
+		 * cookie
+		 * @method nic.base.cookie
+		 */
+		cookie: {
 
-	nic.ui.check     = __webpack_require__(13);
-	nic.ui.tab       = __webpack_require__(14);
-	nic.ui.tip       = __webpack_require__(15);
-	nic.ui.tree      = __webpack_require__(16);
-	nic.ui.btnSwitch = __webpack_require__(17);
+			/**
+			 * 设置cookie
+			 * @param {String} cookie的名称
+			 * @param {String} cookie的值
+			 * @param {String} cookie的有效期
+			 * @param {String} cookie的域名
+			 * @param {String} cookie存放的路径
+			 * @return {Boolean}
+			 */
+			set: function(name, value, hour, domain, path){
+				if( hour ){
+					var today  = new Date(),
+						expire = new Date();
+					expire.setTime(today.getTime() + 36E5 * hour);
+				}
+				document.cookie = name + "=" + encodeURI(value) + "; " + (hour ? "expires=" + expire.toGMTString() + "; " : "") + (path ? "path=" + path + "; " : "path=/; ") + (domain ? "domain=" + domain + ";" : "");
+				return true;
+			},
+			
+			/**
+			 * 获取cookie
+			 * @param {String} cookie的名称
+			 * @return {String} cookie的值
+			 */
+			get: function( name ){
+				var r = new RegExp("(?:^|;+|\\s+)" + name + "=([^;]*)"),
+					m = document.cookie.match(r);
+					
+				return unescape(decodeURI(!m ? "" : m[1]));
+			},
+			
+			/**
+			 * 删除cookie
+			 * @param {String} cookie的名称
+			 * @param {String} cookie的域名
+			 * @param {String} cookie存放的路径
+			 */
+			del: function(name, domain, path){
+				document.cookie = name + "=; expires=Mon, 26 Jul 1997 05:00:00 GMT; " + (path ? "path=" + path + "; " : "path=/; ") + (domain ? "domain=" + domain + ";" : "");
+			}
+		}
+	};
+		
+		
+		
+	/**
+	 * 前端显示层，用来重构和回流DOM，前端的特效显示处理
+	 * @class nic.ui 前端显示层
+	 * @author norion
+	 * @blog http://zkeyword.com/
+	 */
+	nic.ui = {
+		
+		/**
+		 * 设置z-index
+		 * @method nic.ui.zIndex
+		 * @return {Number} z-index值
+		 */
+		zIndex: function(){
+			return 99999 + $('.l-ui').length;
+		},
+		
+		/**
+		 * 设置tabindex
+		 * @method nic.ui.tabindex
+		 * @param {object} 表单元素jquery对象
+		 * @return {Number} tabindex值
+		 */
+		tabindex: function(obj){
+			var form = obj.parents('form'),
+				all  = form.find('select, input, textarea')
+		},
+		
+		/**
+		 * 需要ui元素需要绝对定位的容器
+		 * @method nic.ui.wrap
+		 * @return {Object} ui元素jquery对象
+		 */
+		wrap: function(){
+			if( !$('#l-ui-wrap').length ){
+				$('body').append('<div id="l-ui-wrap"><!--[if lte IE 6.5]><iframe src="javascript:false;" style="width:0;height:0;"></iframe><![endif]--></div>');
+			}
+			return $('#l-ui-wrap');
+		},
+		
+		/**
+		 * 去除滚动条
+		 * @method nic.ui.noScroll
+		 */
+		noScroll: function(){
+			var html = $('html');
+			
+			/*监听滚轮*/
+			if( document.onmousewheel === undefined ){
+				html[0].addEventListener('DOMMouseScroll',function(e){
+					html.scrollTop += e.detail > 0 ? 60 : -60;   
+	            },false);
+			}else{
+				html.onmousewheel = function(e){   
+	                e = e || window.event;   
+	                html.scrollTop += e.wheelDelta > 0 ? -60 : 60;   
+	                e.returnValue = false;  
+	            };
+			}
+			
+			html.addClass('html-noScroll');
+		},
+		
+		/**
+		 * 设置遮罩
+		 * @method nic.ui.lock
+		 * @return {Object} 遮罩元素jquery对象
+		 */
+		lock: function(){
+			var win      = $(window),
+				body     = $('body'),
+				lock     = $('.l-ui-lock'),
+				_setSize = function(){
+					if( !lock.length ){
+						lock = body
+								.append('<div class="l-ui-lock fn-hide"></div>')
+								.find('.l-ui-lock')
+					}
+					lock.css({
+						filter:'Alpha(opacity=20)',
+						width:'100%',
+						height: body[0].scrollHeight
+					});
+				};
+				
+			this.noScroll();
+			_setSize();	
+			win.resize(_setSize);
+			lock.fadeIn();
 
-
-	/* 其他插件 */
-	__webpack_require__(18);
-	__webpack_require__(19);
-
+			return lock;
+		},
+		
+		/**
+		 * 删除遮罩
+		 * @method nic.ui.unlock
+		 */
+		unlock: function(){
+			$('html').removeClass('html-noScroll');
+			$('.l-ui-lock').fadeOut();
+		},
+		
+		/**
+		 * 获取鼠标位置
+		 * @method nic.ui.mousePosition
+		 * @param {Object} event事件
+		 * @return {Array} 返回鼠标的x、y轴：[positionX, positionY]
+		 */
+		mousePosition: function(e){
+			e = e || window.event;
+			
+			var x = e.pageX || e.clientX + document.body.scrollLeft,
+				y = e.pageY || e.clientY + document.body.scrollTop;
+				
+			return{
+				positionX : x,
+				positionY : y
+			};
+		},
+		
+		/**
+		 * 判断是否宽屏
+		 * @method nic.ui.widescreen
+		 * @return {Boolean} 
+		 */
+		widescreen: (function(){
+			return (screen.width >= 1210);
+		})(),
+		
+		/**
+		 * onselectstart 选中处理
+		 * @method nic.ui.onselectstart
+		 * @param {Object} jquery 对象
+		 */
+		onselectstart: function(obj){
+			if( !obj || !obj.length ){ return false; }
+			if( document.onselectstart !== undefined ){
+				obj[0].onselectstart = function(){return false;};
+			}else{
+				obj.css({'-moz-user-select':'none'});
+			}
+			return obj;
+		}
+	};
+		
 	module.exports = window.nic = nic;
 
 /***/ },
@@ -92,513 +486,301 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	* ZeroClipboard
-	* The ZeroClipboard library provides an easy way to copy text to the clipboard using an invisible Adobe Flash movie and a JavaScript interface.
-	* Copyright (c) 2014 Jon Rohan, James M. Greene
-	* Licensed MIT
-	* http://zeroclipboard.org/
-	* v1.3.5
-	*/
-	!function(a){"use strict";function b(a){return a.replace(/,/g,".").replace(/[^0-9\.]/g,"")}function c(a){return parseFloat(b(a))>=10}var d,e={bridge:null,version:"0.0.0",disabled:null,outdated:null,ready:null},f={},g=0,h={},i=0,j={},k=null,l=null,m=function(){var a,b,c,d,e="ZeroClipboard.swf";if(document.currentScript&&(d=document.currentScript.src));else{var f=document.getElementsByTagName("script");if("readyState"in f[0])for(a=f.length;a--&&("interactive"!==f[a].readyState||!(d=f[a].src)););else if("loading"===document.readyState)d=f[f.length-1].src;else{for(a=f.length;a--;){if(c=f[a].src,!c){b=null;break}if(c=c.split("#")[0].split("?")[0],c=c.slice(0,c.lastIndexOf("/")+1),null==b)b=c;else if(b!==c){b=null;break}}null!==b&&(d=b)}}return d&&(d=d.split("#")[0].split("?")[0],e=d.slice(0,d.lastIndexOf("/")+1)+e),e}(),n=function(){var a=/\-([a-z])/g,b=function(a,b){return b.toUpperCase()};return function(c){return c.replace(a,b)}}(),o=function(b,c){var d,e,f;return a.getComputedStyle?d=a.getComputedStyle(b,null).getPropertyValue(c):(e=n(c),d=b.currentStyle?b.currentStyle[e]:b.style[e]),"cursor"!==c||d&&"auto"!==d||(f=b.tagName.toLowerCase(),"a"!==f)?d:"pointer"},p=function(b){b||(b=a.event);var c;this!==a?c=this:b.target?c=b.target:b.srcElement&&(c=b.srcElement),K.activate(c)},q=function(a,b,c){a&&1===a.nodeType&&(a.addEventListener?a.addEventListener(b,c,!1):a.attachEvent&&a.attachEvent("on"+b,c))},r=function(a,b,c){a&&1===a.nodeType&&(a.removeEventListener?a.removeEventListener(b,c,!1):a.detachEvent&&a.detachEvent("on"+b,c))},s=function(a,b){if(!a||1!==a.nodeType)return a;if(a.classList)return a.classList.contains(b)||a.classList.add(b),a;if(b&&"string"==typeof b){var c=(b||"").split(/\s+/);if(1===a.nodeType)if(a.className){for(var d=" "+a.className+" ",e=a.className,f=0,g=c.length;g>f;f++)d.indexOf(" "+c[f]+" ")<0&&(e+=" "+c[f]);a.className=e.replace(/^\s+|\s+$/g,"")}else a.className=b}return a},t=function(a,b){if(!a||1!==a.nodeType)return a;if(a.classList)return a.classList.contains(b)&&a.classList.remove(b),a;if(b&&"string"==typeof b||void 0===b){var c=(b||"").split(/\s+/);if(1===a.nodeType&&a.className)if(b){for(var d=(" "+a.className+" ").replace(/[\n\t]/g," "),e=0,f=c.length;f>e;e++)d=d.replace(" "+c[e]+" "," ");a.className=d.replace(/^\s+|\s+$/g,"")}else a.className=""}return a},u=function(){var a,b,c,d=1;return"function"==typeof document.body.getBoundingClientRect&&(a=document.body.getBoundingClientRect(),b=a.right-a.left,c=document.body.offsetWidth,d=Math.round(b/c*100)/100),d},v=function(b,c){var d={left:0,top:0,width:0,height:0,zIndex:B(c)-1};if(b.getBoundingClientRect){var e,f,g,h=b.getBoundingClientRect();"pageXOffset"in a&&"pageYOffset"in a?(e=a.pageXOffset,f=a.pageYOffset):(g=u(),e=Math.round(document.documentElement.scrollLeft/g),f=Math.round(document.documentElement.scrollTop/g));var i=document.documentElement.clientLeft||0,j=document.documentElement.clientTop||0;d.left=h.left+e-i,d.top=h.top+f-j,d.width="width"in h?h.width:h.right-h.left,d.height="height"in h?h.height:h.bottom-h.top}return d},w=function(a,b){var c=null==b||b&&b.cacheBust===!0&&b.useNoCache===!0;return c?(-1===a.indexOf("?")?"?":"&")+"noCache="+(new Date).getTime():""},x=function(b){var c,d,e,f=[],g=[],h=[];if(b.trustedOrigins&&("string"==typeof b.trustedOrigins?g.push(b.trustedOrigins):"object"==typeof b.trustedOrigins&&"length"in b.trustedOrigins&&(g=g.concat(b.trustedOrigins))),b.trustedDomains&&("string"==typeof b.trustedDomains?g.push(b.trustedDomains):"object"==typeof b.trustedDomains&&"length"in b.trustedDomains&&(g=g.concat(b.trustedDomains))),g.length)for(c=0,d=g.length;d>c;c++)if(g.hasOwnProperty(c)&&g[c]&&"string"==typeof g[c]){if(e=E(g[c]),!e)continue;if("*"===e){h=[e];break}h.push.apply(h,[e,"//"+e,a.location.protocol+"//"+e])}return h.length&&f.push("trustedOrigins="+encodeURIComponent(h.join(","))),"string"==typeof b.jsModuleId&&b.jsModuleId&&f.push("jsModuleId="+encodeURIComponent(b.jsModuleId)),f.join("&")},y=function(a,b,c){if("function"==typeof b.indexOf)return b.indexOf(a,c);var d,e=b.length;for("undefined"==typeof c?c=0:0>c&&(c=e+c),d=c;e>d;d++)if(b.hasOwnProperty(d)&&b[d]===a)return d;return-1},z=function(a){if("string"==typeof a)throw new TypeError("ZeroClipboard doesn't accept query strings.");return a.length?a:[a]},A=function(b,c,d,e){e?a.setTimeout(function(){b.apply(c,d)},0):b.apply(c,d)},B=function(a){var b,c;return a&&("number"==typeof a&&a>0?b=a:"string"==typeof a&&(c=parseInt(a,10))&&!isNaN(c)&&c>0&&(b=c)),b||("number"==typeof N.zIndex&&N.zIndex>0?b=N.zIndex:"string"==typeof N.zIndex&&(c=parseInt(N.zIndex,10))&&!isNaN(c)&&c>0&&(b=c)),b||0},C=function(a,b){if(a&&b!==!1&&"undefined"!=typeof console&&console&&(console.warn||console.log)){var c="`"+a+"` is deprecated. See docs for more info:\n    https://github.com/zeroclipboard/zeroclipboard/blob/master/docs/instructions.md#deprecations";console.warn?console.warn(c):console.log(c)}},D=function(){var a,b,c,d,e,f,g=arguments[0]||{};for(a=1,b=arguments.length;b>a;a++)if(null!=(c=arguments[a]))for(d in c)if(c.hasOwnProperty(d)){if(e=g[d],f=c[d],g===f)continue;void 0!==f&&(g[d]=f)}return g},E=function(a){if(null==a||""===a)return null;if(a=a.replace(/^\s+|\s+$/g,""),""===a)return null;var b=a.indexOf("//");a=-1===b?a:a.slice(b+2);var c=a.indexOf("/");return a=-1===c?a:-1===b||0===c?null:a.slice(0,c),a&&".swf"===a.slice(-4).toLowerCase()?null:a||null},F=function(){var a=function(a,b){var c,d,e;if(null!=a&&"*"!==b[0]&&("string"==typeof a&&(a=[a]),"object"==typeof a&&"length"in a))for(c=0,d=a.length;d>c;c++)if(a.hasOwnProperty(c)&&(e=E(a[c]))){if("*"===e){b.length=0,b.push("*");break}-1===y(e,b)&&b.push(e)}},b={always:"always",samedomain:"sameDomain",never:"never"};return function(c,d){var e,f=d.allowScriptAccess;if("string"==typeof f&&(e=f.toLowerCase())&&/^always|samedomain|never$/.test(e))return b[e];var g=E(d.moviePath);null===g&&(g=c);var h=[];a(d.trustedOrigins,h),a(d.trustedDomains,h);var i=h.length;if(i>0){if(1===i&&"*"===h[0])return"always";if(-1!==y(c,h))return 1===i&&c===g?"sameDomain":"always"}return"never"}}(),G=function(a){if(null==a)return[];if(Object.keys)return Object.keys(a);var b=[];for(var c in a)a.hasOwnProperty(c)&&b.push(c);return b},H=function(a){if(a)for(var b in a)a.hasOwnProperty(b)&&delete a[b];return a},I=function(){try{return document.activeElement}catch(a){}return null},J=function(){var a=!1;if("boolean"==typeof e.disabled)a=e.disabled===!1;else{if("function"==typeof ActiveXObject)try{new ActiveXObject("ShockwaveFlash.ShockwaveFlash")&&(a=!0)}catch(b){}!a&&navigator.mimeTypes["application/x-shockwave-flash"]&&(a=!0)}return a},K=function(a,b){return this instanceof K?(this.id=""+g++,h[this.id]={instance:this,elements:[],handlers:{}},a&&this.clip(a),"undefined"!=typeof b&&(C("new ZeroClipboard(elements, options)",N.debug),K.config(b)),this.options=K.config(),"boolean"!=typeof e.disabled&&(e.disabled=!J()),e.disabled===!1&&e.outdated!==!0&&null===e.bridge&&(e.outdated=!1,e.ready=!1,O()),void 0):new K(a,b)};K.prototype.setText=function(a){return a&&""!==a&&(f["text/plain"]=a,e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setText?e.bridge.setText(a):e.ready=!1),this},K.prototype.setSize=function(a,b){return e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setSize?e.bridge.setSize(a,b):e.ready=!1,this};var L=function(a){e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setHandCursor?e.bridge.setHandCursor(a):e.ready=!1};K.prototype.destroy=function(){this.unclip(),this.off(),delete h[this.id]};var M=function(){var a,b,c,d=[],e=G(h);for(a=0,b=e.length;b>a;a++)c=h[e[a]].instance,c&&c instanceof K&&d.push(c);return d};K.version="1.3.5";var N={swfPath:m,trustedDomains:a.location.host?[a.location.host]:[],cacheBust:!0,forceHandCursor:!1,zIndex:999999999,debug:!0,title:null,autoActivate:!0};K.config=function(a){"object"==typeof a&&null!==a&&D(N,a);{if("string"!=typeof a||!a){var b={};for(var c in N)N.hasOwnProperty(c)&&(b[c]="object"==typeof N[c]&&null!==N[c]?"length"in N[c]?N[c].slice(0):D({},N[c]):N[c]);return b}if(N.hasOwnProperty(a))return N[a]}},K.destroy=function(){K.deactivate();for(var a in h)if(h.hasOwnProperty(a)&&h[a]){var b=h[a].instance;b&&"function"==typeof b.destroy&&b.destroy()}var c=P(e.bridge);c&&c.parentNode&&(c.parentNode.removeChild(c),e.ready=null,e.bridge=null)},K.activate=function(a){d&&(t(d,N.hoverClass),t(d,N.activeClass)),d=a,s(a,N.hoverClass),Q();var b=N.title||a.getAttribute("title");if(b){var c=P(e.bridge);c&&c.setAttribute("title",b)}var f=N.forceHandCursor===!0||"pointer"===o(a,"cursor");L(f)},K.deactivate=function(){var a=P(e.bridge);a&&(a.style.left="0px",a.style.top="-9999px",a.removeAttribute("title")),d&&(t(d,N.hoverClass),t(d,N.activeClass),d=null)};var O=function(){var b,c,d=document.getElementById("global-zeroclipboard-html-bridge");if(!d){var f=K.config();f.jsModuleId="string"==typeof k&&k||"string"==typeof l&&l||null;var g=F(a.location.host,N),h=x(f),i=N.moviePath+w(N.moviePath,N),j='      <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" id="global-zeroclipboard-flash-bridge" width="100%" height="100%">         <param name="movie" value="'+i+'"/>         <param name="allowScriptAccess" value="'+g+'"/>         <param name="scale" value="exactfit"/>         <param name="loop" value="false"/>         <param name="menu" value="false"/>         <param name="quality" value="best" />         <param name="bgcolor" value="#ffffff"/>         <param name="wmode" value="transparent"/>         <param name="flashvars" value="'+h+'"/>         <embed src="'+i+'"           loop="false" menu="false"           quality="best" bgcolor="#ffffff"           width="100%" height="100%"           name="global-zeroclipboard-flash-bridge"           allowScriptAccess="'+g+'"           allowFullScreen="false"           type="application/x-shockwave-flash"           wmode="transparent"           pluginspage="http://www.macromedia.com/go/getflashplayer"           flashvars="'+h+'"           scale="exactfit">         </embed>       </object>';d=document.createElement("div"),d.id="global-zeroclipboard-html-bridge",d.setAttribute("class","global-zeroclipboard-container"),d.style.position="absolute",d.style.left="0px",d.style.top="-9999px",d.style.width="15px",d.style.height="15px",d.style.zIndex=""+B(N.zIndex),document.body.appendChild(d),d.innerHTML=j}b=document["global-zeroclipboard-flash-bridge"],b&&(c=b.length)&&(b=b[c-1]),e.bridge=b||d.children[0].lastElementChild},P=function(a){for(var b=/^OBJECT|EMBED$/,c=a&&a.parentNode;c&&b.test(c.nodeName)&&c.parentNode;)c=c.parentNode;return c||null},Q=function(){if(d){var a=v(d,N.zIndex),b=P(e.bridge);b&&(b.style.top=a.top+"px",b.style.left=a.left+"px",b.style.width=a.width+"px",b.style.height=a.height+"px",b.style.zIndex=a.zIndex+1),e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setSize?e.bridge.setSize(a.width,a.height):e.ready=!1}return this};K.prototype.on=function(a,b){var c,d,f,g={},i=h[this.id]&&h[this.id].handlers;if("string"==typeof a&&a)f=a.toLowerCase().split(/\s+/);else if("object"==typeof a&&a&&"undefined"==typeof b)for(c in a)a.hasOwnProperty(c)&&"string"==typeof c&&c&&"function"==typeof a[c]&&this.on(c,a[c]);if(f&&f.length){for(c=0,d=f.length;d>c;c++)a=f[c].replace(/^on/,""),g[a]=!0,i[a]||(i[a]=[]),i[a].push(b);g.noflash&&e.disabled&&T.call(this,"noflash",{}),g.wrongflash&&e.outdated&&T.call(this,"wrongflash",{flashVersion:e.version}),g.load&&e.ready&&T.call(this,"load",{flashVersion:e.version})}return this},K.prototype.off=function(a,b){var c,d,e,f,g,i=h[this.id]&&h[this.id].handlers;if(0===arguments.length)f=G(i);else if("string"==typeof a&&a)f=a.split(/\s+/);else if("object"==typeof a&&a&&"undefined"==typeof b)for(c in a)a.hasOwnProperty(c)&&"string"==typeof c&&c&&"function"==typeof a[c]&&this.off(c,a[c]);if(f&&f.length)for(c=0,d=f.length;d>c;c++)if(a=f[c].toLowerCase().replace(/^on/,""),g=i[a],g&&g.length)if(b)for(e=y(b,g);-1!==e;)g.splice(e,1),e=y(b,g,e);else i[a].length=0;return this},K.prototype.handlers=function(a){var b,c=null,d=h[this.id]&&h[this.id].handlers;if(d){if("string"==typeof a&&a)return d[a]?d[a].slice(0):null;c={};for(b in d)d.hasOwnProperty(b)&&d[b]&&(c[b]=d[b].slice(0))}return c};var R=function(b,c,d,e){var f=h[this.id]&&h[this.id].handlers[b];if(f&&f.length){var g,i,j,k=c||this;for(g=0,i=f.length;i>g;g++)j=f[g],c=k,"string"==typeof j&&"function"==typeof a[j]&&(j=a[j]),"object"==typeof j&&j&&"function"==typeof j.handleEvent&&(c=j,j=j.handleEvent),"function"==typeof j&&A(j,c,d,e)}return this};K.prototype.clip=function(a){a=z(a);for(var b=0;b<a.length;b++)if(a.hasOwnProperty(b)&&a[b]&&1===a[b].nodeType){a[b].zcClippingId?-1===y(this.id,j[a[b].zcClippingId])&&j[a[b].zcClippingId].push(this.id):(a[b].zcClippingId="zcClippingId_"+i++,j[a[b].zcClippingId]=[this.id],N.autoActivate===!0&&q(a[b],"mouseover",p));var c=h[this.id].elements;-1===y(a[b],c)&&c.push(a[b])}return this},K.prototype.unclip=function(a){var b=h[this.id];if(b){var c,d=b.elements;a="undefined"==typeof a?d.slice(0):z(a);for(var e=a.length;e--;)if(a.hasOwnProperty(e)&&a[e]&&1===a[e].nodeType){for(c=0;-1!==(c=y(a[e],d,c));)d.splice(c,1);var f=j[a[e].zcClippingId];if(f){for(c=0;-1!==(c=y(this.id,f,c));)f.splice(c,1);0===f.length&&(N.autoActivate===!0&&r(a[e],"mouseover",p),delete a[e].zcClippingId)}}}return this},K.prototype.elements=function(){var a=h[this.id];return a&&a.elements?a.elements.slice(0):[]};var S=function(a){var b,c,d,e,f,g=[];if(a&&1===a.nodeType&&(b=a.zcClippingId)&&j.hasOwnProperty(b)&&(c=j[b],c&&c.length))for(d=0,e=c.length;e>d;d++)f=h[c[d]].instance,f&&f instanceof K&&g.push(f);return g};N.hoverClass="zeroclipboard-is-hover",N.activeClass="zeroclipboard-is-active",N.trustedOrigins=null,N.allowScriptAccess=null,N.useNoCache=!0,N.moviePath="ZeroClipboard.swf",K.detectFlashSupport=function(){return C("ZeroClipboard.detectFlashSupport",N.debug),J()},K.dispatch=function(a,b){if("string"==typeof a&&a){var c=a.toLowerCase().replace(/^on/,"");if(c)for(var e=d&&N.autoActivate===!0?S(d):M(),f=0,g=e.length;g>f;f++)T.call(e[f],c,b)}},K.prototype.setHandCursor=function(a){return C("ZeroClipboard.prototype.setHandCursor",N.debug),a="boolean"==typeof a?a:!!a,L(a),N.forceHandCursor=a,this},K.prototype.reposition=function(){return C("ZeroClipboard.prototype.reposition",N.debug),Q()},K.prototype.receiveEvent=function(a,b){if(C("ZeroClipboard.prototype.receiveEvent",N.debug),"string"==typeof a&&a){var c=a.toLowerCase().replace(/^on/,"");c&&T.call(this,c,b)}},K.prototype.setCurrent=function(a){return C("ZeroClipboard.prototype.setCurrent",N.debug),K.activate(a),this},K.prototype.resetBridge=function(){return C("ZeroClipboard.prototype.resetBridge",N.debug),K.deactivate(),this},K.prototype.setTitle=function(a){if(C("ZeroClipboard.prototype.setTitle",N.debug),a=a||N.title||d&&d.getAttribute("title")){var b=P(e.bridge);b&&b.setAttribute("title",a)}return this},K.setDefaults=function(a){C("ZeroClipboard.setDefaults",N.debug),K.config(a)},K.prototype.addEventListener=function(a,b){return C("ZeroClipboard.prototype.addEventListener",N.debug),this.on(a,b)},K.prototype.removeEventListener=function(a,b){return C("ZeroClipboard.prototype.removeEventListener",N.debug),this.off(a,b)},K.prototype.ready=function(){return C("ZeroClipboard.prototype.ready",N.debug),e.ready===!0};var T=function(a,g){a=a.toLowerCase().replace(/^on/,"");var h=g&&g.flashVersion&&b(g.flashVersion)||null,i=d,j=!0;switch(a){case"load":if(h){if(!c(h))return T.call(this,"onWrongFlash",{flashVersion:h}),void 0;e.outdated=!1,e.ready=!0,e.version=h}break;case"wrongflash":h&&!c(h)&&(e.outdated=!0,e.ready=!1,e.version=h);break;case"mouseover":s(i,N.hoverClass);break;case"mouseout":N.autoActivate===!0&&K.deactivate();break;case"mousedown":s(i,N.activeClass);break;case"mouseup":t(i,N.activeClass);break;case"datarequested":if(i){var k=i.getAttribute("data-clipboard-target"),l=k?document.getElementById(k):null;if(l){var m=l.value||l.textContent||l.innerText;m&&this.setText(m)}else{var n=i.getAttribute("data-clipboard-text");n&&this.setText(n)}}j=!1;break;case"complete":H(f),i&&i!==I()&&i.focus&&i.focus()}var o=i,p=[this,g];return R.call(this,a,o,p,j)}; true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__,exports,module], __WEBPACK_AMD_DEFINE_RESULT__ = function(a,b,c){return k=c&&c.id||null,K}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):"object"==typeof module&&module&&"object"==typeof module.exports&&module.exports&&"function"==typeof a.require?(l=module.id||null,module.exports=K):a.ZeroClipboard=K}(function(){return this}());
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+	    if (true) {
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof exports === 'object') {
+	        module.exports = factory(require('jquery'));
+	    } else {
+	        root.Drag = factory(root.jQuery);
+	    }
+	}(this, function ($) {
+
+		'use strict';
+
+		/**
+		* nic.ui.drag 拖拽控件
+		* @class nic.ui.drag
+		* @author norion.z
+		* @blog http://zkeyword.com/
+		* @param {Object} options drag参数
+		* @param {String} options.dragItem 拖拽触发对象选择器
+		* @param {String} options.dragWrap 拖拽移动对象选择器
+		*/
+		var Drag = function(options){         //IE下 iframe内的的拖动还是有问题
+
+			var o = options || {};
+			if( !o.dragItem ){return false;}
+			var	dragItem = $('body').find(o.dragItem),
+				dragWrap = $('body').find(o.dragWrap),
+				win      = parent.document || document,
+				mouse    = {x:0,y:0};
+				
+			function _moveDialog(e){
+		        
+		        var top  = dragWrap.css('top') === 'auto' ? 0 : dragWrap.css('top'),
+					left = dragWrap.css('left') === 'auto' ? 0 : dragWrap.css('left');
+					
+		        dragWrap
+					.css({
+						top  : parseInt(top) + (e.clientY - mouse.y),
+						left : parseInt(left) + (e.clientX - mouse.x)
+					});
+		        
+		        mouse.x = e.clientX;
+		        mouse.y = e.clientY;
+		    }
+			
+		    dragItem
+				.on('mousedown', function(e){
+					mouse.x = e.clientX;
+					mouse.y = e.clientY;
+					$(win).on('mousemove', _moveDialog);
+					
+					if(e.preventDefault){
+						e.preventDefault();
+					}else{
+						e.returnValue = false;
+					}
+				});
+		    
+		    $(win)
+				.on('mouseup', function(){
+					$(win).off('mousemove', _moveDialog);
+				});
+		};
+
+		return Drag;
+
+	}));
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(){
+	/*
 
-		'use strict';
+	pagination({
+		cur:17,
+		total:20,
+		target: 'wrap',
+		prevText: 'prev',
+		nextText: 'next',
+		len:8,
+		callback: function(cur, total){
+			console.log(cur, total)
+		}
+	});
+
+	*/
+
+
+	'use strict';
+
+	var Pagination = function(options){
+
+		this.cur      = options.cur || 1;
+		this.total    = options.total === undefined ? 10 : options.total;
+		this.len      = options.len ? options.len : 5;
+		this.prevText = options.prevText || '上一页';
+		this.nextText = options.nextText || '下一页';
+		this.target   = options.target;
+		this.callback = options.callback || function(){};
 		
-		(function() {
-			/**
-			 * 针对原型的方法添加应用支持
-			 */
-			
-			/**
-			 * 获取中文长度
-			 * @method getLength
-			 */
-			String.prototype.getLength = function(){
-				return this.replace(/[^\x00-\xff]/g, "en").length; //若为中文替换成两个字母
-			};
-			
-			/**
-			 * 清空空格
-			 * @method trims
-			 * @return {String}
-			 */
-			String.prototype.trims = function(){
-				return this.replace(/^[\s\xa0\u3000]+|[\u3000\xa0\s]+$/g, "");
-			};
-			
-			/**
-			 * 转为unicode编码
-			 * @method toUnicode
-			 * @return {String}
-			 */
-			String.prototype.toUnicode = function(){
-				return escape( this.toLocaleLowerCase() ).replace(/\%/gi, '\\') ;
-			};
-			
-			/**
-			 * 转为unicode编码
-			 * @method unicodeTo
-			 * @return {String}
-			 */
-			String.prototype.unicodeTo = function(){
-				return unescape( this.toLocaleLowerCase().replace(/%u/gi, '\\') );
-			};
-			
-			// 对Date的扩展，将 Date 转化为指定格式的String
-			// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
-			// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
-			// 例子： 
-			// (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
-			// (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
-			Date.prototype.format = function(fmt) { //author: meizz 
-				var o = {
-					"M+": this.getMonth() + 1, //月份 
-					"d+": this.getDate(), //日 
-					"h+": this.getHours(), //小时 
-					"m+": this.getMinutes(), //分 
-					"s+": this.getSeconds(), //秒 
-					"q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-					"S": this.getMilliseconds() //毫秒 
-				};
-				if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-				for (var k in o)
-				if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-				return fmt;
+		if( typeof this.target === 'String' ){
+			this.target = document.getElementById(this.target);
+		}
+		if( !this.target ) return;
+		
+		this.init();
+		this.click(this.callback);
+	}
+
+	Pagination.prototype.init = function() {
+
+		var tmp      = '',
+			link     = '<a href="javascript:;" data-index="{{num}}">{{num}}</a>',
+			prev     = '<a href="javascript:;" class="prev" data-index="{{num}}">'+ this.prevText +'</a>',
+			next     = '<a href="javascript:;" class="next" data-index="{{num}}">'+ this.nextText +'</a>',
+			cur      = '<span class="current">{{num}}</span>',
+			ellipsis = '<span class="ellipsis">...</span>',
+			haddle   = function(src, num){
+							return src.replace(/{{num}}/g, num);
+						},
+			showNum  = 3;
+		
+		/* 显示的长度 */			
+		if( this.len >= 3 ){
+			showNum = Math.round(this.len/2);
+		}
+		
+		/* 上一页 */
+		if( this.cur >= 2 ){
+			tmp += haddle(prev, this.cur - 1)
+		}
+		
+		/* 前置省略号 */
+		if( this.cur >= 4 && this.total >= this.len + 1 ){
+			tmp += haddle(link, 1);
+			tmp += ellipsis;
+		}
+		
+		/* 连接 */
+		if( this.len >= this.total ){
+			for(var i = 1; i<=this.total; i++){
+				tmp += haddle(i === this.cur ? cur : link, i);
 			}
-			
-			/**
-			 * 重写console
-			 */
-			if(!window.console){
-				window.console = {};
-			}
-			if(!console.log){
-				console.log = function(){};
-			}
-			
-			/**
-			 * 设定基本命名空间
-			 * @namespace nic
-			 * @author norion
-			 * @blog http://zkeyword.com/
-			 */
-			var nic = window.nic || {};
-		
-			/*设定基本构架*/
-			nic = {
-				_INSTALL: function(){
-					window.nic = nic;
-				},
-				base: {}, //基础层，所有的基础函数库，如cookie等
-				ui: {},   //前端显示层，用来重构和回流DOM，前端的特效显示处理
-				app:{}    //应用层，挂载一些应用的通用类。
-			};
-			
-			nic._INSTALL();
-		}(window));
-		
-		/*鼠标滚轮监听*/
-		/*(function($){
-		    $.fn.preventScroll = function(){
-		        var that = this[0];
-		        if($.browser.mozilla){
-		        	that.addEventListener('DOMMouseScroll',function(e){
-		        		that.scrollTop += e.detail > 0 ? 60 : -60;   
-		                e.preventDefault();
-		            },false); 
-		        }else{
-		        	that.onmousewheel = function(e){   
-		                e = e || window.event;   
-		                that.scrollTop += e.wheelDelta > 0 ? -60 : 60;   
-		                e.returnValue = false;  
-		            };
-		        }
-		        return this;
-		    };
-		})(jQuery);*/
-		
-		/**
-		 * 基础函数库
-		 * @class nic.base 基础函数库
-		 * @author norion
-		 * @blog http://zkeyword.com/
-		 */
-		nic.base = {
-			
-			/**
-			 * 判断是否是数组
-			 * @method nic.base.isArray
-			 * @param {Object} 数组对象
-			 * @return {Boolean}
-			 */
-			isArray: function(o){
-				return o ? jQuery.isArray(o) : false;
-			},
-			
-			/**
-			 * 判断是否是对象
-			 * @method nic.base.isObject
-			 * @param {Object} 字符串对象
-			 * @return {Boolean}
-			 */
-			isObject: function(o){
-				return o ? Object.prototype.toString.call(o) === "[object Object]" : false;
-			},
-			
-			/**
-			 * 判断是否是函数
-			 * @method nic.base.isFunction
-			 * @param {Function} Function对象
-			 * @return {Boolean}
-			 */
-			isFunction: function(o){
-				return o ? Object.prototype.toString.call(o) === "[object Function]" : false;
-			},
-			
-			/**
-			 * 判断是否是空值
-			 * @method nic.base.isEmpty
-			 * @param {Object} 对象
-			 * @return {Boolean}
-			 */
-			isEmpty: function(){
-				if( Object.keys ){
-					return Object.keys(o)
+		}else{
+			for(var i = 1, isCur = false, num = 0; i<=this.len; i++){
+
+				if( this.cur < showNum ){
+					if( i === this.cur ){
+						isCur = true;
+					}
+					num = i;
+				}else if(this.total - this.cur < showNum){
+					if( this.len - (this.total - this.cur) === i ){
+						isCur = true;
+					}
+					num = this.total - this.len + i;
 				}else{
-					if( obj == null) return true;
-					if( obj.length > 0) return false;
-					if( obj.length === 0) return true;
-					for( var key in obj ){
-						if( Object.prototype.hasOwnProperty.call(obj, key) ) return false;
+					if( i === showNum ){
+						isCur = true;
 					}
-					return true;
+					num = this.cur - showNum + i;
 				}
-			},
-			
-			/**
-			 * 获取浏览器 userAgent
-			 * @method nic.base.browser
-			 * @return {Object}
-			 */
-			browser: (function(){
-				var na            = window.navigator,
-					browserTester = /(msie|webkit|gecko|presto|opera|safari|firefox|chrome|maxthon|android|ipad|iphone|webos|hpwos)[ \/os]*([\d_.]+)/ig,
-					ua            = na.userAgent.toLowerCase(),
-					browser       = {
-										platform: na.platform
-									};
-				ua.replace(browserTester, function(a, b, c) {
-					var bLower = b.toLowerCase();
-					if (!browser[bLower]) {
-						browser[bLower] = c; 
-					}
-				});
-				if( browser.msie ){
-					browser.ie = browser.msie;
-					var v = parseInt(browser.msie, 10);
-					browser['ie' + v] = true;
-				}	
-				return browser;
-			}()),
-			
-			/**
-			 * cookie
-			 * @method nic.base.cookie
-			 */
-			cookie: {
 
-				/**
-				 * 设置cookie
-				 * @param {String} cookie的名称
-				 * @param {String} cookie的值
-				 * @param {String} cookie的有效期
-				 * @param {String} cookie的域名
-				 * @param {String} cookie存放的路径
-				 * @return {Boolean}
-				 */
-				set: function(name, value, hour, domain, path){
-					if( hour ){
-						var today  = new Date(),
-							expire = new Date();
-						expire.setTime(today.getTime() + 36E5 * hour);
-					}
-					document.cookie = name + "=" + encodeURI(value) + "; " + (hour ? "expires=" + expire.toGMTString() + "; " : "") + (path ? "path=" + path + "; " : "path=/; ") + (domain ? "domain=" + domain + ";" : "");
-					return true;
-				},
-				
-				/**
-				 * 获取cookie
-				 * @param {String} cookie的名称
-				 * @return {String} cookie的值
-				 */
-				get: function( name ){
-					var r = new RegExp("(?:^|;+|\\s+)" + name + "=([^;]*)"),
-						m = document.cookie.match(r);
-						
-					return unescape(decodeURI(!m ? "" : m[1]));
-				},
-				
-				/**
-				 * 删除cookie
-				 * @param {String} cookie的名称
-				 * @param {String} cookie的域名
-				 * @param {String} cookie存放的路径
-				 */
-				del: function(name, domain, path){
-					document.cookie = name + "=; expires=Mon, 26 Jul 1997 05:00:00 GMT; " + (path ? "path=" + path + "; " : "path=/; ") + (domain ? "domain=" + domain + ";" : "");
-				}
+				tmp += haddle(isCur ? cur : link, num);
+				isCur = false;
+			}
+		}
+		
+		/* 后置省略号 */
+		if( this.total - this.cur >= showNum && this.total >= this.len + 1 && this.cur + this.len - showNum !== this.total  ){
+			tmp += ellipsis;
+			tmp += haddle(link, this.total)
+		}
+		
+		/* 下一页 */
+		if( this.total - this.cur >= 1 ){
+			tmp += haddle(next, this.cur + 1)
+		}
+
+		this.target.innerHTML = tmp;
+	};
+
+	Pagination.prototype.click = function(fn){
+		var that = this,
+			oA   = this.target.getElementsByTagName('a');
+
+		for (var i = oA.length - 1; i >= 0; i--) {
+			oA[i].onclick = function(){
+				that.cur = Number(this.getAttribute('data-index'));
+				that.init();
+				that.click(fn);
+				fn.apply(this, [that.cur, that.total]);
 			}
 		};
+	}
 		
-		
-		
-		/**
-		 * 前端显示层，用来重构和回流DOM，前端的特效显示处理
-		 * @class nic.ui 前端显示层
-		 * @author norion
-		 * @blog http://zkeyword.com/
-		 */
-		nic.ui = {
-			
-			/**
-			 * 设置z-index
-			 * @method nic.ui.zIndex
-			 * @return {Number} z-index值
-			 */
-			zIndex: function(){
-				return 99999 + $('.l-ui').length;
-			},
-			
-			/**
-			 * 设置tabindex
-			 * @method nic.ui.tabindex
-			 * @param {object} 表单元素jquery对象
-			 * @return {Number} tabindex值
-			 */
-			tabindex: function(obj){
-				var form = obj.parents('form'),
-					all  = form.find('select, input, textarea')
-			},
-			
-			/**
-			 * 需要ui元素需要绝对定位的容器
-			 * @method nic.ui.wrap
-			 * @return {Object} ui元素jquery对象
-			 */
-			wrap: function(){
-				if( !$('#l-ui-wrap').length ){
-					$('body').append('<div id="l-ui-wrap"><!--[if lte IE 6.5]><iframe src="javascript:false;" style="width:0;height:0;"></iframe><![endif]--></div>');
-				}
-				return $('#l-ui-wrap');
-			},
-			
-			/**
-			 * 去除滚动条
-			 * @method nic.ui.noScroll
-			 */
-			noScroll: function(){
-				var html = $('html');
-				
-				/*监听滚轮*/
-				if( document.onmousewheel === undefined ){
-					html[0].addEventListener('DOMMouseScroll',function(e){
-						html.scrollTop += e.detail > 0 ? 60 : -60;   
-		            },false);
-				}else{
-					html.onmousewheel = function(e){   
-		                e = e || window.event;   
-		                html.scrollTop += e.wheelDelta > 0 ? -60 : 60;   
-		                e.returnValue = false;  
-		            };
-				}
-				
-				html.addClass('html-noScroll');
-			},
-			
-			/**
-			 * 设置遮罩
-			 * @method nic.ui.lock
-			 * @return {Object} 遮罩元素jquery对象
-			 */
-			lock: function(){
-				var win      = $(window),
-					body     = $('body'),
-					lock     = $('.l-ui-lock'),
-					_setSize = function(){
-						if( !lock.length ){
-							lock = body
-									.append('<div class="l-ui-lock fn-hide"></div>')
-									.find('.l-ui-lock')
-						}
-						lock.css({
-							filter:'Alpha(opacity=20)',
-							width:'100%',
-							height: body[0].scrollHeight
-						});
-					};
-					
-				this.noScroll();
-				_setSize();	
-				win.resize(_setSize);
-				lock.fadeIn();
+	module.exports = function(o){
+		return o ? new Pagination(o) : {};
+	};
 
-				return lock;
-			},
-			
-			/**
-			 * 删除遮罩
-			 * @method nic.ui.unlock
-			 */
-			unlock: function(){
-				$('html').removeClass('html-noScroll');
-				$('.l-ui-lock').fadeOut();
-			},
-			
-			/**
-			 * 获取鼠标位置
-			 * @method nic.ui.mousePosition
-			 * @param {Object} event事件
-			 * @return {Array} 返回鼠标的x、y轴：[positionX, positionY]
-			 */
-			mousePosition: function(e){
-				e = e || window.event;
-				
-				var x = e.pageX || e.clientX + document.body.scrollLeft,
-					y = e.pageY || e.clientY + document.body.scrollTop;
-					
-				return{
-					positionX : x,
-					positionY : y
-				};
-			},
-			
-			/**
-			 * 判断是否宽屏
-			 * @method nic.ui.widescreen
-			 * @return {Boolean} 
-			 */
-			widescreen: (function(){
-				return (screen.width >= 1210);
-			})(),
-			
-			/**
-			 * onselectstart 选中处理
-			 * @method nic.ui.onselectstart
-			 * @param {Object} jquery 对象
-			 */
-			onselectstart: function(obj){
-				if( !obj || !obj.length ){ return false; }
-				if( document.onselectstart !== undefined ){
-					obj[0].onselectstart = function(){return false;};
-				}else{
-					obj.css({'-moz-user-select':'none'});
-				}
-				return obj;
-			}
-		};	
-		
-		return nic;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 **┏┓　　　┏┓ 
-	 *┏┛┻━━━┛┻┓ 
-	 *┃　　　　　　　┃ 　 
-	 *┃　　　━　　　┃ 
-	 *┃　┳┛　┗┳　┃ 
-	 *┃　　　　　　　┃ 
-	 *┃　　　┻　　　┃ 
-	 *┃　　　　　　　┃ 
-	 *┗━┓　　　┏━┛ 
-	 ****┃　　　┃　　　　 
-	 ****┃　　　┃ 神兽保护，代码无bug
-	 ****┃　　　┗━━━┓ 
-	 ****┃　　　　　　　┣┓ 
-	 ****┃　　　　　　　┏┛ 
-	 ****┗┓┓┏━┳┓┏┛ 
-	 ******┃┫┫　┃┫┫ 
-	 ******┗┻┛　┗┻┛  
+	/**
+	**┏┓　　　┏┓ 
+	*┏┛┻━━━┛┻┓ 
+	*┃　　　　　　　┃ 　 
+	*┃　　　━　　　┃ 
+	*┃　┳┛　┗┳　┃ 
+	*┃　　　　　　　┃ 
+	*┃　　　┻　　　┃ 
+	*┃　　　　　　　┃ 
+	*┗━┓　　　┏━┛ 
+	****┃　　　┃　　　　 
+	****┃　　　┃ 神兽保护，代码无bug
+	****┃　　　┗━━━┓ 
+	****┃　　　　　　　┣┓ 
+	****┃　　　　　　　┏┛ 
+	****┗┓┓┏━┳┓┏┛ 
+	******┃┫┫　┃┫┫ 
+	******┗┻┛　┗┻┛  
 	*/
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic){
+
+	'use strict';
+
+	/**
+	* nic.ui.grid 表格控件
+	* @class nic.ui.grid
+	* @author norion.z
+	* @blog http://zkeyword.com/
+	* @param {Object} o 表格参数
+	* @param {String} o.wrap 表格容器
+	* @param {String} o.id 表格id
+	* @param {Object} o.pageAjax ajax数据
+	* @param {String} o.pageAjax.url ajax请求的url
+	* @param {String} o.pageAjax.type ajax请求类型，默认是GET
+	* @param {String} o.pageAjax.data ajax请求的条件
+	* @param {Object} o.data 静态数据
+	* @param {String|Number} o.width 表格宽度
+	* @param {Boolean} o.isFixedWidth 表宽度是否为固定宽度，默认为false，会去对比grid外框的宽度和o.columns.width，而达到自适应列的目的
+	* @param {Object} o.columns 列结构
+	* @param {String} o.columns.display 表头名称
+	* @param {String} o.columns.name 数据字段名
+	* @param {Number} o.columns.width 列宽度，这里是占比
+	* @param {Function} o.columns.render 列自定义显示函数
+	* @param {Function} o.columns.statisRender 统计列自定义显示函数
+	* @param {String} o.columns.statisType 统计类型
+	* @param {String} o.columns.statisWrap 统计容器
+	* @param {Object} o.statis 统计
+	* @param {Object} o.detail 表格详细
+	* @param {Object} o.bottomBtns 底部按钮
+	* @param {Boolean} o.isPage 是否显示分页
+	* @param {Boolean} o.isHead 是否显示头部
+	* @param {Boolean} o.showAllRow 显示所有数据，默认false，以分页和显示条数互斥 ，isPage=false、pageSize = total
+	* @param {String} o.pageIndex 分页起始页
+	* @param {String} o.pageSize 每页显示的条数
+	* @param {Array} o.pageSizeOptions 可选择设定的每页结果数，默认[10, 20, 50, 100, 200]，不显示时可设置null
+	* @param {Function} o.onPageFn 翻页事件
+	* @param {Boolean} o.isPageCache 翻页时是否缓存当页数据
+	* @param {Boolean} o.isMemory 翻页是否记住选择记录，默认false
+	* @param {Boolean} o.checkbox 是否有checkbox
+	* @param {Function} o.onCheckFn 点击checkbox事件
+	* @param {Function} o.onRowFn 点击行事件
+	* @param {Boolean} o.isSelectSingleRow 点击是否选中单行,onRowFn有设置时才生效
+	* @param {Boolean} o.isOnRowCheckbox 点击行选中checkbox
+	* @param {Function} o.initSelected 初始化选中事件
+	* @param {String}  o.nullText 空文本
+	* @param {String}  o.requestText 请求文本
+	* @param {Boolean} o.isSort 是否排序，默认false
+	* @param {Boolean} o.isSortCurrent 排序当前页中数据，默认false，使用时isSort必须是true，isPageCache必须是true
+	* @param {Boolean} o.isShowLoading 是否显示loading效果，默认true
+	* @param {String} o.countFont 统计文字
+	* @param {String} o.refreshIndex 刷新当前页索引pageIndex,默认false
+	* @param {String} o.isHideColumns 是否要隐藏列Columns, 隐藏列是请设置ID
+	* @return {Object} grid对象
+	*/
+
+
+	// XXX
+	var lang = {
+		/*grid*/
+	    nextPage: '&gt;',
+	    prevPage: '&lt;',
+	    //countFont: '每页显示：{{size}}条，当前显示从{{start}}到{{end}}，总{{count}}条 。',
+	    countFont:'',
+	    nullText: '暂无数据，请确认！',
+	    requestText: '数据请求中，请稍后...'
+	}
+
+	var nic  = __webpack_require__(1),
+		Grid = function(o){
 		
-		'use strict';
-		
-		/**
-		* nic.ui.grid 表格控件
-		* @class nic.ui.grid
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} o 表格参数
-	    * @param {String} o.wrap 表格容器
-	    * @param {String} o.id 表格id
-	    * @param {Object} o.pageAjax ajax数据
-	    * @param {String} o.pageAjax.url ajax请求的url
-	    * @param {String} o.pageAjax.type ajax请求类型，默认是GET
-	    * @param {String} o.pageAjax.data ajax请求的条件
-	    * @param {Object} o.data 静态数据
-	    * @param {String|Number} o.width 表格宽度
-	    * @param {Boolean} o.isFixedWidth 表宽度是否为固定宽度，默认为false，会去对比grid外框的宽度和o.columns.width，而达到自适应列的目的
-	    * @param {Object} o.columns 列结构
-	    * @param {String} o.columns.display 表头名称
-	    * @param {String} o.columns.name 数据字段名
-	    * @param {Number} o.columns.width 列宽度，这里是占比
-	    * @param {Function} o.columns.render 列自定义显示函数
-	    * @param {Function} o.columns.statisRender 统计列自定义显示函数
-	    * @param {String} o.columns.statisType 统计类型
-	    * @param {String} o.columns.statisWrap 统计容器
-	    * @param {Object} o.statis 统计
-	    * @param {Object} o.detail 表格详细
-	    * @param {Object} o.bottomBtns 底部按钮
-	    * @param {Boolean} o.isPage 是否显示分页
-	    * @param {Boolean} o.isHead 是否显示头部
-	    * @param {Boolean} o.showAllRow 显示所有数据，默认false，以分页和显示条数互斥 ，isPage=false、pageSize = total
-	    * @param {String} o.pageIndex 分页起始页
-	    * @param {String} o.pageSize 每页显示的条数
-	    * @param {Array} o.pageSizeOptions 可选择设定的每页结果数，默认[10, 20, 50, 100, 200]，不显示时可设置null
-	    * @param {Function} o.onPageFn 翻页事件
-	    * @param {Boolean} o.isPageCache 翻页时是否缓存当页数据
-	    * @param {Boolean} o.isMemory 翻页是否记住选择记录，默认false
-	    * @param {Boolean} o.checkbox 是否有checkbox
-	    * @param {Function} o.onCheckFn 点击checkbox事件
-	    * @param {Function} o.onRowFn 点击行事件
-	    * @param {Boolean} o.isSelectSingleRow 点击是否选中单行,onRowFn有设置时才生效
-	    * @param {Boolean} o.isOnRowCheckbox 点击行选中checkbox
-	    * @param {Function} o.initSelected 初始化选中事件
-	    * @param {String}  o.nullText 空文本
-	    * @param {String}  o.requestText 请求文本
-	    * @param {Boolean} o.isSort 是否排序，默认false
-	    * @param {Boolean} o.isSortCurrent 排序当前页中数据，默认false，使用时isSort必须是true，isPageCache必须是true
-	    * @param {Boolean} o.isShowLoading 是否显示loading效果，默认true
-	    * @param {String} o.countFont 统计文字
-	    * @param {String} o.refreshIndex 刷新当前页索引pageIndex,默认false
-	    * @param {String} o.isHideColumns 是否要隐藏列Columns, 隐藏列是请设置ID
-		* @return {Object} grid对象
-		*/
-
-
-		// XXX
-		var lang = {
-			/*grid*/
-		    nextPage: '&gt;',
-		    prevPage: '&lt;',
-		    //countFont: '每页显示：{{size}}条，当前显示从{{start}}到{{end}}，总{{count}}条 。',
-		    countFont:'',
-		    nullText: '暂无数据，请确认！',
-		    requestText: '数据请求中，请稍后...'
-		}
-
-		var Grid = function(o){
-			
 			var 
 				/**
 				* 全局对象
@@ -1443,7 +1625,7 @@
 									that.tBodyCreateHtml(index);
 									that.pageCreateHtml();
 								}
-		
+
 								/*全部选上时给表头全选*/
 								if( gridBody.find('.l-checkbox-selected').length === pageSize ){
 									gridHeader.find('.l-checkbox').addClass('l-checkbox-selected');
@@ -1636,7 +1818,7 @@
 					getRowData: function(index){
 						var	pageIndex = p.pageIndex,
 							data      = _cache.tmpData[pageIndex - 1]; //表格数据
-		
+
 						if( index === -1 ){
 							return false;
 						}
@@ -2462,19 +2644,19 @@
 				}
 				return g;
 			};
-	        */
-	        g.uncheckRowByID = function(id){
+		    */
+		    g.uncheckRowByID = function(id){
 				if( id !== undefined ){
 					var grid1       = g.grid1,
 						grid2       = g.grid2,
 						grid1Header = grid1.find('.l-grid-header'), //表格头
 						grid1Body   = grid1.find('.l-grid-body'),   //表格主体
 						grid2Body   = grid2.find('.l-grid-body'),   //表格主体
-	                    i           = getIndex(),
+		                i           = getIndex(),
 						grid1Row    = grid1Body.find('.l-grid-row').eq(i),
 						grid2Row    = grid2Body.find('.l-grid-row').eq(i),
 						checkbox    = grid1Body.find('.l-checkbox').eq(i);
-	                
+		            
 					checkbox.removeClass('l-checkbox-selected');
 					grid1Row.removeClass('l-grid-row-selected');
 					grid2Row.removeClass('l-grid-row-selected');
@@ -2482,28 +2664,28 @@
 					
 					_core.initCheckbox();
 				}
-	            
+		        
 				return g;
-	            
-	            function getIndex(){
-	                var selectedArr = _cache.rowSelected,
-	                    len         = selectedArr.length,
-	                    index       = 0;
-	                    
-	                for(; index<len; index++){
-	                    if( selectedArr[index] ){
-	                        var subSelectedArr = selectedArr[index],
-	                            subLen         = subSelectedArr.length,
-	                            subIndex       = 0;
-	                        for(; subIndex<subLen; subIndex++){
-	                            if( subSelectedArr[subIndex] && subSelectedArr[subIndex].id == id ){
-	                                subSelectedArr[subIndex] = null;
-	                                return subIndex;
-	                            }
-	                        }
-	                    }
-	                }
-	            }
+		        
+		        function getIndex(){
+		            var selectedArr = _cache.rowSelected,
+		                len         = selectedArr.length,
+		                index       = 0;
+		                
+		            for(; index<len; index++){
+		                if( selectedArr[index] ){
+		                    var subSelectedArr = selectedArr[index],
+		                        subLen         = subSelectedArr.length,
+		                        subIndex       = 0;
+		                    for(; subIndex<subLen; subIndex++){
+		                        if( subSelectedArr[subIndex] && subSelectedArr[subIndex].id == id ){
+		                            subSelectedArr[subIndex] = null;
+		                            return subIndex;
+		                        }
+		                    }
+		                }
+		            }
+		        }
 			};
 			
 			/*g.uncheckRow2 = function(key, val){
@@ -2543,601 +2725,601 @@
 			return _core.init(o);
 		};
 
-		return function(options){
-			return new Grid(options);
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = function(options){
+		return new Grid(options);
+	};
+
 
 /***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 **┏┓　　　┏┓ 
-	 *┏┛┻━━━┛┻┓ 
-	 *┃　　　　　　　┃ 　 
-	 *┃　　　━　　　┃ 
-	 *┃　┳┛　┗┳　┃ 
-	 *┃　　　　　　　┃ 
-	 *┃　　　┻　　　┃ 
-	 *┃　　　　　　　┃ 
-	 *┗━┓　　　┏━┛ 
-	 ****┃　　　┃　　　　 
-	 ****┃　　　┃ 神兽保护，代码无bug
-	 ****┃　　　┗━━━┓ 
-	 ****┃　　　　　　　┣┓ 
-	 ****┃　　　　　　　┏┛ 
-	 ****┗┓┓┏━┳┓┏┛ 
-	 ******┃┫┫　┃┫┫ 
-	 ******┗┻┛　┗┻┛  
+	/**
+	**┏┓　　　┏┓ 
+	*┏┛┻━━━┛┻┓ 
+	*┃　　　　　　　┃ 　 
+	*┃　　　━　　　┃ 
+	*┃　┳┛　┗┳　┃ 
+	*┃　　　　　　　┃ 
+	*┃　　　┻　　　┃ 
+	*┃　　　　　　　┃ 
+	*┗━┓　　　┏━┛ 
+	****┃　　　┃　　　　 
+	****┃　　　┃ 神兽保护，代码无bug
+	****┃　　　┗━━━┓ 
+	****┃　　　　　　　┣┓ 
+	****┃　　　　　　　┏┛ 
+	****┗┓┓┏━┳┓┏┛ 
+	******┃┫┫　┃┫┫ 
+	******┗┻┛　┗┻┛  
 	*/
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4), __webpack_require__(7), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic, template, pagination){
-		
-		'use strict';
-		
-		var 
-			/**
-			* 默认配置
-			* @private
-			*/
-		
-			p    = {
-						template: null, //模板ID
-						nullTemplate: null, //空模板ID
-						wrap: null, //插入位置
-						pageIndex:1, //初始化页码
-						pageSize:10, //每页显示的条数
-						pageSizeOptions: [10, 20, 50, 100, 200], //可选择设定的每页结果数
-						//data:{}, //静态数据
-						pageAjax:{ //ajax数据源
-							type: 'GET',
-							dataType: "json",
-							success: function(){},
-							error: function(){},
-							beforeSend: function(){}
-						},
-						before: function(){},
-						after: function(){},
-						isShowLoading: true, //是否显示loading效果
-						onRowFn: function(){}, //点击行事件
-						bottomBtns: {}, //底部按钮
-						statis: [], //统计
-						statisToFixed: 2 //统计精确位数
+
+	'use strict';
+
+	var 
+		/**
+		* 默认配置
+		* @private
+		*/
+		template   = __webpack_require__(7),
+		pagination = __webpack_require__(4),
+		p          = {
+					template: null, //模板ID
+					nullTemplate: null, //空模板ID
+					wrap: null, //插入位置
+					pageIndex:1, //初始化页码
+					pageSize:10, //每页显示的条数
+					pageSizeOptions: [10, 20, 50, 100, 200], //可选择设定的每页结果数
+					//data:{}, //静态数据
+					pageAjax:{ //ajax数据源
+						type: 'GET',
+						dataType: "json",
+						success: function(){},
+						error: function(){},
+						beforeSend: function(){}
 					},
+					before: function(){},
+					after: function(){},
+					isShowLoading: true, //是否显示loading效果
+					onRowFn: function(){}, //点击行事件
+					bottomBtns: {}, //底部按钮
+					statis: [], //统计
+					statisToFixed: 2 //统计精确位数
+				},
+				
+		/**
+		* 缓存池
+		* @private
+		*/
+		_cache = {
+			data: {},
+			tmpData: [],
+			rowSelected: [],
+			ele: {},
+			isInit: true,
+			fragment: {
+				loading: '<div class="l-gridFree-loading"><div class="l-grid-loadingBg"></div><div class="l-grid-loadingIco"></div></div>',
+				pagination: '<div class="l-gridFree-footer-page ui-pagination"></div>',
+				pageSelect: '<div class="l-gridFree-footer-select"></div>',
+				bottomBtns: '<div class="l-gridFree-footer-btn"></div>',
+				nullWrap: p.nullTemplate ? template(p.nullTemplate, {cls: 'l-gridFree-body-nullWrap'}) :'<div class="l-gridFree-body-nullWrap"></div>'
+			}
+		},
+		
+		/**
+		* 内部对象
+		* @private
+		*/
+		_core = {
+			ajax: function(callback){
+				var pageAjax      = p.pageAjax,
+					type          = pageAjax.type === undefined ? 'GET' : pageAjax.type,
+					pageIndex     = p.pageIndex,
+					pageSize      = p.pageSize,
+					data          = '',
+					isShowLoading = p.isShowLoading,
+					args          = [],
+					str           = '',
+					pathname      = encodeURIComponent(location.pathname + 'getGridPrev'),
+					strToData     = function(str){
+										var args = {},
+											data,
+											param,
+											name,
+											value;
+										
+										data = str.split('&');
+										
+										for (var i = 0; i < data.length; i++) {
+											param = data[i].split('=');
+											name  = param[0];
+											value = param[1];
+											if(name === ""){
+												name = "unkown";
+											}
+											if(typeof(args[name]) === "undefined"){ //参数尚不存在
+												args[name] = value;
+											}else if(typeof(args[name]) === "string"){ //参数已经存在则保存为数组
+												args[name] = [args[name]];
+												args[name].push(value);
+											}else{ //已经是数组的
+												args[name].push(value);
+											}
+										}
+										
+										return args;
+									}
+				if( typeof pageAjax.data ==='string' ){
+					data = pageAjax.data;
+					data += '&pageIndex=' + pageIndex;
+					data += '&pageSize=' + pageSize;
 					
-			/**
-			* 缓存池
-			* @private
-			*/
-			_cache = {
-				data: {},
-				tmpData: [],
-				rowSelected: [],
-				ele: {},
-				isInit: true,
-				fragment: {
-					loading: '<div class="l-gridFree-loading"><div class="l-grid-loadingBg"></div><div class="l-grid-loadingIco"></div></div>',
-					pagination: '<div class="l-gridFree-footer-page ui-pagination"></div>',
-					pageSelect: '<div class="l-gridFree-footer-select"></div>',
-					bottomBtns: '<div class="l-gridFree-footer-btn"></div>',
-					nullWrap: p.nullTemplate ? template(p.nullTemplate, {cls: 'l-gridFree-body-nullWrap'}) :'<div class="l-gridFree-body-nullWrap"></div>'
+					args = data.replace(/{{|}}/g,'');
+
+				}else if( typeof pageAjax.data === 'object' || !pageAjax.data ){
+					data = $.extend({}, pageAjax.data);
+					data.pageSize  = p.pageSize;
+					data.pageIndex = p.pageIndex;
+					
+					for(var i in data){
+						args.push(i + '=' + data[i])
+					}
+					
+					args = args.join('&');
+				}
+				
+				if( !_cache.isInit ){
+					nic.base.cookie.set(pathname, args, 200000);
+				}
+				if( /getGridPrev/.test(location.search) ){
+					args = nic.base.cookie.get(pathname) ? nic.base.cookie.get(pathname) : args;
+					p.pageIndex = Number( strToData(args).pageIndex );
+				}else{
+					nic.base.cookie.set(pathname, args, 200000);
+				}
+				
+				$.ajax({
+					type: p.pageAjax.type,
+					url: p.pageAjax.url,
+					cache: false,
+					dataType: p.pageAjax.dataType,
+					data: args,
+					beforeSend: function(){
+						//if( p.isShowLoading && _cache.ele.loading && ( p.nullTemplate || p.pageIndex !== 1 ) ){
+							_cache.ele.loading.style.display = 'block';
+						//}
+					},
+					success: function(data){
+						_cache.data = data;
+						_cache.tmpData[p.pageIndex - 1] = data.rows;
+						
+						//if( p.pageIndex === 1 && !p.nullTemplate ){
+						//	callback(data);
+						//	p.pageAjax.success(data);
+						//}else{
+							setTimeout(function(){
+								callback();
+								p.pageAjax.success(data);
+								
+								if( p.isShowLoading ){
+									_cache.ele.loading.style.display = 'none';
+								}
+							}, 500);
+						//}
+					},
+					error: function(data){
+						_cache.tmpData[p.pageIndex - 1] = [];
+						_cache.total = 0;
+						callback();
+						p.pageAjax.error(data);
+						console.log(data)
+						setTimeout(function(){
+							_cache.ele.loading.style.display = 'none';
+						}, 500);
+					}
+				});
+			},
+			createWrap: function(ele){
+				var wrap     = document.getElementById(ele),
+					children = null,
+					footer   = null,
+					fragment = _cache.fragment;
+					
+				if( !wrap ) return console.log('请指定容器！');
+				
+				if( !wrap.children.length ){
+					wrap.innerHTML ='<div class="l-gridFree">'+ 
+										fragment.loading +
+										'<div class="l-gridFree-body">'+
+											fragment.nullWrap +
+										'</div>'+
+										'<div class="l-gridFree-footer">'+
+											fragment.bottomBtns +
+											fragment.pageSelect +
+											fragment.pagination +
+										'</div>'+
+									'</div>';
+				}
+				
+				children = wrap.firstChild.children;
+				footer   = children[2];
+				
+				return {
+					wrap: wrap,
+					loading: children[0],
+					body: children[1],
+					footer: footer,
+					bottomBtns: footer.children[0],
+					pageSelect: footer.children[1],
+					pagination: footer.children[2]
 				}
 			},
-			
-			/**
-			* 内部对象
-			* @private
-			*/
-			_core = {
-				ajax: function(callback){
-					var pageAjax      = p.pageAjax,
-						type          = pageAjax.type === undefined ? 'GET' : pageAjax.type,
-						pageIndex     = p.pageIndex,
-						pageSize      = p.pageSize,
-						data          = '',
-						isShowLoading = p.isShowLoading,
-						args          = [],
-						str           = '',
-						pathname      = encodeURIComponent(location.pathname + 'getGridPrev'),
-						strToData     = function(str){
-											var args = {},
-												data,
-												param,
-												name,
-												value;
-											
-											data = str.split('&');
-											
-											for (var i = 0; i < data.length; i++) {
-												param = data[i].split('=');
-												name  = param[0];
-												value = param[1];
-												if(name === ""){
-													name = "unkown";
-												}
-												if(typeof(args[name]) === "undefined"){ //参数尚不存在
-													args[name] = value;
-												}else if(typeof(args[name]) === "string"){ //参数已经存在则保存为数组
-													args[name] = [args[name]];
-													args[name].push(value);
-												}else{ //已经是数组的
-													args[name].push(value);
-												}
-											}
-											
-											return args;
-										}
-					if( typeof pageAjax.data ==='string' ){
-						data = pageAjax.data;
-						data += '&pageIndex=' + pageIndex;
-						data += '&pageSize=' + pageSize;
-						
-						args = data.replace(/{{|}}/g,'');
+			createBody: function(){
+				var arr = _cache.tmpData[p.pageIndex - 1];
 
-					}else if( typeof pageAjax.data === 'object' || !pageAjax.data ){
-						data = $.extend({}, pageAjax.data);
-						data.pageSize  = p.pageSize;
-						data.pageIndex = p.pageIndex;
-						
-						for(var i in data){
-							args.push(i + '=' + data[i])
-						}
-						
-						args = args.join('&');
+				/* 扩展template的辅助函数  */
+				if( p.templateRender ){
+					for(var i = 0, len = p.templateRender.length; i<len; i++){
+						template.helper(p.templateRender[i].name, p.templateRender[i].handle);
 					}
-					
-					if( !_cache.isInit ){
-						nic.base.cookie.set(pathname, args, 200000);
-					}
-					if( /getGridPrev/.test(location.search) ){
-						args = nic.base.cookie.get(pathname) ? nic.base.cookie.get(pathname) : args;
-						p.pageIndex = Number( strToData(args).pageIndex );
-					}else{
-						nic.base.cookie.set(pathname, args, 200000);
-					}
-					
-					$.ajax({
-						type: p.pageAjax.type,
-						url: p.pageAjax.url,
-						cache: false,
-						dataType: p.pageAjax.dataType,
-						data: args,
-						beforeSend: function(){
-							//if( p.isShowLoading && _cache.ele.loading && ( p.nullTemplate || p.pageIndex !== 1 ) ){
-								_cache.ele.loading.style.display = 'block';
-							//}
-						},
-						success: function(data){
-							_cache.data = data;
-							_cache.tmpData[p.pageIndex - 1] = data.rows;
-							
-							//if( p.pageIndex === 1 && !p.nullTemplate ){
-							//	callback(data);
-							//	p.pageAjax.success(data);
-							//}else{
-								setTimeout(function(){
-									callback();
-									p.pageAjax.success(data);
-									
-									if( p.isShowLoading ){
-										_cache.ele.loading.style.display = 'none';
-									}
-								}, 500);
-							//}
-						},
-						error: function(data){
-							_cache.tmpData[p.pageIndex - 1] = [];
-							_cache.total = 0;
-							callback();
-							p.pageAjax.error(data);
-							console.log(data)
-							setTimeout(function(){
-								_cache.ele.loading.style.display = 'none';
-							}, 500);
-						}
-					});
-				},
-				createWrap: function(ele){
-					var wrap     = document.getElementById(ele),
-						children = null,
-						footer   = null,
-						fragment = _cache.fragment;
-						
-					if( !wrap ) return console.log('请指定容器！');
-					
-					if( !wrap.children.length ){
-						wrap.innerHTML ='<div class="l-gridFree">'+ 
-											fragment.loading +
-											'<div class="l-gridFree-body">'+
-												fragment.nullWrap +
-											'</div>'+
-											'<div class="l-gridFree-footer">'+
-												fragment.bottomBtns +
-												fragment.pageSelect +
-												fragment.pagination +
-											'</div>'+
-										'</div>';
-					}
-					
-					children = wrap.firstChild.children;
-					footer   = children[2];
-					
-					return {
-						wrap: wrap,
-						loading: children[0],
-						body: children[1],
-						footer: footer,
-						bottomBtns: footer.children[0],
-						pageSelect: footer.children[1],
-						pagination: footer.children[2]
-					}
-				},
-				createBody: function(){
-					var arr = _cache.tmpData[p.pageIndex - 1];
+				}
 
-					/* 扩展template的辅助函数  */
-					if( p.templateRender ){
-						for(var i = 0, len = p.templateRender.length; i<len; i++){
-							template.helper(p.templateRender[i].name, p.templateRender[i].handle);
-						}
+				_cache.data.rows          = arr;
+				_cache.ele.body.innerHTML = arr.length ? template(p.template, _cache.data) : _cache.fragment.nullWrap;
+				
+			},
+			createFooter: function(){
+				
+				if( !_cache.tmpData[p.pageIndex - 1].length ) {
+					 _cache.ele.footer.style.display = 'none';
+				}else{
+					_cache.ele.footer.style.display = '';
+				}
+				
+				var html            = '',
+					pageSize        = p.pageSize,
+					pageSizeOptions = p.pageSizeOptions;
+				
+				if( pageSizeOptions.length ){
+					html += '<select class="ui-select">';
+					for(var i = 0, len = pageSizeOptions.length, select = _cache.ele.pageSelect; i<len; i++){
+						html += '<option value="'+ pageSizeOptions[i] +'"'+ (pageSize === pageSizeOptions[i] ? ' selected="selected"' : '') +'>'+ pageSizeOptions[i] +'</option>';
 					}
+					html += '</select>';
+					
+					select.innerHTML = html;
+					
+					select.firstChild.onchange = function(){
+						p.pageSize = Number( this.value );
+						p.pageIndex = 1;
+						_cache.tmpData = [];
+						
+						_core.ajax(function(){
+							_core.before();
+							_core.createBody();
+							_core.after();
+							_core.createFooter();
+						});
+					}
+				}
 
-					_cache.data.rows          = arr;
-					_cache.ele.body.innerHTML = arr.length ? template(p.template, _cache.data) : _cache.fragment.nullWrap;
-					
-				},
-				createFooter: function(){
-					
-					if( !_cache.tmpData[p.pageIndex - 1].length ) {
-						 _cache.ele.footer.style.display = 'none';
-					}else{
-						_cache.ele.footer.style.display = '';
-					}
-					
-					var html            = '',
-						pageSize        = p.pageSize,
-						pageSizeOptions = p.pageSizeOptions;
-					
-					if( pageSizeOptions.length ){
-						html += '<select class="ui-select">';
-						for(var i = 0, len = pageSizeOptions.length, select = _cache.ele.pageSelect; i<len; i++){
-							html += '<option value="'+ pageSizeOptions[i] +'"'+ (pageSize === pageSizeOptions[i] ? ' selected="selected"' : '') +'>'+ pageSizeOptions[i] +'</option>';
-						}
-						html += '</select>';
-						
-						select.innerHTML = html;
-						
-						select.firstChild.onchange = function(){
-							p.pageSize = Number( this.value );
-							p.pageIndex = 1;
-							_cache.tmpData = [];
-							
+				pagination({
+	                cur: p.pageIndex,
+	                total: Math.ceil(_cache.data.total / pageSize),
+	                target: _cache.ele.pagination,
+	                prevText: '&lt;',
+	                nextText: '&gt;',
+					callback: function(cur, total){
+						p.pageIndex = cur;
+						if( !_cache.tmpData[p.pageIndex -1] ){
 							_core.ajax(function(){
 								_core.before();
 								_core.createBody();
 								_core.after();
-								_core.createFooter();
 							});
+						}else{
+							_core.before();
+							_core.createBody();
+							_core.after();
 						}
 					}
+	            });
+			},
+			
+			
+			/**
+			* 对比现有数据
+			* @param {String} name 要比较的的字段
+			* @param {String} sortType 排序裂隙
+			*/
+			compareData: function(name, sortType, callback){
+				var index = p.pageIndex - 1,
+					arr   = _cache.tmpData[index];
+				
+				arr.sort( getJsPercentDataComparator(name) );
+				
+				if( sortType === 'desc' ){
+					arr.reverse();
+				}
+				
+				_cache.tmpData[index] = arr;
+				
+				_core.before();
+				_core.createBody();
+				_core.after();
+				callback();
+				
+				return;
 
-					pagination({
-		                cur: p.pageIndex,
-		                total: Math.ceil(_cache.data.total / pageSize),
-		                target: _cache.ele.pagination,
-		                prevText: '&lt;',
-		                nextText: '&gt;',
-						callback: function(cur, total){
-							p.pageIndex = cur;
-							if( !_cache.tmpData[p.pageIndex -1] ){
-								_core.ajax(function(){
-									_core.before();
-									_core.createBody();
-									_core.after();
-								});
+				/*序顺序(a、b都是数字时按大小，a、b长度都一样是按字母，a、b长度不一时按长度)*/
+				function getJsPercentDataComparator(name){
+					return function(a, b){
+						var result = 0;
+						
+						if( a[name] !== null && b[name] !== null ){
+							var aStr   = a[name],
+								bStr   = b[name],
+								afloat = parseFloat(aStr),
+								bfloat = parseFloat(bStr);
+							
+							if( !isNaN(bfloat) && !isNaN(afloat) ){
+								result = (afloat>bfloat) ? 1 : -1;
 							}else{
-								_core.before();
-								_core.createBody();
-								_core.after();
+								if( aStr.length === bStr.length ){
+									result = aStr.localeCompare(bStr);
+								}else{
+									result = (aStr.length>bStr.length) ? 1 : -1;
+								}
+								
 							}
 						}
-		            });
-				},
-				
-				
-				/**
-				* 对比现有数据
-				* @param {String} name 要比较的的字段
-				* @param {String} sortType 排序裂隙
-				*/
-				compareData: function(name, sortType, callback){
-					var index = p.pageIndex - 1,
-						arr   = _cache.tmpData[index];
-					
-					arr.sort( getJsPercentDataComparator(name) );
-					
-					if( sortType === 'desc' ){
-						arr.reverse();
+						
+						return result;
 					}
-					
-					_cache.tmpData[index] = arr;
-					
+				}
+				
+			},
+			
+			/**
+			* 对比所有数据
+			* @param {String} name 要比较的的字段
+			* @param {String} sortType 排序裂隙
+			*/
+			compareAllData: function(name, sortType, callback){
+				if( typeof p.pageAjax.data === 'string' ){
+					if( /&sort=/.test(p.pageAjax.data) ){
+						p.pageAjax.data = (p.pageAjax.data).replace(/&sort={{\w*}}/, '&sort={{'+ name+ '}}');
+						p.pageAjax.data = (p.pageAjax.data).replace(/&sortType={{\w*}}/, '&sortType={{'+ sortType +'}}');
+					}else{
+						p.pageAjax.data = (p.pageAjax.data) + '&sort={{'+ name+ '}}&sortType={{'+ sortType +'}}';
+					}
+				}else if( typeof p.pageAjax.data === 'object' ){
+					p.pageAjax.data.sort     = name;
+					p.pageAjax.data.sortType = sortType;
+				}else{
+					p.pageAjax.data          = {};
+					p.pageAjax.data.sort     = name;
+					p.pageAjax.data.sortType = sortType;
+				}
+				_core.ajax(function(){
 					_core.before();
 					_core.createBody();
 					_core.after();
 					callback();
-					
-					return;
-
-					/*序顺序(a、b都是数字时按大小，a、b长度都一样是按字母，a、b长度不一时按长度)*/
-					function getJsPercentDataComparator(name){
-						return function(a, b){
-							var result = 0;
-							
-							if( a[name] !== null && b[name] !== null ){
-								var aStr   = a[name],
-									bStr   = b[name],
-									afloat = parseFloat(aStr),
-									bfloat = parseFloat(bStr);
-								
-								if( !isNaN(bfloat) && !isNaN(afloat) ){
-									result = (afloat>bfloat) ? 1 : -1;
-								}else{
-									if( aStr.length === bStr.length ){
-										result = aStr.localeCompare(bStr);
-									}else{
-										result = (aStr.length>bStr.length) ? 1 : -1;
-									}
-									
-								}
-							}
-							
-							return result;
-						}
-					}
-					
-				},
-				
-				/**
-				* 对比所有数据
-				* @param {String} name 要比较的的字段
-				* @param {String} sortType 排序裂隙
-				*/
-				compareAllData: function(name, sortType, callback){
-					if( typeof p.pageAjax.data === 'string' ){
-						if( /&sort=/.test(p.pageAjax.data) ){
-							p.pageAjax.data = (p.pageAjax.data).replace(/&sort={{\w*}}/, '&sort={{'+ name+ '}}');
-							p.pageAjax.data = (p.pageAjax.data).replace(/&sortType={{\w*}}/, '&sortType={{'+ sortType +'}}');
-						}else{
-							p.pageAjax.data = (p.pageAjax.data) + '&sort={{'+ name+ '}}&sortType={{'+ sortType +'}}';
-						}
-					}else if( typeof p.pageAjax.data === 'object' ){
-						p.pageAjax.data.sort     = name;
-						p.pageAjax.data.sortType = sortType;
-					}else{
-						p.pageAjax.data          = {};
-						p.pageAjax.data.sort     = name;
-						p.pageAjax.data.sortType = sortType;
-					}
-					_core.ajax(function(){
-						_core.before();
-						_core.createBody();
-						_core.after();
-						callback();
-					});
-				},
-
-				before: function(){
-					var that = this,
-						data = nic.base.isFunction( p.before ) ? p.before() : null;
-
-					if( data ) _cache.data.selectedData = data;
-				},
-
-				after: function(){
-					if( nic.base.isFunction(p.after) ) p.after();
-				}
+				});
 			},
-			
-			/**
-			* 表格对象
-			* @public
-			*/
-			GridFree = function(options){
 
-				p = $.extend(true, p, options);
-				
-				if( !p.wrap ) return;
-				
-				_cache.ele = $.extend({}, _cache.ele, _core.createWrap(p.wrap) );
-				
-				/*if( p.data ){
-					_cache.data = p.data;
-					_cache.tmpData[p.pageIndex - 1] = p.data.rows;
+			before: function(){
+				var that = this,
+					data = nic.base.isFunction( p.before ) ? p.before() : null;
+
+				if( data ) _cache.data.selectedData = data;
+			},
+
+			after: function(){
+				if( nic.base.isFunction(p.after) ) p.after();
+			}
+		},
+		
+		/**
+		* 表格对象
+		* @public
+		*/
+		GridFree = function(options){
+
+			p = $.extend(true, p, options);
+			
+			if( !p.wrap ) return;
+			
+			_cache.ele = $.extend({}, _cache.ele, _core.createWrap(p.wrap) );
+			
+			/*if( p.data ){
+				_cache.data = p.data;
+				_cache.tmpData[p.pageIndex - 1] = p.data.rows;
+				_core.createBody();
+				_core.createFooter();
+				_cache.isInit = false;
+			}else{*/
+				_core.ajax(function(){
+					_core.before();
 					_core.createBody();
+					_core.after();
 					_core.createFooter();
 					_cache.isInit = false;
-				}else{*/
-					_core.ajax(function(){
-						_core.before();
-						_core.createBody();
-						_core.after();
-						_core.createFooter();
-						_cache.isInit = false;
-					});
-				/*}*/
-			};
-		
+				});
+			/*}*/
+		};
 
-		// DDD
-		function equal(objA, objB){
-		    if (typeof arguments[0] != typeof arguments[1])
-		        return false;
-		    //数组
-		    if (arguments[0] instanceof Array)
-		    {
-		        if (arguments[0].length != arguments[1].length)
-		            return false;
-		        
-		        var allElementsEqual = true;
-		        for (var i = 0; i < arguments[0].length; ++i)
-		        {
-		            if (typeof arguments[0][i] != typeof arguments[1][i])
-		                return false;
-		            if (typeof arguments[0][i] == 'number' && typeof arguments[1][i] == 'number')
-		                allElementsEqual = (arguments[0][i] == arguments[1][i]);
-		            else
-		                allElementsEqual = arguments.callee(arguments[0][i], arguments[1][i]);            //递归判断对象是否相等                
-		        }
-		        return allElementsEqual;
-		    }
-		    
-		    //对象
-		    if (arguments[0] instanceof Object && arguments[1] instanceof Object)
-		    {
-		        var result = true;
-		        var attributeLengthA = 0, attributeLengthB = 0;
-		        for (var o in arguments[0])
-		        {
-		            //判断两个对象的同名属性是否相同（数字或字符串）
-		            if (typeof arguments[0][o] == 'number' || typeof arguments[0][o] == 'string')
-		                result = eval("arguments[0]['" + o + "'] == arguments[1]['" + o + "']");
-		            else {
-		                //如果对象的属性也是对象，则递归判断两个对象的同名属性
-		                //if (!arguments.callee(arguments[0][o], arguments[1][o]))
-		                if (!arguments.callee(eval("arguments[0]['" + o + "']"), eval("arguments[1]['" + o + "']")))
-		                {
-		                    result = false;
-		                    return result;
-		                }
-		            }
-		            ++attributeLengthA;
-		        }
-		        
-		        for (var o in arguments[1]) {
-		            ++attributeLengthB;
-		        }
-		        
-		        //如果两个对象的属性数目不等，则两个对象也不等
-		        if (attributeLengthA != attributeLengthB)
-		            result = false;
-		        return result;
-		    }
-		    return arguments[0] == arguments[1];
+
+	// DDD
+	function equal(objA, objB){
+	    if (typeof arguments[0] != typeof arguments[1])
+	        return false;
+	    //数组
+	    if (arguments[0] instanceof Array)
+	    {
+	        if (arguments[0].length != arguments[1].length)
+	            return false;
+	        
+	        var allElementsEqual = true;
+	        for (var i = 0; i < arguments[0].length; ++i)
+	        {
+	            if (typeof arguments[0][i] != typeof arguments[1][i])
+	                return false;
+	            if (typeof arguments[0][i] == 'number' && typeof arguments[1][i] == 'number')
+	                allElementsEqual = (arguments[0][i] == arguments[1][i]);
+	            else
+	                allElementsEqual = arguments.callee(arguments[0][i], arguments[1][i]);            //递归判断对象是否相等                
+	        }
+	        return allElementsEqual;
+	    }
+	    
+	    //对象
+	    if (arguments[0] instanceof Object && arguments[1] instanceof Object)
+	    {
+	        var result = true;
+	        var attributeLengthA = 0, attributeLengthB = 0;
+	        for (var o in arguments[0])
+	        {
+	            //判断两个对象的同名属性是否相同（数字或字符串）
+	            if (typeof arguments[0][o] == 'number' || typeof arguments[0][o] == 'string')
+	                result = eval("arguments[0]['" + o + "'] == arguments[1]['" + o + "']");
+	            else {
+	                //如果对象的属性也是对象，则递归判断两个对象的同名属性
+	                //if (!arguments.callee(arguments[0][o], arguments[1][o]))
+	                if (!arguments.callee(eval("arguments[0]['" + o + "']"), eval("arguments[1]['" + o + "']")))
+	                {
+	                    result = false;
+	                    return result;
+	                }
+	            }
+	            ++attributeLengthA;
+	        }
+	        
+	        for (var o in arguments[1]) {
+	            ++attributeLengthB;
+	        }
+	        
+	        //如果两个对象的属性数目不等，则两个对象也不等
+	        if (attributeLengthA != attributeLengthB)
+	            result = false;
+	        return result;
+	    }
+	    return arguments[0] == arguments[1];
+	}
+
+	/**
+	* 刷新表格数据
+	*/
+	GridFree.prototype.refresh = function(options){
+		
+		p = $.extend(true, p, options);
+		_cache.tmpData = [];
+		
+		_core.ajax(function(){
+			_core.before();
+			_core.createBody();
+			_core.after();
+			_core.createFooter();
+		});
+		
+		return this;
+	};
+
+	/**
+	* 排序
+	* @param {String} options.sort 要比较的的字段
+	* @param {String} options.sortType 排序类型
+	* @param {Boolean} options.isSortCurrent 是否排序当前页的数据，默认为true，只按字符串大小排序，设置为false时，这进行ajax排序
+	* @param {Function} options.callback 排序后的回调函数
+	*/
+	GridFree.prototype.sort = function(options){
+		if( !options || !options.sort ) return;
+				
+		var sort          = options.sort,
+			sortType      = options.sortType || 'asc',
+			isSortCurrent = options.isSortCurrent === undefined ? true : options.isSortCurrent,
+			callback      = options.callback || function(){};
+		
+		if( isSortCurrent ){
+			_core.compareData(sort, sortType, callback);
+		}else{
+			_core.compareAllData(sort, sortType, callback);
 		}
 
-		/**
-		* 刷新表格数据
-		*/
-		GridFree.prototype.refresh = function(options){
-			
-			p = $.extend(true, p, options);
-			_cache.tmpData = [];
-			
-			_core.ajax(function(){
-				_core.before();
-				_core.createBody();
-				_core.after();
-				_core.createFooter();
-			});
-			
-			return this;
-		};
+		return this;
+	};
 
-		/**
-		* 排序
-		* @param {String} options.sort 要比较的的字段
-		* @param {String} options.sortType 排序类型
-		* @param {Boolean} options.isSortCurrent 是否排序当前页的数据，默认为true，只按字符串大小排序，设置为false时，这进行ajax排序
-		* @param {Function} options.callback 排序后的回调函数
-		*/
-		GridFree.prototype.sort = function(options){
-			if( !options || !options.sort ) return;
-					
-			var sort          = options.sort,
-				sortType      = options.sortType || 'asc',
-				isSortCurrent = options.isSortCurrent === undefined ? true : options.isSortCurrent,
-				callback      = options.callback || function(){};
-			
-			if( isSortCurrent ){
-				_core.compareData(sort, sortType, callback);
-			}else{
-				_core.compareAllData(sort, sortType, callback);
+	/**
+	* 获取页码
+	*/
+	GridFree.prototype.getPageIndex = function(){
+		return p.pageIndex;
+	};
+
+	/**
+	* 获取一页条数
+	*/
+	GridFree.prototype.getPageSize = function(){
+		return p.pageSize;
+	};
+
+	/**
+	* 获取当前页数据
+	*/
+	GridFree.prototype.getCurrentData = function(){
+		return _cache.data;
+	};
+
+	/**
+	* 获取行数据
+	* @param {Number} i 当前页的行索引
+	*/
+	GridFree.prototype.getRowData = function(i){
+		return _cache.data.rows[i];
+	};
+
+
+	/**
+	* 设置选中数据
+	* @param {Number} i 当前页的行索引
+	*/
+	GridFree.prototype.setRowSelected = function(selectedData){
+		_cache.rowSelected.push(selectedData);
+	};
+
+	/**
+	* 删除选中数据
+	* @param {Number} i 当前页的行索引
+	*/
+	GridFree.prototype.delRowSelected = function(selectedData){
+		var rowSelected = _cache.rowSelected,
+			len         = rowSelected.length,
+			i           = 0,
+			index       = 0;
+
+		for(; i<len; i++){
+			var isEqual = equal(rowSelected[i], selectedData);
+
+			if( isEqual ){
+				_cache.rowSelected.splice(i, 1);
 			}
+		}
+		//console.log( _cache.rowSelected );
+	};
 
-			return this;
-		};
-		
-		/**
-		* 获取页码
-		*/
-		GridFree.prototype.getPageIndex = function(){
-			return p.pageIndex;
-		};
+	/**
+	* 获取选中数据
+	* @param {Number} i 当前页的行索引
+	*/
+	GridFree.prototype.getRowSelected = function(i){
+		return _cache.rowSelected;
+	};
 
-		/**
-		* 获取一页条数
-		*/
-		GridFree.prototype.getPageSize = function(){
-			return p.pageSize;
-		};
-		
-		/**
-		* 获取当前页数据
-		*/
-		GridFree.prototype.getCurrentData = function(){
-			return _cache.data;
-		};
-		
-		/**
-		* 获取行数据
-		* @param {Number} i 当前页的行索引
-		*/
-		GridFree.prototype.getRowData = function(i){
-			return _cache.data.rows[i];
-		};
-		
-		
-		/**
-		* 设置选中数据
-		* @param {Number} i 当前页的行索引
-		*/
-		GridFree.prototype.setRowSelected = function(selectedData){
-			_cache.rowSelected.push(selectedData);
-		};
-		
-		/**
-		* 删除选中数据
-		* @param {Number} i 当前页的行索引
-		*/
-		GridFree.prototype.delRowSelected = function(selectedData){
-			var rowSelected = _cache.rowSelected,
-				len         = rowSelected.length,
-				i           = 0,
-				index       = 0;
+	module.exports = function(options){
+		return new GridFree(options);
+	};
 
-			for(; i<len; i++){
-				var isEqual = equal(rowSelected[i], selectedData);
-
-				if( isEqual ){
-					_cache.rowSelected.splice(i, 1);
-				}
-			}
-			//console.log( _cache.rowSelected );
-		};
-		
-		/**
-		* 获取选中数据
-		* @param {Number} i 当前页的行索引
-		*/
-		GridFree.prototype.getRowSelected = function(i){
-			return _cache.rowSelected;
-		};
-
-		return function(options){
-			return new GridFree(options);
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
 /* 7 */
@@ -3150,188 +3332,42 @@
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
-
-	pagination({
-		cur:17,
-		total:20,
-		target: 'wrap',
-		prevText: 'prev',
-		nextText: 'next',
-		len:8,
-		callback: function(cur, total){
-			console.log(cur, total)
-		}
-	});
-
+	'use strict';
+		
+	/**
+	* TODO
+	* nic.ui.validator
+	* @class nic.ui.validator
+	* @author norion.z
+	* @blog http://zkeyword.com/
+	* @param {Object} o 
+	* @param {String} o.id 
+	* @return {Object} select对象
 	*/
 
-	(function (root, factory) {
-		if (true) {
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else if (typeof exports === 'object') {
-			module.exports = factory(require('jquery'));
-		} else {
-			root.pagination = factory(root.jQuery);
-		}
-	}(this, function ($) {
-
-		'use strict';
-
-		var Pagination = function(options){
-
-			this.cur      = options.cur || 1;
-			this.total    = options.total === undefined ? 10 : options.total;
-			this.len      = options.len ? options.len : 5;
-			this.prevText = options.prevText || '上一页';
-			this.nextText = options.nextText || '下一页';
-			this.target   = options.target;
-			this.callback = options.callback || function(){};
-			
-			if( typeof this.target === 'String' ){
-				this.target = document.getElementById(this.target);
-			}
-			if( !this.target ) return;
-			
-			this.init();
-			this.click(this.callback);
-		}
-
-		Pagination.prototype.init = function() {
-
-			var tmp      = '',
-				first    = '<a href="javascript:;" data-index="{{num}}">{{num}}</a>',
-				last     = '<a href="javascript:;" data-index="{{num}}">{{num}}</a>',
-				prev     = '<a href="javascript:;" class="prev" data-index="{{num}}">'+ this.prevText +'</a>',
-				next     = '<a href="javascript:;" class="next" data-index="{{num}}">'+ this.nextText +'</a>',
-				cur      = '<span class="current">{{num}}</span>',
-				text     = '<a href="javascript:;" class="" data-index="{{num}}">{{num}}</a>',
-				ellipsis = '<span>...</span>',
-				haddle   = function(src, num){
-								return src.replace(/{{num}}/g, num);
-							},
-				showNum  = 3;
-			
-			/* 显示的长度 */			
-			if( this.len >= 3 ){
-				showNum = Math.round(this.len/2);
-			}
-			
-			/* 上一页 */
-			if( this.cur >= 2 ){
-				tmp += haddle(prev, this.cur - 1)
-			}
-			
-			/* 前置省略号 */
-			if( this.cur >= 4 && this.total >= this.len + 1 ){
-				tmp += haddle(first, 1);
-				tmp += ellipsis;
-			}
-			
-			/* 连接 */
-			if( this.len >= this.total ){
-				for(var i = 1; i<=this.total; i++){
-					tmp += haddle(i === this.cur ? cur : text, i);
-				}
-			}else{
-				for(var i = 1, isCur = false, num = 0; i<=this.len; i++){
-
-					if( this.cur < showNum ){
-						if( i === this.cur ){
-							isCur = true;
-						}
-						num = i;
-					}else if(this.total - this.cur < showNum){
-						if( this.len - (this.total - this.cur) === i ){
-							isCur = true;
-						}
-						num = this.total - this.len + i;
-					}else{
-						if( i === showNum ){
-							isCur = true;
-						}
-						num = this.cur - showNum + i;
-					}
-
-					tmp += haddle(isCur ? cur : text, num);
-					isCur = false;
-				}
-			}
-			
-			/* 后置省略号 */
-			if( this.total - this.cur >= showNum && this.total >= this.len + 1 && this.cur + this.len - showNum !== this.total  ){
-				tmp += ellipsis;
-				tmp += haddle(last, this.total)
-			}
-			
-			/* 下一页 */
-			if( this.total - this.cur >= 1 ){
-				tmp += haddle(next, this.cur + 1)
-			}
-
-			this.target.innerHTML = tmp;
-		};
-
-		Pagination.prototype.click = function(fn){
-			var that = this,
-				oA   = this.target.getElementsByTagName('a');
-
-			for (var i = oA.length - 1; i >= 0; i--) {
-				oA[i].onclick = function(){
-					that.cur = Number(this.getAttribute('data-index'));
-					that.init();
-					that.click(fn);
-					fn.apply(this, [that.cur, that.total]);
-				}
-			};
-		}
+	var nic       = __webpack_require__(1),
+	    Validator = function(o){
 		
-		return function(o){
-			return o ? new Pagination(o) : {};
-		};
-	}));
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic){
-		
-		'use strict';
-			
-		/**
-		* TODO
-		* nic.ui.validator
-		* @class nic.ui.validator
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} o 
-	    * @param {String} o.id 
-		* @return {Object} select对象
-		*/
-		
-		var Validator = function(o){
-			
-			var 
-				/**
-				* 当前对象
-				*/
-				g = this,
-				
-				/**
-				* 默认配置
-				*/
-				p = {
-					target: null,
-					//label: null,
+	    	var 
+	    		/**
+	    		* 当前对象
+	    		*/
+	    		g = this,
+	    		
+	    		/**
+	    		* 默认配置
+	    		*/
+	    		p = {
+	    			target: null,
+	    			//label: null,
 	                text: {
 	                    check: '必须勾选！',
 	                    required: '不能为空！',
-						select: '请选择！',
+	    				select: '请选择！',
 	                    length: '输入字符长度等于{{param}}个字符',
 	                    minLength: '输入字符长度不小于{{param}}个字符',
 	                    maxLength: '输入字符长度大小于{{param}}个字符',
-						minValue: '请输入不能小于{{param}}',
+	    				minValue: '请输入不能小于{{param}}',
 	                    maxValue: '请输入不能大于{{param}}',
 	                    integer: '请输入一个正确的整数值',
 	                    digits: '请输入一个正确的正整数',
@@ -3347,21 +3383,21 @@
 	                },
 	                rules:null,
 	                ajax:null,
-					position: null
-				},
-					
-				/**
-				* 缓存池
-				*/
-				t = {
-					//submit: false
-				},
-				
-				/**
-				* XXX
-				* 代码逻辑
-				*/
-				c = {
+	    			position: null
+	    		},
+	    			
+	    		/**
+	    		* 缓存池
+	    		*/
+	    		t = {
+	    			//submit: false
+	    		},
+	    		
+	    		/**
+	    		* XXX
+	    		* 代码逻辑
+	    		*/
+	    		c = {
 	                
 	                rule: {
 
@@ -3373,8 +3409,8 @@
 	                        if( !sVal.length ){
 	                            return false;
 	                        }
-							
-							// XXX
+	    					
+	    					// XXX
 	                        
 	                        if( oItem[0].type === 'checkbox' && !$("input:checkbox[name='"+ oItem[0].name +"']:checked").length ){
 	                            return c.handleText(oItem, 'check');
@@ -3384,19 +3420,19 @@
 	                            return c.handleText(oItem, 'check');
 	                        }
 	                    },
-						
-						/* 强制选择 */
-						select: function(sVal, oItem, sParam){
+	    				
+	    				/* 强制选择 */
+	    				select: function(sVal, oItem, sParam){
 	                        if(sVal === sParam){
 	                            return c.handleText(oItem, 'select', sParam);
 	                        }
-						},
+	    				},
 	                    
 	                    /* 非空 */
-						//TODO
+	    				//TODO
 	                    required: function(sVal, oItem){
 	                        if( !sVal.trims() ){
-								return c.handleText(oItem, 'required');
+	    						return c.handleText(oItem, 'required');
 	                        }
 	                    },
 	                    
@@ -3441,8 +3477,8 @@
 	                            return c.handleText(oItem, 'maxLength', sParam);
 	                        }
 	                    },
-						
-						/* 最小值 */
+	    				
+	    				/* 最小值 */
 	                    minValue: function(sVal, oItem, sParam){
 	                        
 	                    	sVal   = Number(sVal);
@@ -3579,9 +3615,9 @@
 	                            return c.handleText(oItem, 'phone');
 	                        }
 	                    },
-						
-						/* 身份证 */
-						idCard: function(sVal, oItem){
+	    				
+	    				/* 身份证 */
+	    				idCard: function(sVal, oItem){
 	                        sVal = sVal.trims();
 
 	                        if( !sVal.length ){
@@ -3651,7 +3687,7 @@
 	                            success: function(data){
 	                                if( !data ){
 	                                    oItem.addClass('l-form-error');
-										c.handleMessage(oItem, c.handleText(oItem, 'ajax'));
+	    								c.handleMessage(oItem, c.handleText(oItem, 'ajax'));
 	                                }else{
 	                                    oItem.removeClass('l-form-error');
 	                                }
@@ -3663,213 +3699,213 @@
 	                    }
 	                
 	                },
-					
-					handlePositionStr: function(s){
-						if( !s ) return;
-						var sStr    = s.replace(/\{|\}/g, ''),
-							oArr    = sStr.split(','),
-							len     = oArr.length,
-							i       = 0,
-							oReturn = {}
-							
-						for(; i<len; i++){
-							var oChlid = oArr[i].split(':');
-							oReturn[oChlid[0]] = Number(oChlid[1]);
-						}
-						return oReturn;
-					},
-					
-					route: function(oItem){
-						
-						if( !oItem.length ){ return; }
-						
-						var oThat      = this,
-							sVal       = oItem.val(),
-							aRule      = oItem.attr('data-validate').split(';'),
-							len        = aRule.length,
-							i          = 0,
-							rCode      = /\=/,
-							rFormat    = /format\=|ajax\=/,
-							rPosition  = /\|/,
-							isFunction = nic.base.isFunction;
-							
-						for(; i<len; i++){
-							var fRule     = null,
-								sText     = '',
-								sType     = '',
-								sTypeVal  = '',
-								sPosition = '';
-							
-							if( rCode.test(aRule[i]) ){
-								var aChild = aRule[i].split('=');
-								
-								if( rFormat ){
-									if( aChild[0] === 'format' ){
-										aChild = ['format', aRule[i].replace(rFormat,'')];
-									}else{
-										var tmpVal = '';
-										tmpVal = aRule[i].replace(rFormat,'');
-										tmpVal = tmpVal.replace(/{{value}}/, sVal);
-										aChild = ['ajax', tmpVal];
-									}
-								}else if( aChild[0] === 'position' ){
-									console.log(1)
-								}
-								
-								fRule    = oThat.rule[aChild[0]];
-								sType    = aChild[0];
-								sTypeVal = aChild[1];
-								
-								if( fRule && isFunction(fRule) ){
-									sText = fRule(sVal, oItem, aChild[1]);
-								}
-								
-							}else{
-								
-								if( rPosition.test(aRule[i]) ){
-									var aRuleChild = aRule[i].split('|');
-									fRule     = oThat.rule[aRuleChild[0]];
-									sType     = aRuleChild[0];
-									sPosition = aRuleChild[1];
-									if( !/\{.*\}/g.test(sPosition) ){
-										sPosition = '';
-										console.log('定位的格式不正确');
-									}
-								}else{
-									fRule = oThat.rule[aRule[i]];
-									sType = aRule[i];
-								}
-								
-								if( fRule && isFunction(fRule) ){
-									sText = fRule(sVal, oItem);
-								}
-							}
+	    			
+	    			handlePositionStr: function(s){
+	    				if( !s ) return;
+	    				var sStr    = s.replace(/\{|\}/g, ''),
+	    					oArr    = sStr.split(','),
+	    					len     = oArr.length,
+	    					i       = 0,
+	    					oReturn = {}
+	    					
+	    				for(; i<len; i++){
+	    					var oChlid = oArr[i].split(':');
+	    					oReturn[oChlid[0]] = Number(oChlid[1]);
+	    				}
+	    				return oReturn;
+	    			},
+	    			
+	    			route: function(oItem){
+	    				
+	    				if( !oItem.length ){ return; }
+	    				
+	    				var oThat      = this,
+	    					sVal       = oItem.val(),
+	    					aRule      = oItem.attr('data-validate').split(';'),
+	    					len        = aRule.length,
+	    					i          = 0,
+	    					rCode      = /\=/,
+	    					rFormat    = /format\=|ajax\=/,
+	    					rPosition  = /\|/,
+	    					isFunction = nic.base.isFunction;
+	    					
+	    				for(; i<len; i++){
+	    					var fRule     = null,
+	    						sText     = '',
+	    						sType     = '',
+	    						sTypeVal  = '',
+	    						sPosition = '';
+	    					
+	    					if( rCode.test(aRule[i]) ){
+	    						var aChild = aRule[i].split('=');
+	    						
+	    						if( rFormat ){
+	    							if( aChild[0] === 'format' ){
+	    								aChild = ['format', aRule[i].replace(rFormat,'')];
+	    							}else{
+	    								var tmpVal = '';
+	    								tmpVal = aRule[i].replace(rFormat,'');
+	    								tmpVal = tmpVal.replace(/{{value}}/, sVal);
+	    								aChild = ['ajax', tmpVal];
+	    							}
+	    						}else if( aChild[0] === 'position' ){
+	    							console.log(1)
+	    						}
+	    						
+	    						fRule    = oThat.rule[aChild[0]];
+	    						sType    = aChild[0];
+	    						sTypeVal = aChild[1];
+	    						
+	    						if( fRule && isFunction(fRule) ){
+	    							sText = fRule(sVal, oItem, aChild[1]);
+	    						}
+	    						
+	    					}else{
+	    						
+	    						if( rPosition.test(aRule[i]) ){
+	    							var aRuleChild = aRule[i].split('|');
+	    							fRule     = oThat.rule[aRuleChild[0]];
+	    							sType     = aRuleChild[0];
+	    							sPosition = aRuleChild[1];
+	    							if( !/\{.*\}/g.test(sPosition) ){
+	    								sPosition = '';
+	    								console.log('定位的格式不正确');
+	    							}
+	    						}else{
+	    							fRule = oThat.rule[aRule[i]];
+	    							sType = aRule[i];
+	    						}
+	    						
+	    						if( fRule && isFunction(fRule) ){
+	    							sText = fRule(sVal, oItem);
+	    						}
+	    					}
 
-							if( sText ){
-								return {
-									html: sText,
-									type: sType,
-									typeVal: sTypeVal,
-									position: oThat.handlePositionStr(sPosition)
-								};
-							}
-						}
-						
-						return null;
-					},
-					
+	    					if( sText ){
+	    						return {
+	    							html: sText,
+	    							type: sType,
+	    							typeVal: sTypeVal,
+	    							position: oThat.handlePositionStr(sPosition)
+	    						};
+	    					}
+	    				}
+	    				
+	    				return null;
+	    			},
+	    			
 	                handleText: function(oItem, sMark, sParam){
 	                    var arrtText    = oItem.attr('data-validate-'+ sMark +'Text'),
 	                        defaultText = p.text[sMark],
 	                        text        = arrtText ? arrtText : defaultText,
 	                        reg         = /{{param}}/;
-						oItem.attr('data-validate-'+ sMark +'Text', text);
+	    				oItem.attr('data-validate-'+ sMark +'Text', text);
 	                    return text.replace(reg, sParam);
 	                },
-					
-					handleMessage: function(oSelf, sContents, sType, sTypeVal, position){
-						var oThat     = this,
-							parents   = oSelf.parents('.ui-form'),
-							message   = parents.find('.ui-form-message'),
-							error     = parents.find('.l-form-error'),
-							oItems    = parents.find('[data-validate]'),
-							oTarget   = p.target,
-							oPosition = oThat.handlePositionStr( oItems.attr('data-validate-position') ),
-							html      = '<span class="error"><i></i>'+ sContents +'</span>',
-							fPosition = function(position){
-								message
-									.attr('style', '')
-									.css(position)
-									.css({position:'absolute'})
-									.addClass('ui-form-message-absolute')
-								parents.css({position:'relative'});
-								
-								message.append('<i class="ui-form-message-arrow"></i>');
+	    			
+	    			handleMessage: function(oSelf, sContents, sType, sTypeVal, position){
+	    				var oThat     = this,
+	    					parents   = oSelf.parents('.ui-form'),
+	    					message   = parents.find('.ui-form-message'),
+	    					error     = parents.find('.l-form-error'),
+	    					oItems    = parents.find('[data-validate]'),
+	    					oTarget   = p.target,
+	    					oPosition = oThat.handlePositionStr( oItems.attr('data-validate-position') ),
+	    					html      = '<span class="error"><i></i>'+ sContents +'</span>',
+	    					fPosition = function(position){
+	    						message
+	    							.attr('style', '')
+	    							.css(position)
+	    							.css({position:'absolute'})
+	    							.addClass('ui-form-message-absolute')
+	    						parents.css({position:'relative'});
+	    						
+	    						message.append('<i class="ui-form-message-arrow"></i>');
 
-								message
-									.append(function(){
-										if( !message.find('.ui-form-message-arrow').length ) return '<i class="ui-form-message-arrow"></i>';
-									})
-									.find('.ui-form-message-arrow')
-									.addClass(function(){
-										if( position.top ) return 'arrowTop';
-										if( position.bottom ) return 'arrowBottom';
-									});
-							}
-							
-						if( !message.length ){
-							if( oSelf.next('.ui-form-message').length ){
-								message = oSelf.next('.ui-form-message');
-							}else if( message.length === 0 ){
-								message = oTarget.find('.ui-form-message');
-								message.length === 1 && message.html( html );
-								if(!g.getStatus()){
-									return;
-								}
-							}
-						}
+	    						message
+	    							.append(function(){
+	    								if( !message.find('.ui-form-message-arrow').length ) return '<i class="ui-form-message-arrow"></i>';
+	    							})
+	    							.find('.ui-form-message-arrow')
+	    							.addClass(function(){
+	    								if( position.top ) return 'arrowTop';
+	    								if( position.bottom ) return 'arrowBottom';
+	    							});
+	    					}
+	    					
+	    				if( !message.length ){
+	    					if( oSelf.next('.ui-form-message').length ){
+	    						message = oSelf.next('.ui-form-message');
+	    					}else if( message.length === 0 ){
+	    						message = oTarget.find('.ui-form-message');
+	    						message.length === 1 && message.html( html );
+	    						if(!g.getStatus()){
+	    							return;
+	    						}
+	    					}
+	    				}
 
-						if( !sContents ){
-							message.empty();
-							return false;
-						}
-						if( oItems.length !== 1 && error.length && sType ){
-							html = '<span class="error"><i></i>'+ oThat.handleText(error.eq(0), sType, sTypeVal) +'</span>';
-			 			}
-						
-						message.html( html );
-						
-						if( position ){
-							fPosition(position);
-						}else if(oPosition){
-							fPosition(oPosition);
-						}else if( p.position ){
-							fPosition(p.position);
-						}
-					},
-					
-					handleError: function(oSelf, oRoute){
-						var oThat      = this,
-							sHideError = oSelf.attr('data-ishideValidte'),
-							errorCls   = (sHideError === "true" && sHideError) ? 'l-form-error l-form-hideError' :'l-form-error',
-							type       = oRoute ? oRoute.type : null,
-							html       = oRoute ? oRoute.html : null,
-							typeVal    = oRoute ? oRoute.typeVal : null,
-							position   = oRoute ? oRoute.position : null;
+	    				if( !sContents ){
+	    					message.empty();
+	    					return false;
+	    				}
+	    				if( oItems.length !== 1 && error.length && sType ){
+	    					html = '<span class="error"><i></i>'+ oThat.handleText(error.eq(0), sType, sTypeVal) +'</span>';
+	    	 			}
+	    				
+	    				message.html( html );
+	    				
+	    				if( position ){
+	    					fPosition(position);
+	    				}else if(oPosition){
+	    					fPosition(oPosition);
+	    				}else if( p.position ){
+	    					fPosition(p.position);
+	    				}
+	    			},
+	    			
+	    			handleError: function(oSelf, oRoute){
+	    				var oThat      = this,
+	    					sHideError = oSelf.attr('data-ishideValidte'),
+	    					errorCls   = (sHideError === "true" && sHideError) ? 'l-form-error l-form-hideError' :'l-form-error',
+	    					type       = oRoute ? oRoute.type : null,
+	    					html       = oRoute ? oRoute.html : null,
+	    					typeVal    = oRoute ? oRoute.typeVal : null,
+	    					position   = oRoute ? oRoute.position : null;
 
-						if( html ){
-							oSelf
-								.addClass(errorCls)
-								.attr('data-validate-result', 'false')
-								.parents('.l-select-wrap')
-								.find('.l-select-single-init')
-								.addClass(errorCls);
-							oThat.handleMessage(oSelf, html, type, typeVal, position);
-						}else{
-							oSelf
-								.removeClass(errorCls)
-								.attr('data-validate-result', 'true')
-								.parents('.l-select-wrap')
-								.find('.l-select-single-init')
-								.removeClass(errorCls);
-							oThat.handleMessage(oSelf);
-						}
-						
-						return html;
-					},
-					
-					run: function(){
-						var oThat      = this,
-							oTarget    = p.target,
+	    				if( html ){
+	    					oSelf
+	    						.addClass(errorCls)
+	    						.attr('data-validate-result', 'false')
+	    						.parents('.l-select-wrap')
+	    						.find('.l-select-single-init')
+	    						.addClass(errorCls);
+	    					oThat.handleMessage(oSelf, html, type, typeVal, position);
+	    				}else{
+	    					oSelf
+	    						.removeClass(errorCls)
+	    						.attr('data-validate-result', 'true')
+	    						.parents('.l-select-wrap')
+	    						.find('.l-select-single-init')
+	    						.removeClass(errorCls);
+	    					oThat.handleMessage(oSelf);
+	    				}
+	    				
+	    				return html;
+	    			},
+	    			
+	    			run: function(){
+	    				var oThat      = this,
+	    					oTarget    = p.target,
 	                        fRules     = p.rules,
 	                        fAjax      = p.ajax,
-							fAction    = function(oSelf){
-											var sVal     = oSelf.val(),
-												sRule    = oSelf.attr('data-validate'),
-												name     = oSelf.attr('data-validate-name'),
-												allName  = oTarget.find('[data-validate-name="'+ name +'"]'),
-												errorLen = oSelf.parents('.ui-form').find('.l-form-error').length,
-												oRoute   = null;
+	    					fAction    = function(oSelf){
+	    									var sVal     = oSelf.val(),
+	    										sRule    = oSelf.attr('data-validate'),
+	    										name     = oSelf.attr('data-validate-name'),
+	    										allName  = oTarget.find('[data-validate-name="'+ name +'"]'),
+	    										errorLen = oSelf.parents('.ui-form').find('.l-form-error').length,
+	    										oRoute   = null;
 
 	                                        if( nic.base.isFunction(fRules) && sRule === 'process' ){
 	                                            return processHandle(sRule, fRules(oSelf), true );
@@ -3883,190 +3919,190 @@
 	                                            return true;
 	                                        }
 
-											oRoute = oThat.route(oSelf);
-											
-											if( name ){
-												
-												if( oRoute ){
-													if( oRoute.type !== 'required' ){
-														return sVal && oThat.handleError(oSelf, oRoute);
-													}
-													
-													return allNameHandle();
-												}
-												
-												return oThat.handleError(allName);
-											}
-											
-											return oRoute ? 
-														oThat.handleError(oSelf, oRoute) : 
-														oThat.handleError(oSelf);
-											
-											function allNameHandle(){
-												
-												var obj     = allName.filter(function(){
-																	return this.value;
-																}),
-													nullObj = allName.filter(function(){
-																	return !this.value;
-																}),
-													okObj   = allName.filter(function(){
-																	return this.getAttribute('data-validate-result') === 'true';
-																}),
-													noObj   = allName.filter(function(){
-																	return this.getAttribute('data-validate-result') === 'false';
-																})
-												/*				
-												console.log(
-													errorLen, 
-													nullObj.length, 
-													okObj.length, 
-													!sVal, 
-													oSelf, 
-													noObj, 
-													oSelf.hasClass('l-form-error')
-												)*/			
-												
-												if( errorLen ){
-													
-													//全部不通过
-													if( errorLen === allName.length ){
-														return ;
-													}
-													
-													//当前无值且当前不通过、不是全部空值
-													if( !sVal && oSelf.hasClass('l-form-error') && nullObj.length !== allName.length ){
-														return oThat.handleError(oSelf);
-													}
-													
-													//当前无值且有不通过
-													if( !sVal && noObj.length ){
-														return ;
-													}
-													
-													//当前无值且有通过
-													if( !sVal && okObj.length ){
-														return ;
-													}
+	    									oRoute = oThat.route(oSelf);
+	    									
+	    									if( name ){
+	    										
+	    										if( oRoute ){
+	    											if( oRoute.type !== 'required' ){
+	    												return sVal && oThat.handleError(oSelf, oRoute);
+	    											}
+	    											
+	    											return allNameHandle();
+	    										}
+	    										
+	    										return oThat.handleError(allName);
+	    									}
+	    									
+	    									return oRoute ? 
+	    												oThat.handleError(oSelf, oRoute) : 
+	    												oThat.handleError(oSelf);
+	    									
+	    									function allNameHandle(){
+	    										
+	    										var obj     = allName.filter(function(){
+	    															return this.value;
+	    														}),
+	    											nullObj = allName.filter(function(){
+	    															return !this.value;
+	    														}),
+	    											okObj   = allName.filter(function(){
+	    															return this.getAttribute('data-validate-result') === 'true';
+	    														}),
+	    											noObj   = allName.filter(function(){
+	    															return this.getAttribute('data-validate-result') === 'false';
+	    														})
+	    										/*				
+	    										console.log(
+	    											errorLen, 
+	    											nullObj.length, 
+	    											okObj.length, 
+	    											!sVal, 
+	    											oSelf, 
+	    											noObj, 
+	    											oSelf.hasClass('l-form-error')
+	    										)*/			
+	    										
+	    										if( errorLen ){
+	    											
+	    											//全部不通过
+	    											if( errorLen === allName.length ){
+	    												return ;
+	    											}
+	    											
+	    											//当前无值且当前不通过、不是全部空值
+	    											if( !sVal && oSelf.hasClass('l-form-error') && nullObj.length !== allName.length ){
+	    												return oThat.handleError(oSelf);
+	    											}
+	    											
+	    											//当前无值且有不通过
+	    											if( !sVal && noObj.length ){
+	    												return ;
+	    											}
+	    											
+	    											//当前无值且有通过
+	    											if( !sVal && okObj.length ){
+	    												return ;
+	    											}
 
-													return oThat.handleError(oSelf, oRoute);
-												}
-												
-												//全部空值
-												if( nullObj.length === allName.length ){
-													return oThat.handleError(allName, oRoute);
-												}
-												
-												//无错且无空值
-												if( !nullObj.length ){
-													return ;
-												}
-												
-												//无错且当前是空值
-												if( !sVal ){
-													return ;
-												}
-												
-												return oThat.handleError(allName, oRoute);
-											}
+	    											return oThat.handleError(oSelf, oRoute);
+	    										}
+	    										
+	    										//全部空值
+	    										if( nullObj.length === allName.length ){
+	    											return oThat.handleError(allName, oRoute);
+	    										}
+	    										
+	    										//无错且无空值
+	    										if( !nullObj.length ){
+	    											return ;
+	    										}
+	    										
+	    										//无错且当前是空值
+	    										if( !sVal ){
+	    											return ;
+	    										}
+	    										
+	    										return oThat.handleError(allName, oRoute);
+	    									}
 
 	                                        function processHandle(type, status, isShow){
-												return !status ?
-															oThat.handleError(
-																oSelf, 
-																type, 
-																isShow ? oSelf.attr('data-validate-'+ type +'Text') : ''
-															):
-															oThat.handleError(oSelf);
+	    										return !status ?
+	    													oThat.handleError(
+	    														oSelf, 
+	    														type, 
+	    														isShow ? oSelf.attr('data-validate-'+ type +'Text') : ''
+	    													):
+	    													oThat.handleError(oSelf);
 	                                        }
-										},
-							fUnAction  = function(oSelf){
-											var sHideError   = oSelf.attr('data-ishideValidte'),
-												hideErrorCls = sHideError === "true" && sHideError ?
-																	'l-form-error l-form-hideError' :
-																	'l-form-error',
-												name         = oSelf.attr('data-validate-name'),
-												allName      = oTarget.find('[data-validate-name="'+ name +'"]'),
-												errorLen     = allName.parents('.ui-form').find('.l-form-error').length;
+	    								},
+	    					fUnAction  = function(oSelf){
+	    									var sHideError   = oSelf.attr('data-ishideValidte'),
+	    										hideErrorCls = sHideError === "true" && sHideError ?
+	    															'l-form-error l-form-hideError' :
+	    															'l-form-error',
+	    										name         = oSelf.attr('data-validate-name'),
+	    										allName      = oTarget.find('[data-validate-name="'+ name +'"]'),
+	    										errorLen     = allName.parents('.ui-form').find('.l-form-error').length;
 
 	                                        if( oSelf[0].type === 'checkbox' || oSelf[0].type === 'radio' ){
 	                                            $("input[name='"+ oSelf[0].name +"']").removeClass(hideErrorCls);
 	                                        }
-											
-											if( allName.length && errorLen ){
-												return ;
-											}
-											
-											if( allName.length ){
-												oThat.handleError(allName);
-											}else{
-												oThat.handleError(oSelf);
-											}
-										},
-							fActionAll = function(){
-											var oItem = oTarget.find('[data-validate]'),
-												len   = oItem.length,
-												i     = 0;
-												
-											for(; i<len; i++){
-												if( !fAction( oItem.eq(i) ) ){
-													fUnAction( oItem.eq(i) );
-												}
-											}
-											return g.getStatus();
-										};
-						
-						oTarget
-							.on('blur', '[data-validate]', function(e){
-								fAction( $(e.currentTarget) );
-							})
-							.on('focus', '[data-validate]', function(e){
-								fUnAction( $(e.currentTarget) );
-							})
-							.on('change', 'select[data-validate]', function(e){
-								fAction( $(e.currentTarget) );
-							})
-							.on('submit', function(){
-								return fActionAll();
-							})
-							.on('all', function(){
-								return fActionAll();
-							});
-							
-						/*oTarget.on('blur', '.l-select-single-init', function(e){
-							var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
-							if( obj.length ){
-								fAction( obj );
-							}
-						});
-						
-						oTarget.on('focus', '.l-select-single-init', function(e){
-							var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
-							if( obj.length ){
-								fUnAction( $(e.currentTarget) );
-							}
-						});*/
-					},
-					
-					init: function(o){
-						for(var key in o){
-							if( o.hasOwnProperty(key) && o[key] !== undefined && p[key] !== undefined ){
-								p[key] = o[key];
-							}
-						}
-						
-						p.target = $(p.target);
-						
-						if( !p.target.length ){
-							console.log('target not find');
-						}
-						
-						c.run();
-					}
-				};
-				
-			g.reset = function(){
-				var oTarget  = p.target,
+	    									
+	    									if( allName.length && errorLen ){
+	    										return ;
+	    									}
+	    									
+	    									if( allName.length ){
+	    										oThat.handleError(allName);
+	    									}else{
+	    										oThat.handleError(oSelf);
+	    									}
+	    								},
+	    					fActionAll = function(){
+	    									var oItem = oTarget.find('[data-validate]'),
+	    										len   = oItem.length,
+	    										i     = 0;
+	    										
+	    									for(; i<len; i++){
+	    										if( !fAction( oItem.eq(i) ) ){
+	    											fUnAction( oItem.eq(i) );
+	    										}
+	    									}
+	    									return g.getStatus();
+	    								};
+	    				
+	    				oTarget
+	    					.on('blur', '[data-validate]', function(e){
+	    						fAction( $(e.currentTarget) );
+	    					})
+	    					.on('focus', '[data-validate]', function(e){
+	    						fUnAction( $(e.currentTarget) );
+	    					})
+	    					.on('change', 'select[data-validate]', function(e){
+	    						fAction( $(e.currentTarget) );
+	    					})
+	    					.on('submit', function(){
+	    						return fActionAll();
+	    					})
+	    					.on('all', function(){
+	    						return fActionAll();
+	    					});
+	    					
+	    				/*oTarget.on('blur', '.l-select-single-init', function(e){
+	    					var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
+	    					if( obj.length ){
+	    						fAction( obj );
+	    					}
+	    				});
+	    				
+	    				oTarget.on('focus', '.l-select-single-init', function(e){
+	    					var obj = $(this).parents('.l-select-wrap').find('[data-validate]');
+	    					if( obj.length ){
+	    						fUnAction( $(e.currentTarget) );
+	    					}
+	    				});*/
+	    			},
+	    			
+	    			init: function(o){
+	    				for(var key in o){
+	    					if( o.hasOwnProperty(key) && o[key] !== undefined && p[key] !== undefined ){
+	    						p[key] = o[key];
+	    					}
+	    				}
+	    				
+	    				p.target = $(p.target);
+	    				
+	    				if( !p.target.length ){
+	    					console.log('target not find');
+	    				}
+	    				
+	    				c.run();
+	    			}
+	    		};
+	    		
+	    	g.reset = function(){
+	    		var oTarget  = p.target,
 	                oItem    = oTarget.find('[data-validate]'),
 	                oMessage = oTarget.find('.ui-form-message'),
 	                len      = oItem.length,
@@ -4082,625 +4118,66 @@
 	                    .removeClass('l-form-error');
 	                oMessage.eq(i).empty();
 	            }
-			};
-			
-			g.getStatus = function(){
-				var oTarget         = p.target,
-					oError          = oTarget.find('.l-form-error'),
-					oVisibleError   = oError.filter(function(){
-											var that = $(this);
-											return that.filter(':visible').length && ( that.filter(':enabled').length || that.hasClass('l-select-single-init') );
-										}),
-					oHideError      = oError.filter('.l-form-hideError'),
-					len             = oVisibleError.length + oHideError.length,
-					nErrorOffsetTop = oVisibleError.length ? oVisibleError.offset().top : 0;
-				
-				if( oVisibleError.length && $(window).height() < nErrorOffsetTop ){
-					$('html, body').animate({scrollTop:nErrorOffsetTop}, 500);
-					//oVisibleError.focus();
-				}
+	    	};
+	    	
+	    	g.getStatus = function(){
+	    		var oTarget         = p.target,
+	    			oError          = oTarget.find('.l-form-error'),
+	    			oVisibleError   = oError.filter(function(){
+	    									var that = $(this);
+	    									return that.filter(':visible').length && ( that.filter(':enabled').length || that.hasClass('l-select-single-init') );
+	    								}),
+	    			oHideError      = oError.filter('.l-form-hideError'),
+	    			len             = oVisibleError.length + oHideError.length,
+	    			nErrorOffsetTop = oVisibleError.length ? oVisibleError.offset().top : 0;
+	    		
+	    		if( oVisibleError.length && $(window).height() < nErrorOffsetTop ){
+	    			$('html, body').animate({scrollTop:nErrorOffsetTop}, 500);
+	    			//oVisibleError.focus();
+	    		}
 
-				return !len;
-			};
-			
-			g.validatorAll = function(){
+	    		return !len;
+	    	};
+	    	
+	    	g.validatorAll = function(){
 	            return p.target.triggerHandler('all');
-			};
-			
-			g.reload = function(){
-				console.log('target overloaded');
-				c.init(o);
-			};
+	    	};
+	    	
+	    	g.reload = function(){
+	    		console.log('target overloaded');
+	    		c.init(o);
+	    	};
 
-			return c.init(o);
-		};
-		
-		return function(o){
-			return o ? new Validator(o) : {};
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    	return c.init(o);
+	    };
+
+	module.exports = function(o){
+		return o ? new Validator(o) : {};
+	};
+
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(){
-		
-		'use strict';
-		
-		/**
-		* nic.ui.drag 拖拽控件
-		* @class nic.ui.drag
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} options drag参数
-	    * @param {String} options.dragItem 拖拽触发对象选择器
-	    * @param {String} options.dragWrap 拖拽移动对象选择器
-		*/
-		var Drag = function(options){         //IE下 iframe内的的拖动还是有问题
-		
-			var o = options || {};
-			if( !o.dragItem ){return false;}
-			var	dragItem = $('body').find(o.dragItem),
-				dragWrap = $('body').find(o.dragWrap),
-				win      = parent.document || document,
-				mouse    = {x:0,y:0};
-				
-			function _moveDialog(e){
-		        
-		        var top  = dragWrap.css('top') === 'auto' ? 0 : dragWrap.css('top'),
-					left = dragWrap.css('left') === 'auto' ? 0 : dragWrap.css('left');
-					
-		        dragWrap
-					.css({
-						top  : parseInt(top) + (e.clientY - mouse.y),
-						left : parseInt(left) + (e.clientX - mouse.x)
-					});
-		        
-		        mouse.x = e.clientX;
-		        mouse.y = e.clientY;
-		    }
-			
-		    dragItem
-				.on('mousedown', function(e){
-					mouse.x = e.clientX;
-					mouse.y = e.clientY;
-					$(win).on('mousemove', _moveDialog);
-					
-					if(e.preventDefault){
-						e.preventDefault();
-					}else{
-						e.returnValue = false;
-					}
-				});
-		    
-		    $(win)
-				.on('mouseup', function(){
-					$(win).off('mousemove', _moveDialog);
-				});
-		};
-		
-		return Drag;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	/**
+	* nic.ui.dialog 拖拽控件
+	* @class nic.ui.dialog
+	* @author norion.z
+	* @blog http://zkeyword.com/
+	*/
+	// XXX
+	var lang = {
+		close: '关闭',
+	    /*dialog*/
+	    alert: '提示？',
+	    confirm: '确认？',
+	    error: '错误'
+	}
 
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic){
-		
-		'use strict';
-		
-		/**
-		* nic.ui.pop 弹出窗控件
-		* @class nic.ui.pop
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} o 弹出窗参数
-	    * @param {String} o.id 弹出窗ID
-	    * @param {String} o.titleId 标题ID
-	    * @param {String} o.title 弹出框的标题
-	    * @param {Number} o.width 弹出框内部的宽，不包括边框的宽度
-	    * @param {Number} o.height 弹出框内部的高，不包括边框的高度
-	    * @param {Number} o.top 弹出框的top
-	    * @param {Number} o.left 弹出框的left
-	    * @param {String} o.cls 定义class
-	    * @param {String} o.url 用iframe方式加载
-	    * @param {String} o.ajax 用ajax方式加载pop.js
-	    * @param {String} o.ajaxType ajax请求类型
-	    * @param {String|Object} o.ajaxData ajax请求条件
-	    * @param {String} o.async ajax同步方式
-	    * @param {String} o.html 用html方式加载
-	    * @param {Function} o.onloadFn 载入完成后要触发的事件
-	    * @param {Function} o.closeFn 关闭时要触发的事件
-	    * @param {Object} o.btns 弹出框的按钮集合
-	    * @param {Function} o.btns.onclick 点击按钮要执行的动作，如果要执行一些异步的动作，closePop必须是false
-	    * @param {Function} o.btns.closePop 点击按钮之后是否直接关闭弹出框，默认直接关闭
-	    * @param {Function} o.btns.cls 按钮自定义class
-	    * @param {Function} o.btns.text 按钮文本
-	    * @param {Boolean} o.isMask 是否允许遮罩,默认true
-	    * @param {Boolean} o.isMaskClose 是否点击遮罩关闭,默认false
-	    * @param {Boolean} o.allowClose 允许关闭,默认true
-	    * @param {Boolean} o.allowEscClose 允许esc关闭,默认true
-	    * @param {Boolean} o.isDrag 允许拖拽,默认true
-		* @return {Object} pop对象
-		*/
-		var Pop = function(o){
-			var g      = this,
-				
-				/**
-				* 默认配置
-				* @private
-				*/
-				p      = {
-					id            : 'l-pop-'+(new Date()).valueOf(),
-					titleId       : 'l-pop-title-'+(new Date()).valueOf(),
-					title         : '',                                     //弹出框的标题
-					width         : 500,                                    //弹出框内部的宽，不包括边框的宽度
-					height        : 300,                                    //弹出框内部的高，不包括边框的高度
-					top           : null,                                   //弹出框的top
-					left          : null,                                   //弹出框的left
-					cls           : '',                                     //定义class
-					url           : '',                                     //用iframe方式加载
-					ajax          : '',                                     //用ajax方式加载
-					ajaxType      : 'GET',
-					ajaxData      : '',
-					ajaxSuccess   : null,
-					async         : false,
-					html          : '',                                      //用html方式加载
-					onloadFn      : null,                                    //载入时要触发的事件
-					closeFn       : null,                                    //关闭时要触发的事件
-					btns          : '',                                      //弹出框的按钮集合
-					isMask        : true,                                    //是否允许遮罩,默认true
-					isMaskClose   : false,                                   //是否点击遮罩关闭,默认true
-					allowClose    : true,                                    //允许关闭,默认true
-					allowEscClose : true,                                    //允许esc关闭,默认true
-					isDrag        : true                                     //允许拖拽,默认true
-				},
-				
-				/**
-				* 临时对象
-				* @private
-				*/
-				_cache = {
-					popTitle: $(),
-					popContent: $(),
-					btnWrap: $(),
-					mask: $()
-				},
-				
-				/**
-				* 内部处理
-				* @private
-				*/
-				_core  = {
-					
-					/**
-					* 创建遮罩
-					*/
-					createMask: function(){
-						var isMask      = p.isMask,
-							isMaskClose = p.isMaskClose;
-						
-						if( isMask ){
-							var mask = nic.ui.lock();
-							
-							if( isMaskClose && allowClose ){
-								lock.click(function(){
-									g.close();
-								});
-							}
-							
-							_cache.mask = mask;
-							
-							p.popWrap.addClass('l-ui-mask');
-						}
-					},
-					
-					/**
-					* 创建标题
-					*/
-					createTitle: function(){
-						var id         = p.id,
-							title      = p.title,
-							titleId    = p.titleId,
-							popMain    = p.popMain,
-							isDrag     = p.isDrag,
-							allowClose = p.allowClose;
-						
-						if( title ){
-							
-							var popTitle = popMain.append('<div class="l-pop-title" id="'+ titleId +'"></div>')
-												  .find('.l-pop-title')
-												  .html(title);
-							
-							if( isDrag ){
-								nic.ui.drag({
-									dragItem:'#'+titleId,
-									dragWrap:'#'+id
-								});
-							}
-							
-							if( allowClose ){
-								/*添加关闭按钮*/
-								if( !popMain.find('.l-pop-close').length ){
-									popMain.prepend('<div class="l-pop-close"><i class="icon icon-close" title="关闭"></i></div>');
-								}
-								
-								popMain.find('.l-pop-close')
-									   .click(function(){
-											g.close();
-										});
-							}
-							
-							_cache.popTitle = popTitle;
-						}
-					},
-					
-					/**
-					* 创建内容
-					*/
-					createContent: function(){
-						var popMain     = p.popMain.append('<div class="l-pop-content"></div>'),
-							url         = p.url,
-							ajax        = p.ajax,
-							ajaxType    = p.ajaxType,
-							ajaxData    = p.ajaxData,
-							async       = p.async,
-	                        ajaxSuccess = p.ajaxSuccess,
-							html        = p.html,
-							popContent  = popMain.find('.l-pop-content');
-						
-						if( url ){
-							popContent.append('<iframe src="'+ url +'" frameborder="no" border="0"></iframe>').addClass('l-pop-contentIframe');
-						}else if( ajax ){
-							$.ajax({
-								url     : ajax,
-								type    : ajaxType,
-								data    : ajaxData,
-								cache   : false,
-								async   : async,
-								success : function(data){
-	                                if( nic.base.isFunction(ajaxSuccess) ){
-	                                    ajaxSuccess(data);
-	                                }
-									popContent.append(data);
-								}
-							}); 
-						}else if( html ){
-							popContent.append(html);
-						}
-						
-						_cache.popContent = popContent;
-					},
-					
-					/**
-					* 创建按钮
-					*/
-					createBtn: function(){
-						var id      = p.id,
-							btns    = p.btns,
-							popMain = p.popMain;
-							
-						if( btns ){
-							if( !popMain.find('.l-pop-btnWrap').length ){
-								popMain.append('<div class="ui-floatCenter l-pop-btnWrap"><div class="ui-sl-floatCenter"></div></div>');
-							}
-							
-							var i       = 0,
-								len     = btns.length,
-								html    = '',
-							    btnWrap = popMain.find('.ui-floatCenter'),
-							    btnMain = popMain.find('.ui-sl-floatCenter').html('');
-								
-							for(; i<len; i++){
-								var item = btns[i],
-									cls  = 'ui-btn ui-floatCenter-item ui-btn-primary'+ (item.cls ? ' ' + item.cls :'');
-								html += '<a href="javascript:;" data-index="'+ i +'" class="'+ cls +'"><span>'+item.text+'</span></a>';
-							}
-							
-							btnMain
-								.append(html)
-								.on('click', 'a', function(){
-									var that    = $(this),
-										i       = Number( this.getAttribute('data-index') ),
-										item    = btns[i],
-										isClose = item.closePop === undefined || item.closePop === false;
-										
-									nic.base.isFunction(item.onclick) && item.onclick.apply(this, [id, i, item, that]);
-									isClose && g.close(id);
-								});
-							
-							_cache.btnWrap = btnWrap;
-						}
-					},
-					
-					/**
-					* esc关闭函数
-					*/
-					escCloseFn: function(){
-						var allowClose    = p.allowClose,
-							allowEscClose = p.allowEscClose,
-							popMain       = p.popMain;
-
-						if( allowClose && allowEscClose ){
-
-							var _modalKey = function(e){
-								e = e || event;
-								var code = e.which || event.keyCode;
-								if(code === 27){
-									g.close();
-								}
-							};
-							
-							if(document.attachEvent){
-								document.attachEvent('onkeydown', _modalKey);
-							}else{
-								document.addEventListener('keydown', _modalKey, true);
-							}
-						}
-					},
-					
-					/**
-					* 设置显示
-					*/
-					setShowFn:function(){
-						var win         = $(window),
-							popWrap     = p.popWrap,
-							popContent  = _cache.popContent,
-							titleHeight = _cache.popTitle.outerHeight(),
-							btnHeight   = _cache.btnWrap.outerHeight(),
-							otherHeight = titleHeight + btnHeight + 30 + 40, //30是popContent的padding的和，40是top、bottom的和
-							_setSize    = function(){
-								var winHeight = win.height(),
-									winWidth  = win.width(),
-									height    = p.height,
-									width     = p.width;
-
-								if( winHeight - otherHeight < height ){
-									height = winHeight - otherHeight;
-									if( p.url ){
-										popContent
-											.find('iframe')
-											.height(height)
-											.width(width);
-									}
-								}
-
-								popContent.css({height:height,width:width});
-									
-								popWrap.css({
-									top: p.top || ( winHeight - popWrap.height() )/2,
-									left: p.left || ( winWidth - popWrap.width() )/2
-								});
-							};
-
-						_setSize();
-						win.resize(_setSize);
-						
-						popContent
-							.css({opacity:0.1})
-							.animate({ 
-								opacity: 1
-							}, 800);
-
-
-						/*popContent.css({width:300,height:300,opacity:0.5});
-
-						var popWrap = p.popWrap,
-							top     = win.height()/2 - popWrap.height()/2,
-							left    = ( win.width() - popWrap.width() )/2;
-						
-						popWrap.css({top:top, left:left});
-						
-						
-						popContent.animate({ 
-							width: width,
-							height: height,
-							opacity: 1,
-						}, 500, function(){
-							
-							top  = p.top || win.height()/2 - popWrap.height()/2,
-							left = p.left || ( win.width() - popWrap.width() )/2;
-							
-							popWrap.animate({ 
-									top: top,
-									left: left, 
-								}, 500);
-						});*/
-	   
-					},
-					
-					/**
-					* 设置层级
-					*/
-					setZIndex: function(){
-						if( p.isMask ){
-							var obj        = $('.l-ui'),
-								i          = 0,
-								len        = obj.length,
-								zIndex     = nic.ui.zIndex(),
-								mask       = _cache.mask,
-								maskZindex = Number( mask.css('z-index') ),
-								popWrap	   = p.popWrap;
-							
-							if( popWrap.hasClass('l-ui-current') ){
-												
-								for(; i<len; i++){
-									obj.eq(i).css({'z-index':maskZindex - i});
-								}
-								
-								obj.removeClass('l-ui-current');
-								popWrap.css({'z-index':zIndex});
-							}else{
-								for(; i<len; i++){
-									obj.eq(i).css({'z-index':maskZindex + len - i});
-								}
-							}
-						}
-					},
-					
-					/**
-					* 载入时要触发的事件
-					*/
-					loadFn: function(){
-						if( nic.base.isFunction(p.onloadFn) ){
-							p.onloadFn(p.id, p.popMain);
-						}
-					},
-					
-					/**
-					* 运行 pop
-					*/
-					run: function(){
-						this.createMask();
-						this.createTitle();
-						this.createContent();
-						this.createBtn();
-						this.escCloseFn();
-						this.setShowFn();
-						this.setZIndex();
-						this.loadFn();
-					},
-					
-					/**
-					* 初始化
-					*/
-					init: function(o){
-						for(var key in o){
-							if( o.hasOwnProperty(key) && o[key] !== undefined ){
-								p[key] = o[key];
-							}
-						}
-						
-						var h = '';
-							h += '<div class="l-ui l-pop-wrap l-ui-current" id="'+ p.id +'">';
-							h += '	<table class="l-pop-table">';
-							h += '		<tr><td colspan="3" class="l-pop-border l-pop-border-top"></th></tr>';
-							h += '		<tr>';
-							h += '			<td class="l-pop-border l-pop-border-left"></td>';
-							h += '			<td class="l-pop-main"></td>';
-							h += '			<td class="l-pop-border l-pop-border-right"></td>';
-							h += '		</tr>';
-							h += '		<tr><td colspan="3" class="l-pop-border l-pop-border-bottom"></td></tr>';
-							h += '	</table>';
-							h += '</div>';
-							
-						/*载入容器*/
-						var wrap = nic.ui.wrap();
-						wrap.prepend(h);
-						
-						
-						/*给默认配置项添加popWrap和popMain成员*/
-						p.popWrap = $('#'+p.id);
-						p.popMain = p.popWrap.find('.l-pop-main');
-						
-						p.popWrap.attr('tabindex', '1');
-						p.popWrap.focus();
-						
-						this.run();
-						
-						return g;					
-					}
-				};
-			
-			/**
-			* 关闭弹窗
-			* @method nic.ui.pop.close
-			* @param {String} [id] - pop的id
-			*/
-			g.close = function(id){
-				
-				var closeFn = p.closeFn;
-				
-				p.popWrap.remove();
-				
-				_core.setZIndex();
-						
-				p.popWrap.find('.l-select-wrap').addClass('fn-hide');
-				
-				/*如果没有其他需要遮罩的的ui*/
-				if( !$('.l-ui-mask').length ){
-					nic.ui.unlock();
-				}
-				
-				/*关闭时要触发的事件*/
-				if( nic.base.isFunction(closeFn) ){
-					id = id !== undefined ? id : p.id;
-					p.closeFn(id);
-				}
-				
-			};
-			
-			/**
-			* 修改标题
-			* @method nic.ui.pop.modifyTitle
-			* @param {String} title 标题
-			*/
-			g.modifyTitle = function(title){
-				_cache.popTitle.html(title);
-				return g;
-			};
-			
-			/**
-			* 修改按钮
-			* @method nic.ui.pop.modifyBtns 
-		    * @param {Object} btns 弹出框的按钮集合
-		    * @param {Function} btns.onclick 点击按钮要执行的动作，如果要执行一些异步的动作，closePop必须是false
-		    * @param {Function} btns.closePop 点击按钮之后是否直接关闭弹出框，默认直接关闭
-		    * @param {Function} btns.cls 按钮自定义class
-		    * @param {Function} btns.text 按钮文本
-			*/
-			g.modifyBtns = function(btns){
-				p.btns = btns;
-				_core.createBtn();
-				return g;
-			};
-			
-			/**
-			* 修改窗体大小
-			* @method nic.ui.pop.modifyWrap 
-			* @param {Number} width 
-			* @param {Number} height
-			*/
-			g.modifyWrap = function(width, height){
-				p.width  = width;
-				p.height = height;
-				_core.setShowFn();
-				
-				return g;
-			};
-			
-			return _core.init(o);
-		};
-		
-		return function(o){
-			return new Pop(o);
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic, drag){
-		
-		/**
-		* nic.ui.dialog 拖拽控件
-		* @class nic.ui.dialog
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-		*/
-		// XXX
-		var lang = {
-			close: '关闭',
-		    /*dialog*/
-		    alert: '提示？',
-		    confirm: '确认？',
-		    error: '错误'
-		}
-
-		var dialog = {
+	var nic    = __webpack_require__(1),
+		drag   = __webpack_require__(3),
+		dialog = {
 			init: function(options){
 				var o             = options || {},
 					title         = o.title || '',
@@ -5065,32 +4542,22 @@
 			}
 				
 		};
-		
-		//nic.ui.dialog = dialog;
-		
-		return dialog;
-		
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+	module.exports = dialog;
 
 /***/ },
-/* 13 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic){
+	'use strict';
 		
-		'use strict';
-			
-		/**
-		* nic.ui.check 下拉框控件
-		* @class nic.ui.check
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} o 下拉框参数
-	    * @param {String} o.id 下拉框id
-		* @return {Object} select对象
-		*/
-		
-		var Check = function(o){
+	/**
+	check模拟
+	*/
+
+	var nic   = __webpack_require__(1),
+		Check = function(o){
 			
 			var 
 				/**
@@ -5235,7 +4702,7 @@
 					};
 			
 			/**
-			* 刷新下拉框
+			* 刷新
 			*/
 			g.refresh = function(o){
 				for(var key in o){
@@ -5251,39 +4718,38 @@
 			return c.init(o);
 		};
 		
-		return function(o){
-			if( !o ){
-				return {};
-			}
-			return new Check(o);
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = function(o){
+		if( !o ){
+			return {};
+		}
+		return new Check(o);
+	};
+
 
 /***/ },
-/* 14 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic){
-		
-		'use strict';
-		
-		/**
-		* nic.ui.pop 弹出窗控件
-		* @class nic.ui.tab
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} options 弹出窗参数
-	    * @param {String} options.tabItem tab选卡对象
-	    * @param {String} options.tabWrap tab切换内容对象
-	    * @param {String} options.tabEvent 切换事件，默认click
-	    * @param {Number} options.tabIndex tab选卡起始位置，从0开始，默认0
-	    * @param {Boolean} options.isAuto 是否自动播放，默认false
-	    * @param {Number} options.autoTime 自动播放时间
-	    * @param {Number} options.autoSpeed 自动播放速度
-	    * @param {Function} options.onclick 切换后执行的函数
-		* @return {Object} tab对象
-		*/	
-		var tab = function(options){
+	'use strict';
+
+	/**
+	* nic.ui.pop 弹出窗控件
+	* @class nic.ui.tab
+	* @author norion.z
+	* @blog http://zkeyword.com/
+	* @param {Object} options 弹出窗参数
+	* @param {String} options.tabItem tab选卡对象
+	* @param {String} options.tabWrap tab切换内容对象
+	* @param {String} options.tabEvent 切换事件，默认click
+	* @param {Number} options.tabIndex tab选卡起始位置，从0开始，默认0
+	* @param {Boolean} options.isAuto 是否自动播放，默认false
+	* @param {Number} options.autoTime 自动播放时间
+	* @param {Number} options.autoSpeed 自动播放速度
+	* @param {Function} options.onclick 切换后执行的函数
+	* @return {Object} tab对象
+	*/	
+	var nic = __webpack_require__(1),
+		tab = function(options){
 
 			var o = options || {};
 			
@@ -5374,36 +4840,34 @@
 			tabFn.init();
 		};
 		
-		return tab;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = tab;
 
 /***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/* 12 */
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(){
-		'use strict';
-		
-		/**
-		* nic.ui.pop 弹出窗控件
-		* @class nic.ui.tip
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} options 弹出窗参数
-	    * @param {String} options.id tip的id
-	    * @param {String} options.target tip的触发对象
-	    * @param {String} options.targetWrap target的最外层，默认网页的最外层为body，因为有可能在其他元素中定位
-	    * @param {String} options.header tip标题
-	    * @param {String} options.html tip的html内容
-	    * @param {String} options.render render事件，动态内容
-	    * @param {String} options.width 宽度
-	    * @param {String} options.isTrack 是否鼠标跟随
-	    * @param {String} options.isArrow 是否需要箭头
-	    * @param {String} options.arrowDirection 设箭头位置，默认是向上向下，可选是向左向右
-	    * @param {String} options.event 触发显示tip
-		* @return {Object} tip对象
-		*/
-		var Tip = function(o){
+	'use strict';
+
+	/**
+	* nic.ui.pop 弹出窗控件
+	* @class nic.ui.tip
+	* @author norion.z
+	* @blog http://zkeyword.com/
+	* @param {Object} options 弹出窗参数
+	* @param {String} options.id tip的id
+	* @param {String} options.target tip的触发对象
+	* @param {String} options.targetWrap target的最外层，默认网页的最外层为body，因为有可能在其他元素中定位
+	* @param {String} options.header tip标题
+	* @param {String} options.html tip的html内容
+	* @param {String} options.render render事件，动态内容
+	* @param {String} options.width 宽度
+	* @param {String} options.isTrack 是否鼠标跟随
+	* @param {String} options.isArrow 是否需要箭头
+	* @param {String} options.arrowDirection 设箭头位置，默认是向上向下，可选是向左向右
+	* @param {String} options.event 触发显示tip
+	* @return {Object} tip对象
+	*/
+	var Tip = function(o){
 			var 
 				/**
 				* 全局对象
@@ -5669,47 +5133,45 @@
 			return c.init(o);
 		};
 		
-		return function(o){
-			return new Tip(o);
-		};
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = function(o){
+		return new Tip(o);
+	};
 
 /***/ },
-/* 16 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic){
+	'use strict';
 		
-		'use strict';
-			
-		/**
-		* nic.ui.tree 树形控件
-		* @class nic.ui.tree
-		* @author norion.z
-	    * @blog http://zkeyword.com/
-	    * @param {Object} o 树形参数
-	    * @param {String} o.id 树形id
-	    * @param {String} o.data 树形数据
-	    * @param {String} o.ajax 树形ajax数据，与o.data互斥
-	    * @param {String} o.ajax.url
-	    * @param {String} o.ajax.data
-	    * @param {String} o.ajax.beforeSend
-	    * @param {String} o.ajax.success
-	    * @param {String} o.ajax.error
-	    * @param {String} o.isSimple 简单数据格式，已经经过递归的数据
-	    * @param {String} o.target 树形容器
-	    * @param {Object} o.height o.target的高度
-	    * @param {Object} o.selectedID 初始化选中的ID
-	    * @param {Object} o.isOpen 初始化是否打开
-	    * @param {Object} o.onClick 树形item的click事件
-	    * @param {Object} o.onRightClick 树形item的RightClick事件
-	    * @param {Object} o.onMouseOver 树形item的onmouseover事件
-	    * @param {Object} o.onMouseOut 树形item的onmouseout事件
-	    * @param {Object} o.onLoad 树形加载完触发的事件
-		* @return {Object} tree对象
-		*/
-		
-		var Tree = function(o){
+	/**
+	* nic.ui.tree 树形控件
+	* @class nic.ui.tree
+	* @author norion.z
+	* @blog http://zkeyword.com/
+	* @param {Object} o 树形参数
+	* @param {String} o.id 树形id
+	* @param {String} o.data 树形数据
+	* @param {String} o.ajax 树形ajax数据，与o.data互斥
+	* @param {String} o.ajax.url
+	* @param {String} o.ajax.data
+	* @param {String} o.ajax.beforeSend
+	* @param {String} o.ajax.success
+	* @param {String} o.ajax.error
+	* @param {String} o.isSimple 简单数据格式，已经经过递归的数据
+	* @param {String} o.target 树形容器
+	* @param {Object} o.height o.target的高度
+	* @param {Object} o.selectedID 初始化选中的ID
+	* @param {Object} o.isOpen 初始化是否打开
+	* @param {Object} o.onClick 树形item的click事件
+	* @param {Object} o.onRightClick 树形item的RightClick事件
+	* @param {Object} o.onMouseOver 树形item的onmouseover事件
+	* @param {Object} o.onMouseOut 树形item的onmouseout事件
+	* @param {Object} o.onLoad 树形加载完触发的事件
+	* @return {Object} tree对象
+	*/
+
+	var nic  = __webpack_require__(1),
+		Tree = function(o){
 			
 			var g = this,
 	        
@@ -6280,23 +5742,22 @@
 			return c.init(o);
 		};
 		
-		return function(o){
-			if( !o ){
-				return {};
-			}
-			return new Tree(o);
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = function(o){
+		if( !o ){
+			return {};
+		}
+		return new Tree(o);
+	};
+
 
 /***/ },
-/* 17 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function(nic){
-		
-		'use strict';
+	'use strict';
 
-		var BtnSwitch = function(o){
+	var nic       = __webpack_require__(1),
+		BtnSwitch = function(o){
 			
 			var 
 				/**
@@ -6400,105 +5861,114 @@
 
 			return c.init(o);
 		};
-		
-		return function(o){
-			if( !o ){
-				return {};
-			}
-			return new BtnSwitch(o);
-		};
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+	module.exports = function(o){
+		if( !o ){
+			return {};
+		}
+		return new BtnSwitch(o);
+	};
+
 
 /***/ },
-/* 18 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	//var $ = require('../lib/jquery1.10.2')
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+	    if (true) {
+	        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof exports === 'object') {
+	        module.exports = factory();
+	    } else {
+	        root.suggestion = factory();
+	    }
+	}(this, function (){
 
-	'use strict';
-	var $       = __webpack_require__(2);
-	var oWindow = $(window),
-		oHtml   = $('html, body'),
-		_oCore  = {
-					setFixed: function(oTarget, position){
-						oTarget
-							.css({
-								position: 'fixed',
-								top: position,
-								zIndex: '999'
-							});
-					},
-					removeFixed: function(oTarget){
-						oTarget.removeAttr('style')
-					},
-					setCurrerClass: function(oTarget){
-						oTarget
-							.addClass('cur')
-							.siblings()
-							.removeClass('cur');
-					}
-			   }
+		'use strict';
 
-	$.fn.anchorChain = function(options){
-		
-		var defaults = $.extend({}, {
-							wrap:'',
-							position: 0,
-							isNav: true
-						}, options);
+		var oWindow = $(window),
+			oHtml   = $('html, body'),
+			_oCore  = {
+						setFixed: function(oTarget, position){
+							oTarget
+								.css({
+									position: 'fixed',
+									top: position,
+									zIndex: '999'
+								});
+						},
+						removeFixed: function(oTarget){
+							oTarget.removeAttr('style')
+						},
+						setCurrerClass: function(oTarget){
+							oTarget
+								.addClass('cur')
+								.siblings()
+								.removeClass('cur');
+						}
+				   }
 
-		$(this).each(function(index){
-			var	oWrap = defaults.isNav ? $(defaults.wrap) : $(defaults.wrap).eq(index),
-				oTarget,
-				nTargetOffSetTop,
-				nTargetHeight,
-				oTargetChlid,
-				nWrapOffsetTop,
-				nWrapParentHeight;
-				
-			if( !oWrap.length ) return ;
+		$.fn.anchorChain = function(options){
 			
-			oTarget           = $(this);
-			nTargetOffSetTop  = oTarget.offset().top;
-			nTargetHeight     = oTarget.outerHeight();
-			oTargetChlid      = oTarget.children();
-			nWrapOffsetTop    = oWrap.offset().top;
-			nWrapParentHeight = oWrap.parent().outerHeight();
-			
-			
-			if( defaults.isNav ){
-				oTargetChlid
-					.on('click', function(){
-						var oSelf              = $(this),
-							sIndex             = this.getAttribute('data-index'),
-							oWrapItem          = oWrap.eq(sIndex),
-							nWrapItemOffsetTop = oWrapItem.length && oWrapItem.offset().top - defaults.position;
-						
-						oWrapItem.length && oHtml.animate({scrollTop: nWrapItemOffsetTop}, 500);
-					});
-			};
-			
-			oWindow.on('scroll', function(e){
+			var defaults = $.extend({}, {
+								wrap:'',
+								position: 0,
+								isNav: true
+							}, options);
 
-					var nWindowScrolltop = $(this).scrollTop(),
-						nNeedNum         = defaults.isNav ? nWrapOffsetTop - nTargetHeight : nWrapOffsetTop;
-					//		console.log(nWrapOffsetTop, nTargetHeight, nWindowScrolltop)
-					oWrap.each(function(i){
-						(nWindowScrolltop > $(this).offset().top - nTargetHeight + 1) &&
-								_oCore.setCurrerClass( oTargetChlid.eq(i) );
-					});
+			$(this).each(function(index){
+				var	oWrap = defaults.isNav ? $(defaults.wrap) : $(defaults.wrap).eq(index),
+					oTarget,
+					nTargetOffSetTop,
+					nTargetHeight,
+					oTargetChlid,
+					nWrapOffsetTop,
+					nWrapParentHeight;
 					
-					(nWindowScrolltop >= nNeedNum) && 
-					(nWindowScrolltop + nTargetHeight + defaults.position < nWrapParentHeight + nTargetOffSetTop) 
-							? _oCore.setFixed(oTarget, defaults.position) : _oCore.removeFixed(oTarget);
-		
-				});
-			});
-	}
+				if( !oWrap.length ) return ;
+				
+				oTarget           = $(this);
+				nTargetOffSetTop  = oTarget.offset().top;
+				nTargetHeight     = oTarget.outerHeight();
+				oTargetChlid      = oTarget.children();
+				nWrapOffsetTop    = oWrap.offset().top;
+				nWrapParentHeight = oWrap.parent().outerHeight();
+				
+				
+				if( defaults.isNav ){
+					oTargetChlid
+						.on('click', function(){
+							var oSelf              = $(this),
+								sIndex             = this.getAttribute('data-index'),
+								oWrapItem          = oWrap.eq(sIndex),
+								nWrapItemOffsetTop = oWrapItem.length && oWrapItem.offset().top - defaults.position;
+							
+							oWrapItem.length && oHtml.animate({scrollTop: nWrapItemOffsetTop}, 500);
+						});
+				};
+				
+				oWindow.on('scroll', function(e){
 
+						var nWindowScrolltop = $(this).scrollTop(),
+							nNeedNum         = defaults.isNav ? nWrapOffsetTop - nTargetHeight : nWrapOffsetTop;
+						//		console.log(nWrapOffsetTop, nTargetHeight, nWindowScrolltop)
+						oWrap.each(function(i){
+							(nWindowScrolltop > $(this).offset().top - nTargetHeight + 1) &&
+									_oCore.setCurrerClass( oTargetChlid.eq(i) );
+						});
+						
+						(nWindowScrolltop >= nNeedNum) && 
+						(nWindowScrolltop + nTargetHeight + defaults.position < nWrapParentHeight + nTargetOffSetTop) 
+								? _oCore.setFixed(oTarget, defaults.position) : _oCore.removeFixed(oTarget);
+			
+					});
+				});
+		}
+		
+	}));
 
 /***/ },
-/* 19 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -6758,6 +6228,20 @@
 	    }
 
 	}));
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	* ZeroClipboard
+	* The ZeroClipboard library provides an easy way to copy text to the clipboard using an invisible Adobe Flash movie and a JavaScript interface.
+	* Copyright (c) 2014 Jon Rohan, James M. Greene
+	* Licensed MIT
+	* http://zeroclipboard.org/
+	* v1.3.5
+	*/
+	!function(a){"use strict";function b(a){return a.replace(/,/g,".").replace(/[^0-9\.]/g,"")}function c(a){return parseFloat(b(a))>=10}var d,e={bridge:null,version:"0.0.0",disabled:null,outdated:null,ready:null},f={},g=0,h={},i=0,j={},k=null,l=null,m=function(){var a,b,c,d,e="ZeroClipboard.swf";if(document.currentScript&&(d=document.currentScript.src));else{var f=document.getElementsByTagName("script");if("readyState"in f[0])for(a=f.length;a--&&("interactive"!==f[a].readyState||!(d=f[a].src)););else if("loading"===document.readyState)d=f[f.length-1].src;else{for(a=f.length;a--;){if(c=f[a].src,!c){b=null;break}if(c=c.split("#")[0].split("?")[0],c=c.slice(0,c.lastIndexOf("/")+1),null==b)b=c;else if(b!==c){b=null;break}}null!==b&&(d=b)}}return d&&(d=d.split("#")[0].split("?")[0],e=d.slice(0,d.lastIndexOf("/")+1)+e),e}(),n=function(){var a=/\-([a-z])/g,b=function(a,b){return b.toUpperCase()};return function(c){return c.replace(a,b)}}(),o=function(b,c){var d,e,f;return a.getComputedStyle?d=a.getComputedStyle(b,null).getPropertyValue(c):(e=n(c),d=b.currentStyle?b.currentStyle[e]:b.style[e]),"cursor"!==c||d&&"auto"!==d||(f=b.tagName.toLowerCase(),"a"!==f)?d:"pointer"},p=function(b){b||(b=a.event);var c;this!==a?c=this:b.target?c=b.target:b.srcElement&&(c=b.srcElement),K.activate(c)},q=function(a,b,c){a&&1===a.nodeType&&(a.addEventListener?a.addEventListener(b,c,!1):a.attachEvent&&a.attachEvent("on"+b,c))},r=function(a,b,c){a&&1===a.nodeType&&(a.removeEventListener?a.removeEventListener(b,c,!1):a.detachEvent&&a.detachEvent("on"+b,c))},s=function(a,b){if(!a||1!==a.nodeType)return a;if(a.classList)return a.classList.contains(b)||a.classList.add(b),a;if(b&&"string"==typeof b){var c=(b||"").split(/\s+/);if(1===a.nodeType)if(a.className){for(var d=" "+a.className+" ",e=a.className,f=0,g=c.length;g>f;f++)d.indexOf(" "+c[f]+" ")<0&&(e+=" "+c[f]);a.className=e.replace(/^\s+|\s+$/g,"")}else a.className=b}return a},t=function(a,b){if(!a||1!==a.nodeType)return a;if(a.classList)return a.classList.contains(b)&&a.classList.remove(b),a;if(b&&"string"==typeof b||void 0===b){var c=(b||"").split(/\s+/);if(1===a.nodeType&&a.className)if(b){for(var d=(" "+a.className+" ").replace(/[\n\t]/g," "),e=0,f=c.length;f>e;e++)d=d.replace(" "+c[e]+" "," ");a.className=d.replace(/^\s+|\s+$/g,"")}else a.className=""}return a},u=function(){var a,b,c,d=1;return"function"==typeof document.body.getBoundingClientRect&&(a=document.body.getBoundingClientRect(),b=a.right-a.left,c=document.body.offsetWidth,d=Math.round(b/c*100)/100),d},v=function(b,c){var d={left:0,top:0,width:0,height:0,zIndex:B(c)-1};if(b.getBoundingClientRect){var e,f,g,h=b.getBoundingClientRect();"pageXOffset"in a&&"pageYOffset"in a?(e=a.pageXOffset,f=a.pageYOffset):(g=u(),e=Math.round(document.documentElement.scrollLeft/g),f=Math.round(document.documentElement.scrollTop/g));var i=document.documentElement.clientLeft||0,j=document.documentElement.clientTop||0;d.left=h.left+e-i,d.top=h.top+f-j,d.width="width"in h?h.width:h.right-h.left,d.height="height"in h?h.height:h.bottom-h.top}return d},w=function(a,b){var c=null==b||b&&b.cacheBust===!0&&b.useNoCache===!0;return c?(-1===a.indexOf("?")?"?":"&")+"noCache="+(new Date).getTime():""},x=function(b){var c,d,e,f=[],g=[],h=[];if(b.trustedOrigins&&("string"==typeof b.trustedOrigins?g.push(b.trustedOrigins):"object"==typeof b.trustedOrigins&&"length"in b.trustedOrigins&&(g=g.concat(b.trustedOrigins))),b.trustedDomains&&("string"==typeof b.trustedDomains?g.push(b.trustedDomains):"object"==typeof b.trustedDomains&&"length"in b.trustedDomains&&(g=g.concat(b.trustedDomains))),g.length)for(c=0,d=g.length;d>c;c++)if(g.hasOwnProperty(c)&&g[c]&&"string"==typeof g[c]){if(e=E(g[c]),!e)continue;if("*"===e){h=[e];break}h.push.apply(h,[e,"//"+e,a.location.protocol+"//"+e])}return h.length&&f.push("trustedOrigins="+encodeURIComponent(h.join(","))),"string"==typeof b.jsModuleId&&b.jsModuleId&&f.push("jsModuleId="+encodeURIComponent(b.jsModuleId)),f.join("&")},y=function(a,b,c){if("function"==typeof b.indexOf)return b.indexOf(a,c);var d,e=b.length;for("undefined"==typeof c?c=0:0>c&&(c=e+c),d=c;e>d;d++)if(b.hasOwnProperty(d)&&b[d]===a)return d;return-1},z=function(a){if("string"==typeof a)throw new TypeError("ZeroClipboard doesn't accept query strings.");return a.length?a:[a]},A=function(b,c,d,e){e?a.setTimeout(function(){b.apply(c,d)},0):b.apply(c,d)},B=function(a){var b,c;return a&&("number"==typeof a&&a>0?b=a:"string"==typeof a&&(c=parseInt(a,10))&&!isNaN(c)&&c>0&&(b=c)),b||("number"==typeof N.zIndex&&N.zIndex>0?b=N.zIndex:"string"==typeof N.zIndex&&(c=parseInt(N.zIndex,10))&&!isNaN(c)&&c>0&&(b=c)),b||0},C=function(a,b){if(a&&b!==!1&&"undefined"!=typeof console&&console&&(console.warn||console.log)){var c="`"+a+"` is deprecated. See docs for more info:\n    https://github.com/zeroclipboard/zeroclipboard/blob/master/docs/instructions.md#deprecations";console.warn?console.warn(c):console.log(c)}},D=function(){var a,b,c,d,e,f,g=arguments[0]||{};for(a=1,b=arguments.length;b>a;a++)if(null!=(c=arguments[a]))for(d in c)if(c.hasOwnProperty(d)){if(e=g[d],f=c[d],g===f)continue;void 0!==f&&(g[d]=f)}return g},E=function(a){if(null==a||""===a)return null;if(a=a.replace(/^\s+|\s+$/g,""),""===a)return null;var b=a.indexOf("//");a=-1===b?a:a.slice(b+2);var c=a.indexOf("/");return a=-1===c?a:-1===b||0===c?null:a.slice(0,c),a&&".swf"===a.slice(-4).toLowerCase()?null:a||null},F=function(){var a=function(a,b){var c,d,e;if(null!=a&&"*"!==b[0]&&("string"==typeof a&&(a=[a]),"object"==typeof a&&"length"in a))for(c=0,d=a.length;d>c;c++)if(a.hasOwnProperty(c)&&(e=E(a[c]))){if("*"===e){b.length=0,b.push("*");break}-1===y(e,b)&&b.push(e)}},b={always:"always",samedomain:"sameDomain",never:"never"};return function(c,d){var e,f=d.allowScriptAccess;if("string"==typeof f&&(e=f.toLowerCase())&&/^always|samedomain|never$/.test(e))return b[e];var g=E(d.moviePath);null===g&&(g=c);var h=[];a(d.trustedOrigins,h),a(d.trustedDomains,h);var i=h.length;if(i>0){if(1===i&&"*"===h[0])return"always";if(-1!==y(c,h))return 1===i&&c===g?"sameDomain":"always"}return"never"}}(),G=function(a){if(null==a)return[];if(Object.keys)return Object.keys(a);var b=[];for(var c in a)a.hasOwnProperty(c)&&b.push(c);return b},H=function(a){if(a)for(var b in a)a.hasOwnProperty(b)&&delete a[b];return a},I=function(){try{return document.activeElement}catch(a){}return null},J=function(){var a=!1;if("boolean"==typeof e.disabled)a=e.disabled===!1;else{if("function"==typeof ActiveXObject)try{new ActiveXObject("ShockwaveFlash.ShockwaveFlash")&&(a=!0)}catch(b){}!a&&navigator.mimeTypes["application/x-shockwave-flash"]&&(a=!0)}return a},K=function(a,b){return this instanceof K?(this.id=""+g++,h[this.id]={instance:this,elements:[],handlers:{}},a&&this.clip(a),"undefined"!=typeof b&&(C("new ZeroClipboard(elements, options)",N.debug),K.config(b)),this.options=K.config(),"boolean"!=typeof e.disabled&&(e.disabled=!J()),e.disabled===!1&&e.outdated!==!0&&null===e.bridge&&(e.outdated=!1,e.ready=!1,O()),void 0):new K(a,b)};K.prototype.setText=function(a){return a&&""!==a&&(f["text/plain"]=a,e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setText?e.bridge.setText(a):e.ready=!1),this},K.prototype.setSize=function(a,b){return e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setSize?e.bridge.setSize(a,b):e.ready=!1,this};var L=function(a){e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setHandCursor?e.bridge.setHandCursor(a):e.ready=!1};K.prototype.destroy=function(){this.unclip(),this.off(),delete h[this.id]};var M=function(){var a,b,c,d=[],e=G(h);for(a=0,b=e.length;b>a;a++)c=h[e[a]].instance,c&&c instanceof K&&d.push(c);return d};K.version="1.3.5";var N={swfPath:m,trustedDomains:a.location.host?[a.location.host]:[],cacheBust:!0,forceHandCursor:!1,zIndex:999999999,debug:!0,title:null,autoActivate:!0};K.config=function(a){"object"==typeof a&&null!==a&&D(N,a);{if("string"!=typeof a||!a){var b={};for(var c in N)N.hasOwnProperty(c)&&(b[c]="object"==typeof N[c]&&null!==N[c]?"length"in N[c]?N[c].slice(0):D({},N[c]):N[c]);return b}if(N.hasOwnProperty(a))return N[a]}},K.destroy=function(){K.deactivate();for(var a in h)if(h.hasOwnProperty(a)&&h[a]){var b=h[a].instance;b&&"function"==typeof b.destroy&&b.destroy()}var c=P(e.bridge);c&&c.parentNode&&(c.parentNode.removeChild(c),e.ready=null,e.bridge=null)},K.activate=function(a){d&&(t(d,N.hoverClass),t(d,N.activeClass)),d=a,s(a,N.hoverClass),Q();var b=N.title||a.getAttribute("title");if(b){var c=P(e.bridge);c&&c.setAttribute("title",b)}var f=N.forceHandCursor===!0||"pointer"===o(a,"cursor");L(f)},K.deactivate=function(){var a=P(e.bridge);a&&(a.style.left="0px",a.style.top="-9999px",a.removeAttribute("title")),d&&(t(d,N.hoverClass),t(d,N.activeClass),d=null)};var O=function(){var b,c,d=document.getElementById("global-zeroclipboard-html-bridge");if(!d){var f=K.config();f.jsModuleId="string"==typeof k&&k||"string"==typeof l&&l||null;var g=F(a.location.host,N),h=x(f),i=N.moviePath+w(N.moviePath,N),j='      <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" id="global-zeroclipboard-flash-bridge" width="100%" height="100%">         <param name="movie" value="'+i+'"/>         <param name="allowScriptAccess" value="'+g+'"/>         <param name="scale" value="exactfit"/>         <param name="loop" value="false"/>         <param name="menu" value="false"/>         <param name="quality" value="best" />         <param name="bgcolor" value="#ffffff"/>         <param name="wmode" value="transparent"/>         <param name="flashvars" value="'+h+'"/>         <embed src="'+i+'"           loop="false" menu="false"           quality="best" bgcolor="#ffffff"           width="100%" height="100%"           name="global-zeroclipboard-flash-bridge"           allowScriptAccess="'+g+'"           allowFullScreen="false"           type="application/x-shockwave-flash"           wmode="transparent"           pluginspage="http://www.macromedia.com/go/getflashplayer"           flashvars="'+h+'"           scale="exactfit">         </embed>       </object>';d=document.createElement("div"),d.id="global-zeroclipboard-html-bridge",d.setAttribute("class","global-zeroclipboard-container"),d.style.position="absolute",d.style.left="0px",d.style.top="-9999px",d.style.width="15px",d.style.height="15px",d.style.zIndex=""+B(N.zIndex),document.body.appendChild(d),d.innerHTML=j}b=document["global-zeroclipboard-flash-bridge"],b&&(c=b.length)&&(b=b[c-1]),e.bridge=b||d.children[0].lastElementChild},P=function(a){for(var b=/^OBJECT|EMBED$/,c=a&&a.parentNode;c&&b.test(c.nodeName)&&c.parentNode;)c=c.parentNode;return c||null},Q=function(){if(d){var a=v(d,N.zIndex),b=P(e.bridge);b&&(b.style.top=a.top+"px",b.style.left=a.left+"px",b.style.width=a.width+"px",b.style.height=a.height+"px",b.style.zIndex=a.zIndex+1),e.ready===!0&&e.bridge&&"function"==typeof e.bridge.setSize?e.bridge.setSize(a.width,a.height):e.ready=!1}return this};K.prototype.on=function(a,b){var c,d,f,g={},i=h[this.id]&&h[this.id].handlers;if("string"==typeof a&&a)f=a.toLowerCase().split(/\s+/);else if("object"==typeof a&&a&&"undefined"==typeof b)for(c in a)a.hasOwnProperty(c)&&"string"==typeof c&&c&&"function"==typeof a[c]&&this.on(c,a[c]);if(f&&f.length){for(c=0,d=f.length;d>c;c++)a=f[c].replace(/^on/,""),g[a]=!0,i[a]||(i[a]=[]),i[a].push(b);g.noflash&&e.disabled&&T.call(this,"noflash",{}),g.wrongflash&&e.outdated&&T.call(this,"wrongflash",{flashVersion:e.version}),g.load&&e.ready&&T.call(this,"load",{flashVersion:e.version})}return this},K.prototype.off=function(a,b){var c,d,e,f,g,i=h[this.id]&&h[this.id].handlers;if(0===arguments.length)f=G(i);else if("string"==typeof a&&a)f=a.split(/\s+/);else if("object"==typeof a&&a&&"undefined"==typeof b)for(c in a)a.hasOwnProperty(c)&&"string"==typeof c&&c&&"function"==typeof a[c]&&this.off(c,a[c]);if(f&&f.length)for(c=0,d=f.length;d>c;c++)if(a=f[c].toLowerCase().replace(/^on/,""),g=i[a],g&&g.length)if(b)for(e=y(b,g);-1!==e;)g.splice(e,1),e=y(b,g,e);else i[a].length=0;return this},K.prototype.handlers=function(a){var b,c=null,d=h[this.id]&&h[this.id].handlers;if(d){if("string"==typeof a&&a)return d[a]?d[a].slice(0):null;c={};for(b in d)d.hasOwnProperty(b)&&d[b]&&(c[b]=d[b].slice(0))}return c};var R=function(b,c,d,e){var f=h[this.id]&&h[this.id].handlers[b];if(f&&f.length){var g,i,j,k=c||this;for(g=0,i=f.length;i>g;g++)j=f[g],c=k,"string"==typeof j&&"function"==typeof a[j]&&(j=a[j]),"object"==typeof j&&j&&"function"==typeof j.handleEvent&&(c=j,j=j.handleEvent),"function"==typeof j&&A(j,c,d,e)}return this};K.prototype.clip=function(a){a=z(a);for(var b=0;b<a.length;b++)if(a.hasOwnProperty(b)&&a[b]&&1===a[b].nodeType){a[b].zcClippingId?-1===y(this.id,j[a[b].zcClippingId])&&j[a[b].zcClippingId].push(this.id):(a[b].zcClippingId="zcClippingId_"+i++,j[a[b].zcClippingId]=[this.id],N.autoActivate===!0&&q(a[b],"mouseover",p));var c=h[this.id].elements;-1===y(a[b],c)&&c.push(a[b])}return this},K.prototype.unclip=function(a){var b=h[this.id];if(b){var c,d=b.elements;a="undefined"==typeof a?d.slice(0):z(a);for(var e=a.length;e--;)if(a.hasOwnProperty(e)&&a[e]&&1===a[e].nodeType){for(c=0;-1!==(c=y(a[e],d,c));)d.splice(c,1);var f=j[a[e].zcClippingId];if(f){for(c=0;-1!==(c=y(this.id,f,c));)f.splice(c,1);0===f.length&&(N.autoActivate===!0&&r(a[e],"mouseover",p),delete a[e].zcClippingId)}}}return this},K.prototype.elements=function(){var a=h[this.id];return a&&a.elements?a.elements.slice(0):[]};var S=function(a){var b,c,d,e,f,g=[];if(a&&1===a.nodeType&&(b=a.zcClippingId)&&j.hasOwnProperty(b)&&(c=j[b],c&&c.length))for(d=0,e=c.length;e>d;d++)f=h[c[d]].instance,f&&f instanceof K&&g.push(f);return g};N.hoverClass="zeroclipboard-is-hover",N.activeClass="zeroclipboard-is-active",N.trustedOrigins=null,N.allowScriptAccess=null,N.useNoCache=!0,N.moviePath="ZeroClipboard.swf",K.detectFlashSupport=function(){return C("ZeroClipboard.detectFlashSupport",N.debug),J()},K.dispatch=function(a,b){if("string"==typeof a&&a){var c=a.toLowerCase().replace(/^on/,"");if(c)for(var e=d&&N.autoActivate===!0?S(d):M(),f=0,g=e.length;g>f;f++)T.call(e[f],c,b)}},K.prototype.setHandCursor=function(a){return C("ZeroClipboard.prototype.setHandCursor",N.debug),a="boolean"==typeof a?a:!!a,L(a),N.forceHandCursor=a,this},K.prototype.reposition=function(){return C("ZeroClipboard.prototype.reposition",N.debug),Q()},K.prototype.receiveEvent=function(a,b){if(C("ZeroClipboard.prototype.receiveEvent",N.debug),"string"==typeof a&&a){var c=a.toLowerCase().replace(/^on/,"");c&&T.call(this,c,b)}},K.prototype.setCurrent=function(a){return C("ZeroClipboard.prototype.setCurrent",N.debug),K.activate(a),this},K.prototype.resetBridge=function(){return C("ZeroClipboard.prototype.resetBridge",N.debug),K.deactivate(),this},K.prototype.setTitle=function(a){if(C("ZeroClipboard.prototype.setTitle",N.debug),a=a||N.title||d&&d.getAttribute("title")){var b=P(e.bridge);b&&b.setAttribute("title",a)}return this},K.setDefaults=function(a){C("ZeroClipboard.setDefaults",N.debug),K.config(a)},K.prototype.addEventListener=function(a,b){return C("ZeroClipboard.prototype.addEventListener",N.debug),this.on(a,b)},K.prototype.removeEventListener=function(a,b){return C("ZeroClipboard.prototype.removeEventListener",N.debug),this.off(a,b)},K.prototype.ready=function(){return C("ZeroClipboard.prototype.ready",N.debug),e.ready===!0};var T=function(a,g){a=a.toLowerCase().replace(/^on/,"");var h=g&&g.flashVersion&&b(g.flashVersion)||null,i=d,j=!0;switch(a){case"load":if(h){if(!c(h))return T.call(this,"onWrongFlash",{flashVersion:h}),void 0;e.outdated=!1,e.ready=!0,e.version=h}break;case"wrongflash":h&&!c(h)&&(e.outdated=!0,e.ready=!1,e.version=h);break;case"mouseover":s(i,N.hoverClass);break;case"mouseout":N.autoActivate===!0&&K.deactivate();break;case"mousedown":s(i,N.activeClass);break;case"mouseup":t(i,N.activeClass);break;case"datarequested":if(i){var k=i.getAttribute("data-clipboard-target"),l=k?document.getElementById(k):null;if(l){var m=l.value||l.textContent||l.innerText;m&&this.setText(m)}else{var n=i.getAttribute("data-clipboard-text");n&&this.setText(n)}}j=!1;break;case"complete":H(f),i&&i!==I()&&i.focus&&i.focus()}var o=i,p=[this,g];return R.call(this,a,o,p,j)}; true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__,exports,module], __WEBPACK_AMD_DEFINE_RESULT__ = function(a,b,c){return k=c&&c.id||null,K}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):"object"==typeof module&&module&&"object"==typeof module.exports&&module.exports&&"function"==typeof a.require?(l=module.id||null,module.exports=K):a.ZeroClipboard=K}(function(){return this}());
 
 /***/ }
 /******/ ]);
