@@ -11,7 +11,6 @@ var gulp          = require('gulp'),
 	imagemin      = require('gulp-imagemin'),
 	clean         = require('gulp-clean'),
 	plumber       = require('gulp-plumber'),
-	//tmodjs        = require('gulp-tmod'),
 	nodemon       = require('gulp-nodemon'),
 	htmlInclude   = require('gulp-file-include'),
 	webpack       = require('gulp-webpack'),
@@ -23,26 +22,7 @@ var gulp          = require('gulp'),
 						dest: 'dest/'
 				    };
 
-					
-					
-/*var lessPluginFunction = require('less-plugin-functions')	
-		postcss          = require('gulp-postcss'),
-		autoprefixer    = require('autoprefixer'),
-		cssnano         = require('cssnano')
-	*/
-	
-	//.pipe(less({ plugins: [new lessPluginFunction()] }))
-	//.pipe(postcss([autoprefixer,mqpacker,cssnano]))
-/*
 
-.function {
-    .rem(@val) {
-        return: @val*2+0rem;
-    }
-}
-
-*/					
-					
 //less
 gulp.task('less', function () {
     gulp
@@ -79,17 +59,6 @@ gulp.task('less', function () {
 
 
 
-
-//jshint
-/* gulp.task('jshint', function() {
-	gulp
-		.src(path.src+'js/core/drag.js')
-        .pipe(jshint('.jshintrc'))
-        .pipe(jshint.reporter('default'));	
-}) */
-
-
-
 //js
 gulp.task('js', function () {
 	gulp.src(path.src+'src/')
@@ -103,23 +72,6 @@ gulp.task('js', function () {
         .pipe(gulp.dest(path.demo+'src/rev/'));
 });
 
-gulp.task('djs', function () {
-	gulp.src('app.65b32be3f985189a67e5.js')
-		.pipe(uglify())
-		.pipe(gulp.dest('a'));		
-});
-
-
-
-//tmod.js
-// gulp.task('tmod', function() {
-	// gulp.src(path.src + '/tpl/**/*.html')
-		// .pipe(tmodjs({
-			// base:  path.src + 'tpl',
-			// combo: true,
-			// output: path.src + 'js/app/'
-		// }));
-// });
 
 //清理图片
 gulp.task('clean', [/*'clean:css', 'clean:js', */'clean:imagesDefault', 'clean:imagesSprite']);
@@ -270,9 +222,6 @@ gulp.task('default', ['clean', 'copy', 'sprite',  'js', 'less', 'server', 'demo'
 	
 	//监听sprite
 	gulp.watch(path.src+'img/sprite/**.png', ['sprite']);
-	
-	//监听tpl
-	//gulp.watch(path.src+'tpl/**', ['tmod']);
 		
 	//监听js
     gulp.watch(path.src+'js/**', ['js']);

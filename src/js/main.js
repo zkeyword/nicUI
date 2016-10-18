@@ -1,5 +1,7 @@
 var nic;
 
+require('./../less/styles.less')
+
 /* 基本依赖 */
 nic               = require('./core/nic');
 nic.ui.drag       = require('./core/drag');

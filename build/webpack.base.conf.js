@@ -4,7 +4,7 @@ var projectRoot = path.resolve(__dirname, '../')
 
 module.exports = {
   entry: {
-    app: './src/js/main.js'
+    nicUI: './src/js/main.js'
   },
   output: {
     path: config.build.assetsRoot,

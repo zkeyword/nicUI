@@ -8,7 +8,14 @@ var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = merge(baseWebpackConfig, {
   module: {
-    loaders: utils.styleLoaders({ sourceMap: config.build.productionSourceMap, extract: true })
+    loaders: [
+	  {
+        test: /\.less$/,
+        loader:  ExtractTextPlugin.extract('style', 'css!less')
+      },
+	  { test: /\.(ttf|eot|svg)(.*)?$/, loader: 'file?name=fonts/[name].[ext]' },
+      { test: /\.(png|jpg|jpeg|gif|woff|woff2)$/, loader: 'url?name=img/[name].[ext]' }
+    ]
   },
   output: {
     path: config.build.assetsRoot,

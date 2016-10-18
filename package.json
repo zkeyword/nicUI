@@ -40,6 +40,7 @@
     "nodemon": "^1.10.2",
     "ora": "^0.3.0",
     "postcss-loader": "^0.13.0",
+    "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.7.0",

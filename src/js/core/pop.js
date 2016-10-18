@@ -216,7 +216,7 @@ var nic  = require('./nic'),
 								var that    = $(this),
 									i       = Number( this.getAttribute('data-index') ),
 									item    = btns[i],
-									isClose = item.closePop === undefined || item.closePop === false;
+									isClose = item.closePop === undefined ? true : item.closePop;
 									
 								nic.base.isFunction(item.onclick) && item.onclick.apply(this, [id, i, item, that]);
 								isClose && g.close(id);
