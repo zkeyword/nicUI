@@ -1,7 +1,7 @@
 var gulp          = require('gulp'),
 	less          = require('gulp-less'),
 	uglify        = require('gulp-uglify'),
-	jshint        = require('gulp-jshint'),
+	//jshint        = require('gulp-jshint'),
 	maps          = require('gulp-sourcemaps'),
 	minifycss     = require('gulp-minify-css'),
 	rev           = require('gulp-rev'),
