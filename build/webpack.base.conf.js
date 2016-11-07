@@ -11,6 +11,9 @@ module.exports = {
     publicPath: config.build.assetsPublicPath,
     filename: '[name].js'
   },
+  node: {
+	fs: 'empty'
+  },
   resolve: {
     extensions: ['', '.js'],
     fallback: [path.join(__dirname, '../node_modules')],
@@ -19,7 +22,8 @@ module.exports = {
 		'lib'
 	],
     alias: {
-      'jquery': "jquery1.10.2.js"
+      'jquery': "jquery1.10.2.js",
+	  'template': "art-template"
     }
   },
   externals: {
