@@ -34,13 +34,16 @@ nicUI提供前端架构多组件多页面整体开发方案，同时也支持单
 
 - gulp
 
-- jQuery
-
-- artTemplate
-
 - mockjs
 
 - iconfont
+
+
+##### 项目依赖
+
+- jQuery
+
+- artTemplate
 
 
 ##### 运行方式
@@ -61,6 +64,7 @@ nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-re
 ##### 目录结构
 
 	/ 根目录
+	|__ build 编译工具以及webpack配置文件
 	|__ dest 实例文档
 	|__ dest 压缩合并后目录
 	|__ src 开发目录
@@ -74,15 +78,15 @@ nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-re
 	|	|	|	|__ mod 公用模块
 	|	|	|	|__ page 页面级代码
 	|	|	|__ core 通用可移植的代码
-	|	|	|__ lib 第三方基本库
+	|	|	|__ lib 第三方库
 	|	|	|__ styles.less 统一入口
 	|	|__ js  脚本文件
 	|		|__ app 业务代码
 	|		|	|__ main.js 主业务文件，也是用来管理js依赖的地方，可以在此增删组件
 	|		|__ core 通用可移植的代码
-	|		|__ lib 第三方基本库
+	|		|__ lib 第三方库
 	|__ index.js express路由
-	|__ webpack.config.js webpack配置文件
+	|__ config.js 运行Demo的配置
 	|__ gulpfile.js gulp配置文件
 
 ##### 依赖管理
