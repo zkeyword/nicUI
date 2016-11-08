@@ -4,6 +4,7 @@
 
 nicUI提供前端架构多组件多页面整体开发方案，同时也支持单个组件单独调用，是一款基于jQuery开发的UI库，始终贯彻前端模块化思想，使用webpack打包，即可支持AMD规范，又可支持CMD规范，很方便了实现了UI的扩展。
 
+
 ### 调用方式
 
 - 约定
@@ -22,6 +23,7 @@ nicUI提供前端架构多组件多页面整体开发方案，同时也支持单
 	    <script src="dest/js/lib/jquery1.10.2.js"></script>
 	    <script src="dest/js/pop.js"></script>
 
+		
 ### 二次开发
 
 ##### 相关技术栈
@@ -54,11 +56,15 @@ nicUI提供前端架构多组件多页面整体开发方案，同时也支持单
 	
 运行：
 	
-	gulp
+	npm run dev
 	
-运行成功之后，直接在浏览器打开 http://127.0.0.1:3000 即可，nicUI默认的端口号是3000，如果有端口冲突可以修改根目录下的index.js文件。
+运行成功之后，直接在浏览器打开 http://127.0.0.1:3000 即可，nicUI默认的端口号是3000，如果有端口冲突可以修改根目录下的config.js文件。
 	
 nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-rev-collector修改对应的html，如若不需要或有具体需求请自行修改gulp的配置gulpfile.js。
+
+打包：
+
+	npm run build
 
 
 ##### 目录结构
@@ -89,6 +95,7 @@ nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-re
 	|__ config.js 运行Demo的配置
 	|__ gulpfile.js gulp配置文件
 
+
 ##### 依赖管理
 
 - js部分
@@ -101,17 +108,19 @@ nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-re
 
 	- jquery插件方式，第三方的也有用这种方式挂载在jquery的对象下
 
-	其中，为什么用的是大部分依赖用的是nic.ui，nicUI的基本架构为：
+	其中，为什么用的是大部分依赖用的是nic.ui，因为nicUI的基本架构为：
 
 	- nic.base 基础层，所有的基础函数库、工具函数库，如cookie、isFunction、isArray等
 
 	- nic.ui 显示层，用来呈现DOM，前端的特效显示处理
 
 	- nic.app 应用层，挂载一些应用的业务类，业务上的代码可以挂载在该空间下。
+	
 
 - css部分
 
 	nicUI的css依赖文件在dev/less/styles.less文件内
+	
 
 - 关于iconfont和sprite
 
@@ -136,7 +145,8 @@ nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-re
 
 由于用了gulp-htmlmin、gulp-imagemin插件，在压缩html和img的时候在windows系统上可能会出错，目前的解决方式只有重启，还没找到合适的插件。
 
+
 ##### change log
 
 - 对组件进行解耦和，方便单独调用
-- 改用postcss优化样式
+- 用postcss优化样式
