@@ -14,11 +14,6 @@ let devPath   = path.join(__dirname, "../viewsDev") + '/';
 let bulidPath = path.join(__dirname, "../views") + '/';
 
 let conf = {
-	'mued': 'mued1.jia.com,mued2.jia.com,mued3.jia.com',
-	'fastued': 'fastued2.jia.com,fastued3.jia.com',
-	'fastued1': 'fastued1.jia.com',
-	'm.static': 'm.jia.com',
-	'ued': 'ued.jia.com'
 }
 
 let defParam = {
