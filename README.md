@@ -47,6 +47,7 @@ nicUI提供前端架构多组件多页面整体开发方案，同时也支持单
 
 - artTemplate
 
+- handlebars
 
 ##### 运行方式
 

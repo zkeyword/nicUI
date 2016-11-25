@@ -17,6 +17,9 @@ nic.ui.tip        = require('./core/tip');
 nic.ui.tree       = require('./core/tree');
 nic.ui.btnSwitch  = require('./core/btnSwitch');
 
+nic.ui.picker  = require('./core/picker');
+
+
 /* 其他$.fn插件 */
 require('./core/jquery.anchorChain');
 require('./core/jquery.suggestion');

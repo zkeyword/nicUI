@@ -53,8 +53,9 @@ app.use(devMiddleware)
 app.use(hotMiddleware)
 
 // serve pure static assets
-var staticPath = path.posix.join(config.build.assetsPublicPath, config.build.assetsSubDirectory)
-app.use(staticPath, express.static('./static'))
+var staticPath = path.posix.join(config.build.assetsPublicPath, config.build.assetsSubDirectory);
+console.log( staticPath )
+app.use('/', express.static('../static'))
 
 var mockData = require('./mockData');
 app.use('/', mockData);
