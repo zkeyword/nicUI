@@ -12,7 +12,7 @@ module.exports = {
     context: __dirname,
     entry: [
         '../../src/js/main.js',
-        '../../src/less/test.less',
+        '../../src/less/styles.less',
         // Add the client which connects to our middleware
         // You can use full urls like 'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr'
         // useful if you run your app from another point like django
@@ -47,22 +47,34 @@ module.exports = {
             // },
             {
                 test: /\.less$/,
-                loader: "style-loader!css-loader!less-loader?strictMath&noIeCompat"
+                loader: "style-loader!css-loader?minimize!less-loader?strictMath&noIeCompat!postcss-loader"
             },
             {
                 test: /\.handlebars$/,
                 loader: "handlebars-loader"
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+                loader: 'url',
+                query: {
+                    limit: 1,
+                    name: 'img/[name].[ext]'
+                }
+            },
+            {
+                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                loader: 'url',
+                query: {
+                    limit: 10000,
+                    name: 'fonts/[name].[ext]'
+                }
             }
         ]
     },
     postcss: function () {
         return [
-            autoprefixer({
-                remove: false,
-                browsers: ['ie >= 8', '> 1% in CN'],
-            }),
-            mqpacker(),
-            cssnano()
+            autoprefixer,
+            mqpacker
         ];
     },
 
