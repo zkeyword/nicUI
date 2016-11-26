@@ -1,0 +1,15 @@
+<script type="text/javascript">
+$(function(){
+	$('#demo-left dt').on('click', function(){
+		var that = $(this),
+			dd   = that.next('dd') 
+		if( dd.is(':visible') ){
+			dd.siblings('dd').slideUp();
+			dd.slideUp();
+		}else{
+			dd.siblings('dd').slideUp();
+			dd.slideDown();
+		}
+	});
+});
+</script>

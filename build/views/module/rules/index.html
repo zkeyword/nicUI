@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>nic 使用手册</title>
+<link rel="stylesheet" type="text/css" href="../theme/build/css/styles.css">
+<script data-main="../../build/js/common" src="../../build/js/lib/require.js"></script>
+</head>
+<body>				
+	<div id="demo-wrap">
+		<header id="demo-header">
+			<div id="demo-header-main" class="fn-clear">
+				<a id="demo-logo" href="../" class="fn-left">nic</a>
+				<ul id="demo-nav" class="fn-left">
+					<li><a href="../demo/index.html">DEMO</a></li>
+					<li><a href="../api/index.html">API</a></li>
+					<li><a href="index.html">开发规范</a></li>
+				</ul>
+			</div>
+		</header>
+		<div id="demo-main" class="fn-clear">
+			<dl id="demo-left" class="fn-left">
+				<dt>HTML规范</dt>
+				<dd>
+					<a href="#html/html.html">整体结构</a>
+					<a href="#html/code.html">代码格式</a>
+				</dd>
+				<dt>CSS规范</dt>
+				<dd>
+					<a href="#css/category.html">分类方法</a>
+					<a href="#css/name.html">命名规则</a>
+					<a href="#css/code.html">代码格式</a>
+				</dd>
+				<dt>JS规范</dt>
+				<dd>
+					<a href="#js/category.html">分类方法</a>
+					<a href="#js/code.html">代码格式</a>
+				</dd>
+			</dl>
+			<div id="demo-right" class="fn-right">
+				<div id="demo-index">
+					<div class="block">
+						<h2>注意事项：</h2>
+						<p>nic是基于 jquery1.8.3、less、requirejs 开发的UI类库，请先了解相关知识。</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript" src="../theme/src/js/prettify.js"></script>
+	<script>
+	require(['app/main'], function(nic){
+	
+		$('pre,.prettyprint').addClass('prettyprint linenums').attr('style', 'overflow:auto');
+		window.prettyPrint && prettyPrint();
+
+		
+		var win       = $(window),
+			winHeight = win.height();
+		$('#demo-index').height(winHeight - 106);
+		
+		$('#demo-left dd dt').click(function(){
+			$(this)
+				.next('dd')
+				.show()
+				.siblings('dd')
+				.hide();
+		});
+
+		$('#demo-left a').click(function(){
+			var that  = $(this),
+				url   = that.attr('href'),
+				right = $('#demo-right'),
+				html  = '';
+			
+			if( url !== '#' ){
+				url = url.replace(/#/, '');
+				right.load(url,function(){
+					$('pre,.prettyprint').addClass('prettyprint linenums').attr('style', 'overflow:auto');
+					window.prettyPrint && prettyPrint();
+				}); 
+			}
+			
+			return false;
+		});
+
+		
+	});
+	</script>
+</body>
+</html>

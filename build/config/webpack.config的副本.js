@@ -13,7 +13,6 @@ module.exports = {
     entry: [
         '../../src/js/main.js',
         '../../src/less/styles.less',
-        '../public/layout.less',
         // Add the client which connects to our middleware
         // You can use full urls like 'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr'
         // useful if you run your app from another point like django
@@ -85,6 +84,10 @@ module.exports = {
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
+        new HtmlWebpackPlugin({
+            template: '../views/index.html',
+            inject: true
+        }),
         //new ExtractTextPlugin('styles.css')
     ],
 };

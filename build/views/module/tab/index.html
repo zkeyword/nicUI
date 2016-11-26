@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"tab": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<ul id="tabUl" class="tab fn-clear">
+						<li class="on"><a href="javascript:void(0);">选项一</a></li>
+						<li><a href="javascript:void(0);">选项二</a></li>
+						<li><a href="javascript:void(0);">选项三</a></li>
+					</ul>
+					<div id="tabWrap">
+						<div class="tab-main">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</div>
+					</div>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./index.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+
+<script>
+	nic.ui.tab({
+		tabItem:'#tabUl li',
+		tabWrap:'#tabWrap .tab-main',
+		onclick:function(i, obj){
+			console.log(i, obj)
+			if( i === 0 ){
+				obj.html('内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容')
+			}else if(i === 1){
+				obj.html('内容2内容2内容2内容2内容2内容2内容2内容2内容2内容2内容2内容2内容2内容2内容2')
+			}else if(i === 2){
+				obj.html('内容3内容3内容3内容3内容3内容3内容3内容3内容3内容3内容3内容3内容3内容3内容3内容3')
+			}
+		}
+	});
+</script>

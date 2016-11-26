@@ -1,0 +1,74 @@
+<div class="block">
+	<h2>接口说明：</h2>
+	<p>target为check类型的选择器，使用时设置为jquery的选择器即可，同时请在html设置好checkbox、radio的name值。</p>
+</div>
+
+<div class="block">
+	<h2>应用代码：</h2>
+<pre>
+/*html 代码*/
+&lt;div class=&quot;ui-form fn-clear&quot;&gt;
+    &lt;label class=&quot;ui-pl10&quot;&gt;
+        &lt;input type=&quot;checkbox&quot; class=&quot;ui-checkbox&quot; name=&quot;testCheckbox[]&quot; value=&quot;多选选项1&quot; /&gt;
+        &lt;i class=&quot;ui-label ui-checkbox-label&quot;&gt;多选选项1&lt;/i&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;ui-pl10&quot;&gt;
+        &lt;input type=&quot;checkbox&quot; class=&quot;ui-checkbox &quot; name=&quot;testCheckbox[]&quot; value=&quot;多选选项2&quot;  /&gt;
+        &lt;i class=&quot;ui-label ui-checkbox-label&quot;&gt;多选选项2&lt;/i&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;ui-pl10&quot;&gt;
+        &lt;input type=&quot;radio&quot; class=&quot;ui-radio&quot; name=&quot;testRaio&quot; value=&quot;单选选项3&quot; /&gt;
+        &lt;i class=&quot;ui-label ui-radio-label&quot;&gt;单选选项3&lt;/i&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;ui-pl10&quot;&gt;
+        &lt;input type=&quot;radio&quot; class=&quot;ui-radio &quot; name=&quot;testRaio&quot; value=&quot;单选选项4&quot;  /&gt;
+        &lt;i class=&quot;ui-label ui-radio-label&quot;&gt;单选选项4&lt;/i&gt;
+    &lt;/label&gt;
+&lt;/div&gt;
+
+/*js 代码*/
+var checkbox = nic.ui.check({
+	target:':radio'
+});
+
+var checkbox = nic.ui.check({
+	target:':checkbox'
+})
+</pre>
+</div>
+
+<div class="block">
+	<h2>调用效果：</h2>
+	<div class="ui-form fn-clear">
+		<label class="ui-pl10">
+			<input type="checkbox" class="ui-checkbox" name="testCheckbox[]" value="多选选项1" />
+			<i class="ui-label ui-checkbox-label">多选选项1</i>
+		</label>
+		<label class="ui-pl10">
+			<input type="checkbox" class="ui-checkbox " name="testCheckbox[]" value="多选选项2"  />
+			<i class="ui-label ui-checkbox-label">多选选项2</i>
+		</label>
+		<label class="ui-pl10">
+			<input type="radio" class="ui-radio" name="testRaio" value="单选选项3" />
+			<i class="ui-label ui-radio-label">单选选项3</i>
+		</label>
+		<label class="ui-pl10">
+			<input type="radio" class="ui-radio " name="testRaio" value="单选选项4"  />
+			<i class="ui-label ui-radio-label">单选选项4</i>
+		</label>
+	</div>
+</div>
+
+<script>
+require(['app/main'], function(nic){
+
+	var checkbox = nic.ui.check({
+		target:':radio'
+	});
+	
+	var checkbox = nic.ui.check({
+		target:':checkbox'
+	})
+
+});
+</script>

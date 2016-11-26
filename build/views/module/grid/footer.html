@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"grid": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<div id="grid"></div>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./footer.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+<script>
+	var grid = nic.ui.grid({
+		wrap:'#grid',
+		data:{
+			rows:[
+				{
+					id:1,
+					name:'张三',
+					type:'经理',
+					sex:'男',
+					tel:'13400000000',
+					email:'zhangsan@a.com'
+				},
+			],
+			total:1
+		},
+		pageSizeOptions:[10, 20, 50],
+		countFont:'每页{{size}}条，从{{start}}到{{end}}，共{{count}}条 。',
+		onPageFn:function(pageIndex, pageSize){
+			console.log(pageIndex, pageSize)
+		},
+		columns: [
+			{ display: '编码.', name: 'id', width: 50},
+			{ display: '姓名', name: 'name', width: 50},
+			{ display: '类别', name: 'type', width: 50},
+			{ display: '性别', name: 'sex', width: 50},
+			{ display: '电话', name: 'tel', width: 50},
+			{ display: 'Email', name: 'email', width: 50}
+		]
+	});
+</script>

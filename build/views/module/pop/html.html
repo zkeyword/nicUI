@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"pop": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<a href="javascript:;" id="addPop">点击我，动态创建一个弹窗</a>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./html.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+
+<script>
+	$('#addPop').on('click', function(){
+		var html = '<div>这个是一个pop弹出框</div>';
+
+		var pop = nic.ui.pop({
+			title:'弹窗的标题',
+			height:240,
+			width:320,
+			html:html,
+			btns:[
+				{
+					text:'保存修改',
+					closePop:false,
+					onclick:function(id){
+						alert('保存修改')
+						pop.close(id);
+					}
+				},
+				{
+					text:'取消',
+					onclick:function(){
+			
+					}
+				}
+			]
+		});
+	});	
+</script>
