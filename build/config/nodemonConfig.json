@@ -1,4 +1,8 @@
 {
-  "verbose": true,
-  "ignore": ["../dest/*"]
+    "verbose": true,
+    "ignore": [
+        "../../dist/*",
+        "../../src/*",
+        "../../demo/*"
+    ]
 }

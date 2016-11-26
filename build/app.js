@@ -5,8 +5,6 @@ const app          = express();
 const ejs          = require('ejs');
 const favicon      = require('serve-favicon');
 const serveStatic  = require('serve-static');
-const compression  = require('compression');
-const logger       = require('morgan');
 const bodyParser   = require('body-parser');
 const process      = require('process');
 
@@ -17,7 +15,8 @@ const WebpackDevMiddleware = require('webpack-dev-middleware')
 const WebpackHotMiddleware = require('webpack-hot-middleware')
  
 app.use(WebpackDevMiddleware(compiler, {
-    noInfo: true, publicPath: webpackConfig.output.publicPath
+    noInfo: true, 
+    publicPath: webpackConfig.output.publicPath
 }));
 app.use(WebpackHotMiddleware(compiler));
 
@@ -25,16 +24,9 @@ app.use(WebpackHotMiddleware(compiler));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-/* gzip */ 
-app.use(compression());
-
 /* 设定静态文件目录 */
-//app.use(serveStatic(path.join(__dirname, '/public/static')));
-//app.use(express.static(path.join(__dirname, '/public/static')));
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-
-app.set('views', './views')
-app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, './views'));
+app.set('view engine', 'html');
 app.engine('.html', ejs.__express);
 
 /* 添加路由 */
