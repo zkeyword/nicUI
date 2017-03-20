@@ -1,4 +1,4 @@
-# nicUI 2.0 开发中！！！！
+# nicUI 2.0 开发中！！！！ （1.0版本请移步 [https://github.com/zkeyword/nicUI/tree/1.0](https://github.com/zkeyword/nicUI/tree/1.0)）
 
 ### 简介
 
