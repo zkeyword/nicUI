@@ -1,0 +1,58 @@
+.ui-panel{
+    
+    .ui-panel-body{
+        border-bottom: 1PX solid #dcdcdc;
+        background: #fff;
+        display: flex;
+
+        .box{
+            position: relative;
+            padding:10px 20px;
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+
+            .title{
+                font-size: 14px;
+                color:#333;
+                float: left;
+            }
+            .desc{
+                font-size: 12px;
+                width: 100%;
+                float: left;
+                padding: 20px 0 0;
+                &.gray{
+                    color:#979797;
+                }
+                &.red{
+                    color:#ee4446;
+                }
+            }
+            .detail{
+                float: right;
+                font-size: 12px;
+                color:#666;
+                padding:0 10px 0 0;
+                &:last-child{
+                    padding: 0;
+                }
+            }
+            .arrow{
+                display: inline-block;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+                height: 10px;
+                width: 10px;
+                border-width: 4px 4px 0 0;
+                border-color: #d3d3d6;
+                border-style: solid;
+                position: absolute;
+                top: 38%;
+                right: 15px;
+                margin-top: -3px;
+                cursor: pointer;
+            }
+        }
+    }
+}
