@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+
+<head>
+    <%- include('common/include.ejs') %>
+</head>
+
+<body>
+    <div id="demo-wrap">
+        <%- include('./common/header.ejs') %>
+        <div id="demo-main" class="fn-clear">
+            <%- include('./common/menu.ejs', {"index": "on"}) %>
+            <div id="demo-right" class="fn-right">
+                <div id="markdown">
+                    <%- markdown('README.md') %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('./common/footer.ejs') %>
+</body>
+
+</html>

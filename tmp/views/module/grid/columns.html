@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"grid": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<div class="block">
+					<h4>调用效果</h4>
+					<div id="grid"></div>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./columns.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+
+
+
+<script>
+	var grid = nic.ui.grid({
+		wrap:'#grid',
+		pageAjax: {
+			url: '/grid',
+			data:'type=1&sex=man'
+		},
+		columns: [
+			{ display: '编码.', name: 'id', width: 50},
+			{ display: '姓名', name: 'name', width: 50},
+			{ display: '类别', name: 'type', width: 50},
+			{ display: '性别', name: 'sex', width: 50},
+			{ display: '电话', name: 'tel', width: 50},
+			{ display: 'Email', name: 'email', width: 50}
+		]
+	});
+</script>
+
+
+
+
+<div class="block">
+	<h2>应用代码(可隐藏列)：</h2>
+<pre>
+var grid = nic.ui.grid({
+	wrap:'#grid',
+	pageAjax: {
+		url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+		data:'type=1&sex=man',
+	},
+	isHideColumns: true,
+	columns: [
+		{ display: '编码.', name: 'id', width: 50},
+		{ display: '姓名', name: 'name', width: 50},
+		{ display: '类别', name: 'type', width: 50},
+		{ display: '性别', name: 'sex', width: 50},
+		{ display: '电话', name: 'tel', width: 50},
+		{ display: 'Email', name: 'email', width: 50}
+	]
+});
+</pre>
+</div>
+
+<div class="block">
+	<h2>调用后效果(可隐藏列)：</h2>
+	<div id="grid"></div>
+</div>
+
+<div class="block">
+	<h2>应用代码(其他)：</h2>
+<pre>
+var grid2 = nic.ui.grid({
+	wrap:'#grid',
+	pageAjax: {
+		url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+		data:'type=1&sex=man',
+	},
+	isHideColumns: true,
+	columns: [
+		{ display: '编码.', name: 'id', width: 50},
+		{ display: '姓名', name: 'name', width: 50},
+		{ display: '类别', name: 'type', width: 50},
+		{ display: '性别', name: 'sex', width: 50},
+		{ display: '电话', name: 'tel', width: 50},
+		{ display: 'Email', name: 'email', width: 50}
+	]
+});
+
+grid2.reSetColumns({
+	columns: [
+		{ display: '编码.', name: 'id', width: 50},
+		{ display: '姓名', name: 'name', width: 50},
+		{ display: '类别', name: 'type', width: 50}
+	]
+});
+
+grid2.changeHeaderText('id', 'ID');
+
+console.log(grid2.getColumns());
+</pre>
+</div>
+
+<div class="block">
+	<h2>调用后效果(其他)：</h2>
+	<div id="grid2"></div>
+</div>
+
+<script>
+require(['app/main'], function(nic){
+
+	var grid = nic.ui.grid({
+		wrap:'#grid',
+		pageAjax: {
+			url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+			data:'type=1&sex=man',
+		},
+		isHideColumns: true,
+		columns: [
+			{ display: '编码.', name: 'id', width: 50},
+			{ display: '姓名', name: 'name', width: 50},
+			{ display: '类别', name: 'type', width: 50},
+			{ display: '性别', name: 'sex', width: 50},
+			{ display: '电话', name: 'tel', width: 50},
+			{ display: 'Email', name: 'email', width: 50}
+		]
+	});
+	
+	var grid2 = nic.ui.grid({
+		wrap:'#grid2',
+		pageAjax: {
+			url: 'http://127.0.0.1/nic/doc/tmp/grid.php',
+			data:'type=1&sex=man',
+		},
+		columns: [
+			{ display: '编码.', name: 'id', width: 50},
+			{ display: '姓名', name: 'name', width: 50},
+			{ display: '类别', name: 'type', width: 50},
+			{ display: '性别', name: 'sex', width: 50},
+			{ display: '电话', name: 'tel', width: 50},
+			{ display: 'Email', name: 'email', width: 50}
+		]
+	});
+	
+	/*重设表头*/
+	grid2.reSetColumns({
+		columns: [
+			{ display: '编码.', name: 'id', width: 50},
+			{ display: '姓名', name: 'name', width: 50},
+			{ display: '类别', name: 'type', width: 50}
+		]
+	});
+	
+	/*修改表头文本*/
+	grid2.changeHeaderText('id', 'ID');
+	
+	/*获取表头结构*/
+	console.log(grid2.getColumns());
+
+});
+</script>

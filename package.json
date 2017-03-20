@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "scripts": {
     "dev": "nodemon ./build/bin/www --config ./build/config/nodemonConfig.json",
-    "build": "node ./build/build.js"
+    "build": "node ./build/config/build.js"
   },
   "repository": {
     "type": "git",
@@ -44,6 +44,8 @@
     "postcss-loader": "^0.13.0",
     "serve-favicon": "^2.3.2",
     "style-loader": "^0.13.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.7.0",

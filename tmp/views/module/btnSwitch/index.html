@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+@@include('../../common/include.html')
+</head>
+<body>
+	<div id="demo-wrap">
+		@@include('../../common/header.html')
+		<div id="demo-main" class="fn-clear">
+			@@include('../../common/menu.html', {"BtnSwitch": "on", "js":"on"})
+			<div id="demo-right" class="fn-right">
+				<h4>调用效果</h4>
+				<div class="fn-clear">
+					<span class="ui-btn ui-btn-switch ui-btn-switch-open">
+						<i></i>
+						<em>已开启</em>
+					</span>
+					<span class="ui-btn ui-btn-switch ui-btn-switch-close">
+						<i></i>
+						<em>已关闭</em>
+					</span>
+				</div>
+				<div id="markdown">
+					@@include(markdown('./index.md'))
+				</div>
+			</div>
+		</div>
+	</div>
+	@@include('../../common/footer.html')
+</body>
+</html>
+<script>
+	nic.ui.btnSwitch({
+		target: '.ui-btn',
+		open:{
+			url: '/switch',
+			data: {
+				t:1
+			},
+			success: function(){
+				alert('开启成功')
+			},
+			error: function(){
+				alert('开启失败')
+			}
+		},
+		close:{
+			url: '/switch',
+			data: {
+				t:2
+			},
+			success: function(){
+				alert('关闭成功')
+			},
+			error: function(){
+				alert('关闭失败')
+			}
+		}
+	});
+</script>

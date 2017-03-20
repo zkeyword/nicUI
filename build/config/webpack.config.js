@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
+var projectRoot = path.resolve(__dirname, '../../')
 
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -7,13 +8,13 @@ var autoprefixer = require('autoprefixer');
 var mqpacker = require('css-mqpacker');
 var cssnano = require('cssnano');
 
-
 module.exports = {
     context: __dirname,
+
     entry: [
-        '../../src/js/main.js',
-        '../../src/less/styles.less',
-        '../public/layout.less',
+        `${projectRoot}/src/main.js`,
+        `../public/index.styl`,
+        `${projectRoot}/app/styles/index.styl`,
         // Add the client which connects to our middleware
         // You can use full urls like 'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr'
         // useful if you run your app from another point like django
@@ -21,10 +22,11 @@ module.exports = {
         // And then the actual application
         './dev-client.js'
     ],
+
     output: {
         path: __dirname,
-        publicPath: '/',
-        filename: 'bundle.js'
+        filename: 'nicUI.js',
+        libraryTarget: 'umd'
     },
 
     resolve: {
@@ -32,33 +34,47 @@ module.exports = {
         fallback: [path.join(__dirname, '../node_modules')],
         modulesDirectories: [
             'node_modules',
-            'lib'
+            'lib',
+            'styles'
         ],
         alias: {
-            'jquery': "jquery1.10.2.js",
-            'template': "template"
+            zepto: "zepto.min",
+            template: "template.min"
         }
+    },
+
+    externals: {
+        'zepto': "zepto.min"
     },
 
     module: {
         loaders: [
-            // {
-            //     test: /\.less$/,
-            //     loader: ExtractTextPlugin.extract('style-loader', 'css-loader!less-loader!postcss')
-            // },
             {
-                test: /\.less$/,
-                loader: "style-loader!css-loader?minimize!less-loader?strictMath&noIeCompat!postcss-loader"
+                test: /\.js$/,
+                loader: 'babel',
+                include: projectRoot,
+                exclude: /node_modules/
             },
             {
-                test: /\.handlebars$/,
+                test: /\.styl$/,
+                loader: "style-loader!css-loader!postcss-loader!stylus-loader"
+            },
+            {
+                test: /\.(handlebars|hbs)$/,
                 loader: "handlebars-loader"
+            },
+            {
+                test: /\.html$/,
+                loader: 'html',
+                query: {
+                    minimize: true
+                }
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
                 loader: 'url',
                 query: {
-                    limit: 1,
+                    limit: 8192,
                     name: 'img/[name].[ext]'
                 }
             },
@@ -74,8 +90,12 @@ module.exports = {
     },
     postcss: function () {
         return [
-            autoprefixer,
-            mqpacker
+            autoprefixer({ browsers: ['last 10 versions'] }),
+            mqpacker,
+            cssnano({
+                zindex: false,
+                colormin: false
+            })
         ];
     },
 
@@ -86,5 +106,6 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
         //new ExtractTextPlugin('styles.css')
+        //new OpenBrowserPlugin({ url: 'http://localhost:3000' })
     ],
 };
