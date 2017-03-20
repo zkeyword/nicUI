@@ -5,6 +5,11 @@
 nicUI提供前端架构多组件多页面整体开发方案，同时也支持单个组件单独调用，是一款基于jQuery开发的UI库，始终贯彻前端模块化思想，使用webpack打包，即可支持AMD规范，又可支持CMD规范，很方便了实现了UI的扩展。
 
 
+### 浏览器支持
+
+支持IE8及IE8以上版本
+
+
 ### 调用方式
 
 - 约定
@@ -30,11 +35,9 @@ nicUI提供前端架构多组件多页面整体开发方案，同时也支持单
 
 - webpack
 
-- less
+- stylus
 
 - postcss
-
-- gulp
 
 - mockjs
 
@@ -47,11 +50,10 @@ nicUI提供前端架构多组件多页面整体开发方案，同时也支持单
 
 - artTemplate
 
-- handlebars
 
 ##### 运行方式
 
-首先，请先安装node环境，然后在安装nicUI内依赖的工具：
+首先，请先安装node 6.0+环境，然后在安装nicUI内依赖的工具：
 
     npm install
     
@@ -59,9 +61,7 @@ nicUI提供前端架构多组件多页面整体开发方案，同时也支持单
     
     npm run dev
     
-运行成功之后，直接在浏览器打开 http://127.0.0.1:3000 即可，nicUI默认的端口号是3000，如果有端口冲突可以修改根目录下的config.js文件。
-    
-nicUI通过gulp-rev会生成带版本号styles.css和nicUI.js，并通过gulp-rev-collector修改对应的html，如若不需要或有具体需求请自行修改gulp的配置gulpfile.js。
+运行成功之后，直接在浏览器打开 http://127.0.0.1:3000 即可，nicUI默认的端口号是3000，如果有端口冲突可以修改build/bin/www文件。
 
 打包：
 
