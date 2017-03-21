@@ -1,0 +1,83 @@
+@import '../../styles/mixins.styl';
+
+.l-gridFree{
+    position: relative
+    z-index: 2
+    clear: both
+}
+.l-gridFree-loading{
+    display: none
+    position: absolute
+    width: 100%
+    height: 100%
+    z-index: 2
+}
+.l-gridFree-loadingBg{
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    opacity: .1
+    background: #555
+}
+.l-gridFree-loadingIco{
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    background: url(./loading.gif) no-repeat center
+}
+.l-gridFree-body{
+    clear: both
+    table{
+        width: 100%
+        font-size: 12px
+        a{
+            font-size: 12px
+            color: blue
+        }
+        th{
+            background: #eee
+            line-height: 34px
+            text-align: center
+            color: #333
+        }
+        td{
+            padding: 5px 0
+            line-height: 24px
+            border: 1px solid #f0f5fb
+            text-align: center
+            background: #fff
+            color: #333
+        }
+    }
+}
+.l-gridFree-footer{
+    clear: both
+}
+.l-gridFree-footer-btn{
+    margin: 10px 0
+    float: left
+}
+.l-gridFree-footer-page{
+    margin: 10px 0
+    float: right
+}
+.l-gridFree-footer-select{
+    float: right
+    margin: 10px 0 10px 10px
+    .ui-select{
+        height: 32px
+        border-color: #eee
+    }
+}.l-gridFree-body-nullWrap{
+    width:  150px
+    height:  130px
+    margin:  0 auto
+    padding: 40px 0
+    background:  url(./message-tips.png) no-repeat center
+    text-indent:  -999em
+    overflow:  hidden
+}

@@ -1,0 +1,31 @@
+.l-loading{
+    position: fixed
+    text-align: center
+    min-height: 86px
+    min-width: @height
+    .icon{
+        height: 66px
+        width: 86px
+        background: url(../../app/img/loading.gif) no-repeat center
+        margin: 10px auto
+        display: block
+        position: relative
+        z-index: 1
+    }
+    .text{
+        color: #fff
+        padding: 0 10px 10px
+        position: relative
+        z-index: 1
+    }
+    .loadingBg{
+        //background: #000
+        //opacity: 0.8
+        height: 100%
+        width: @height
+        border-radius: 10px
+        position: absolute
+        top: 0
+        left: 0
+    }
+}

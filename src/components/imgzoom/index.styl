@@ -1,0 +1,116 @@
+.l-imgZoom {
+    position: fixed;
+    text-align: center;
+    height: 500px;
+    width: 500px
+}
+
+.l-imgZoom .l-imgZoom-close{
+    background: url(./close-icon.png) no-repeat
+    position: fixed
+    top: 20px
+    right: 20px
+    width: 50px
+    height: 50px
+    cursor:pointer
+}
+
+.l-imgZoom .l-imgZoom-num {
+    position: relative;
+    margin: 0 auto 20px;
+    height: 30px;
+    line-height: 30px;
+    width: 80px;
+    overflow: hidden;
+    border-radius: 20px
+}
+
+.l-imgZoom .l-imgZoom-num span {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    font-size: 14px
+}
+
+.l-imgZoom .l-imgZoom-num .numBg {
+    opacity: .5;
+    position: absolute;
+    z-index: 0;
+    background: #000;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0
+}
+
+.l-imgZoom .pinch-img,.l-imgZoom .pinch-zoom-container,.l-imgZoom .swiper-container {
+    width: 100%;
+    height: 100%
+}
+
+.l-imgZoom .swiper-container {
+    overflow: hidden
+}
+
+.l-imgZoom .swiper-slide {
+    position: relative;
+    float: left;
+    height: 100%;
+    overflow: hidden
+}
+
+.l-imgZoom .swiper-slide .loading {
+    height: 50px;
+    width: 50px;
+    margin: 0 auto
+}
+
+.l-imgZoom .swiper-slide img {
+    width: 100%;
+    vertical-align: middle
+}
+
+.l-imgZoom .pinch-img table,.l-imgZoom .pinch-img td,.l-imgZoom .pinch-img tr {
+    width: 500px;
+    height: 500px;
+}
+
+.l-imgZoom .arrow {
+    height: 52px;
+    width: 30px;
+    position: absolute;
+    top: 54%;
+    cursor pointer;
+}
+
+.l-imgZoom .arrow.left {
+    background: url(./left.png) no-repeat;
+    left: -60px
+}
+
+.l-imgZoom .arrow.right {
+    background: url(./right.png) no-repeat;
+    right: -60px
+}
+
+.l-imgZoom .swiper-wrapper {
+    position: relative;
+    width: 100%;
+    -webkit-transition-property: left,top,-webkit-transform;
+    transition-property: left,top,-webkit-transform;
+    transition-property: transform,left,top;
+    transition-property: transform,left,top,-webkit-transform;
+    -webkit-transition-duration: 0s;
+    transition-duration: 0s;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-transition-timing-function: ease;
+    transition-timing-function: ease;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box
+}
+
+.l-imgZoom table,.l-imgZoom td,.l-imgZoom tr {
+    width: 100%;
+    height: 100%
+}

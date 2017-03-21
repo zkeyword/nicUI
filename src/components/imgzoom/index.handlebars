@@ -1,0 +1,26 @@
+<div class="l-ui l-imgZoom" style="z-index:{{zIndex}}" data-uid="{{uid}}">
+    <div class="l-close l-imgZoom-close"></div>
+    <div class="l-imgZoom-num">
+        <span class="curImgNum">{{activeIndex}}</span>
+        <span class="separate">/</span>
+        <span class="allImgNum">{{item.length}}</span>
+        <div class="numBg"></div>
+    </div>
+    <div class="arrow left arrow-left"></div>
+    <div class="arrow right arrow-right"></div>
+    <div class="l-imgZoom-main swiper-container">
+        <div class="swiper-wrapper">
+            {{#each item}}
+                <div class="l-imgZoom-item  swiper-slide">
+                    <div class="pinch-img">
+                        <table>
+                            <tr>
+                                <td><img src="{{bigSrc}}" class="loading" bigSrc="{{bigSrc}}" ></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</div>

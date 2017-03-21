@@ -1,0 +1,13 @@
+<div class="l-ui l-popup" style="z-index:{{zIndex}};width:{{width}}px" data-uid="{{uid}}">
+    {{#if isClose}}<i class="l-popup-close l-close"></i> {{/if}}
+    <div class="ui-popup-main">
+        {{{html}}}
+    </div>
+    {{#if btns.length}}
+    <div class="l-popup-btnWrap l-btnWrap">
+        {{#each btns}}
+        <div class="btnItem l-btnItem {{cls}}">{{text}}</div>
+        {{/each}}
+    </div>
+    {{/if}}
+</div>

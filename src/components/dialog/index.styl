@@ -1,0 +1,45 @@
+.l-dialog{
+    position: fixed;
+    // transform: translate(-50%, -50%);
+    // top: 50%;
+    // left: 50%;
+    background: #fff;
+    border-radius: 4px;
+    min-width: 420px;
+    text-align: center;
+    z-index: 9999;
+    .l-dialog-content {
+        padding: 10px 20px;
+        .title {
+            font-size: 20px;
+            padding: 30px 0 10px 0;
+        }
+        .text {
+            font-size: 16px;
+            padding: 30px 0;
+        }
+    }
+    .l-dialog-btnWrap{
+        display: block;
+        text-align: center;
+        padding-bottom: 20px;
+        .btnItem{
+            display: inline-block;
+            padding: 5px 30px;
+            border: 1px solid #fff;
+            border-radius: 3px;
+            cursor: pointer;
+            &.btnItem-red{
+                background-color: #d00;
+                color: #fff;
+                border-color: #d00;
+                margin-right: 15px;
+            }
+            &.btnItem-white{
+                background-color: #fff;
+                color: #666;
+                border-color: #ccc;
+            }
+        }
+    }
+}

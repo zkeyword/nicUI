@@ -1,0 +1,14 @@
+<div class="l-ui l-dialog" style="z-index:{{zIndex}}" data-uid="{{uid}}">
+    {{#if isClose}}
+        <i class="l-dialog-close l-close">关闭</i>
+    {{/if}}
+    <div class="l-dialog-content">
+        {{#if title}}<h3 class="title">{{title}}</h3>{{/if}}
+        <p class="text">{{text}}</p>
+    </div>
+    <div class="l-dialog-btnWrap l-btnWrap">
+        {{#each btns}}
+            <div class="btnItem l-btnItem {{cls}}">{{text}}</div>
+        {{/each}}
+    </div>
+</div>
